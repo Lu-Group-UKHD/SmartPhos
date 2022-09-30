@@ -1,0 +1,411 @@
+#Function to parse one phosphoproteome table
+readOnePhos <- function(inputTab, sampleName, localProbCut, scoreDiffCut, multiMap) {
+
+
+    #define sample specific column names
+    colSele <- paste0(c("Localization.prob.","Score.diff.","Intensity."),
+                      sampleName)
+    if (!all(colSele %in% colnames(inputTab))) stop("Sample not found in quantification file")
+
+    #get features passed quality filter and non zero intensity
+    keepRow <- (!is.na(inputTab[[colSele[1]]]) & inputTab[[colSele[1]]] >= localProbCut) &
+        (!is.na(inputTab[[colSele[2]]]) & inputTab[[colSele[2]]] >= scoreDiffCut) &
+        (!is.na(inputTab[[colSele[3]]]) & inputTab[[colSele[3]]]>0)
+
+    #subset
+    outputTab <- inputTab[keepRow,
+                       c(colSele[3],"Proteins","Gene.names",
+                         "Positions.within.proteins","Amino.acid","Sequence.window")]
+    #create a uniqfied identifier
+    outputTab$rowName <- paste0(outputTab$Proteins, "_",
+                                outputTab$Positions.within.proteins)
+
+    #it's important that identifiers are unique
+    stopifnot(all(!duplicated(outputTab$rowName)))
+
+    #output useful information
+    rownames(outputTab) <- outputTab$rowName
+    outputTab$rowName <- NULL
+    #rename columns
+    colnames(outputTab) <- c("Intensity","UniprotID","Gene","Position","Residue","Sequence")
+
+    return(outputTab)
+}
+
+#Read the whole phosphoproteom and create a SummarizedExperiment object
+readPhosphoExperiment <- function(fileTable, localProbCut, scoreDiffCut) {
+    #select phosphoproteomic entries
+    fileTable <- fileTable[fileTable$type == "phosphoproteome",]
+
+    #read in all batch and store them in a list
+
+    expAll <- lapply(unique(fileTable$fileName), function(eachFileName) {
+        fileTableSub <- fileTable[fileTable$fileName == eachFileName,]
+
+        #read input table, "\t" as delimiter
+        inputTab <- read.delim(eachFileName, sep = "\t")
+        #remove empty features
+        inputTab <- inputTab[!inputTab$Proteins %in% c(NA,"") &
+                                 #!inputTab$Gene.names %in% c("",NA) &
+                                 !inputTab$Positions.within.proteins %in% c(NA,""),]
+        #remove reverse and potential contaminants for the whole table
+        inputTab <- inputTab[!inputTab$Potential.contaminant %in% "+" &
+                                 !inputTab$Reverse %in% "+",]
+
+
+        #each data for each sample
+        expSub <- lapply(seq(nrow(fileTableSub)), function(i) {
+            eachTab <- readOnePhos(inputTab,
+                                   fileTableSub[i,]$sample,
+                                   localProbCut, scoreDiffCut)
+            eachTab$id <- fileTableSub[i,]$id
+            eachTab$rowName <- rownames(eachTab)
+            eachTab
+        })
+        expSub <- do.call(rbind, expSub)
+        expSub
+    })
+    expAll <- do.call(rbind, expAll)
+
+    #prepare annotations
+    annoTab <- expAll[!duplicated(expAll$rowName),c("rowName","UniprotID",
+                                                    "Gene","Position","Residue","Sequence")]
+    annoTab$site <- annoTab$rowName
+    rownames(annoTab) <- annoTab$rowName
+    annoTab$rowName <- NULL
+
+    #prepare intensity matrix
+    phosMat <- matrix(data = rep(NA, nrow(annoTab)*nrow(fileTable)),
+                      nrow(annoTab), nrow(fileTable),
+                      dimnames = list(rownames(annoTab),fileTable$id))
+    for (each_id in fileTable$id) {
+        eachTab <- expAll[(expAll$id %in% each_id),]
+        phosMat[,each_id] <- eachTab[match(rownames(phosMat),eachTab$rowName),][["Intensity"]]
+    }
+
+    #rename rownames
+    rownames(phosMat) <- rownames(annoTab) <- paste0("s",seq(nrow(annoTab)))
+
+    #construct SummariseExperiment object object
+    ppe <- SummarizedExperiment(assays = list(Intensity = phosMat),
+                                rowData = annoTab)
+    return(ppe)
+}
+
+
+
+#-----------------------------------------------------------------------------------------------------------------
+
+#Function to parse one phosphoproteome table (DIA)
+readOnePhosDIA <- function(inputTab, sampleName, localProbCut) {
+
+    #define sample specific column names
+    colSele <- colnames(inputTab[grep(pattern = paste0("*", sampleName, ".raw.PTM.*"), colnames(inputTab))])
+
+    #convert character values to numeric
+    inputTab[[colSele[1]]] <- suppressWarnings(as.numeric(inputTab[[colSele[1]]]))
+    inputTab[[colSele[2]]] <- suppressWarnings(as.numeric(inputTab[[colSele[2]]]))
+
+    if (!all(colSele %in% colnames(inputTab))) stop("Sample not found in quantification file")
+
+    #get features passed quality filter and non zero intensity
+    keepRow <- (!is.na(inputTab[[colSele[1]]]) & inputTab[[colSele[1]]] >= localProbCut) &
+        (!is.na(inputTab[[colSele[2]]]) & inputTab[[colSele[2]]]>0)
+
+    #subset
+    outputTab <- inputTab[keepRow,
+                          c(colSele[2],"PTM.CollapseKey","PG.UniProtIds","PG.Genes","PTM.Multiplicity",
+                            "PTM.SiteLocation","PTM.SiteAA","PTM.FlankingRegion")]
+
+    #deal with multiplicity
+    # summarise(across(c(score, rank), sum))
+    outputTab$PTM.CollapseKeyNew <- substring(outputTab$PTM.CollapseKey, 1, nchar(outputTab$PTM.CollapseKey)-1)
+    outputTab1 <- outputTab %>%
+        group_by(PTM.CollapseKeyNew) %>%
+        summarise_at(.vars = colnames(.)[1:1] , sum)
+    outputTab2 <- outputTab %>%
+        group_by(PTM.CollapseKeyNew) %>%
+        summarise(PG.UniProtIds = first(PG.UniProtIds),
+                  PG.Genes = first(PG.Genes), PTM.Multiplicity = max(PTM.Multiplicity),
+                  PTM.SiteLocation = first(PTM.SiteLocation), PTM.SiteAA = first(PTM.SiteAA),
+                  PTM.FlankingRegion = first(PTM.FlankingRegion))
+    outputTab <- reduce(list(outputTab1, outputTab2),
+                         left_join, by = "PTM.CollapseKeyNew")
+
+    #change class back to data.frame
+    outputTab <- as.data.frame(outputTab)
+
+    #delete the PTM.CollapseKeyNew column
+    outputTab$PTM.CollapseKeyNew <- NULL
+
+
+    #create a uniqfied identifier
+    outputTab$rowName <- paste0(outputTab$PG.UniProtIds, "_",
+                                outputTab$PTM.SiteLocation)
+
+    #it's important that identifiers are unique
+    stopifnot(all(!duplicated(outputTab$rowName)))
+
+    #output useful information
+    rownames(outputTab) <- outputTab$rowName
+    outputTab$rowName <- NULL
+    #rename columns
+    colnames(outputTab) <- c("Intensity","UniprotID","Gene","Multiplicity","Position","Residue","Sequence")
+
+    return(outputTab)
+}
+
+#Read the whole phosphoproteom and create a SummarizedExperiment object (DIA)
+readPhosphoExperimentDIA <- function(fileTable, localProbCut) {
+    #select phosphoproteomic entries
+    fileTable <- fileTable[fileTable$type == "phosphoproteome",]
+
+    #read in all batch and store them in a list
+
+    expAll <- lapply(unique(fileTable$fileName), function(eachFileName) {
+        fileTableSub <- fileTable[fileTable$fileName == eachFileName,]
+
+        #read input table, "\t" as delimiter
+        inputTab <- read.delim(eachFileName, sep = "\t")
+        #keep only Phospho (STY) modifications
+        inputTab <- inputTab[inputTab$PTM.ModificationTitle == "Phospho (STY)",]
+        #remove empty features
+        inputTab <- inputTab[!inputTab$PG.UniProtIds %in% c(NA,"") &
+                                 #!inputTab$Gene.names %in% c("",NA) &
+                                 !inputTab$PTM.SiteLocation %in% c(NA,""),]
+        #remove duplicates
+        inputTab <- inputTab[!duplicated(inputTab$PG.UniProtIds),]
+        #each data for each sample
+        expSub <- lapply(seq(nrow(fileTableSub)), function(i) {
+            eachTab <- readOnePhosDIA(inputTab,
+                                   fileTableSub[i,]$id,
+                                   localProbCut)
+            eachTab$id <- fileTableSub[i,]$id
+            eachTab$rowName <- rownames(eachTab)
+            eachTab
+        })
+        expSub <- do.call(rbind, expSub)
+        expSub
+    })
+    expAll <- do.call(rbind, expAll)
+
+    #prepare annotations
+    annoTab <- expAll[!duplicated(expAll$rowName),c("rowName","UniprotID",
+                                                    "Gene","Multiplicity","Position","Residue","Sequence")]
+    annoTab$site <- annoTab$rowName
+    rownames(annoTab) <- annoTab$rowName
+    annoTab$rowName <- NULL
+
+    #prepare intensity matrix
+    phosMat <- matrix(data = rep(NA, nrow(annoTab)*nrow(fileTable)),
+                      nrow(annoTab), nrow(fileTable),
+                      dimnames = list(rownames(annoTab),fileTable$id))
+    for (each_id in fileTable$id) {
+        eachTab <- expAll[(expAll$id %in% each_id),]
+        phosMat[,each_id] <- eachTab[match(rownames(phosMat),eachTab$rowName),][["Intensity"]]
+    }
+
+    #rename rownames
+    rownames(phosMat) <- rownames(annoTab) <- paste0("s",seq(nrow(annoTab)))
+
+    #construct SummariseExperiment object object
+    ppe <- SummarizedExperiment(assays = list(Intensity = phosMat),
+                                rowData = annoTab)
+    return(ppe)
+}
+
+#------------------------------------------------------------------------------------------------------------------
+
+#Read one proteome assay
+readOneProteom <- function(inputTab, sampleName, pepNumCut, ifLFQ) {
+
+    #define sample specific column names
+    colSele <- paste0(c("Intensity.","LFQ.intensity.","Razor...unique.peptides."),
+                      sampleName)
+    #peptide count filtering, based on Razor plus unique peptide
+    keepRow <- inputTab[[colSele[3]]] >= pepNumCut
+
+    #whether use LFQ quantification, recommended
+    if (ifLFQ) quantCol <- colSele[2] else quantCol <- colSele[1]
+
+    #output useful information
+    outputTab <- inputTab[keepRow,c(quantCol,
+                             "Protein.IDs", "Peptide.counts..all.",
+                             "Gene.names")]
+    #create a uniqfied identifier
+    outputTab$rowName <- outputTab$Protein.IDs
+    #it's important that identifiers are unique
+    stopifnot(all(!duplicated(outputTab$rowName)))
+    rownames(outputTab) <- outputTab$rowName
+    outputTab$rowName <- NULL
+
+    #remove NA or 0 quantification
+    outputTab <- outputTab[!is.na(outputTab[[quantCol]]) &
+                               outputTab[[quantCol]]>0,]
+
+    #rename columns
+    colnames(outputTab) <- c("Intensity","UniprotID","PeptideCounts","Gene")
+
+    return(outputTab)
+}
+
+#Read the whole full proteome and create a SummarizedExperiment object
+readProteomeExperiment <- function(fileTable, fdrCut, scoreCut, pepNumCut, ifLFQ) {
+    #select phosphoproteomic entries
+    fileTable <- fileTable[fileTable$type == "proteome",]
+
+    expAll <- lapply(unique(fileTable$fileName), function(eachFileName) {
+
+        fileTableSub <- fileTable[fileTable$fileName == eachFileName,]
+
+        #read input table, "\t" as delimiter
+        inputTab <- read.delim(eachFileName, sep = "\t")
+        #remove unnecessary rows
+        inputTab <- inputTab[!inputTab$Protein.IDs %in% c(NA,"") &
+                                 #!inputTab$Gene.names %in% c("",NA) &
+                                 (!is.na(inputTab$Q.value) & inputTab$Q.value <= fdrCut) &
+                                 (!is.na(inputTab$Score) & inputTab$Score >= scoreCut),]
+
+
+        #each data for each sample
+        expSub <- lapply(seq(nrow(fileTableSub)), function(i) {
+            eachTab <- readOneProteom(inputTab,
+                                   fileTableSub[i,]$sample,
+                                   pepNumCut,ifLFQ)
+            eachTab$id <- fileTableSub[i,]$id
+            eachTab$rowName <- rownames(eachTab)
+            eachTab
+        })
+        expSub <- do.call(rbind, expSub)
+        expSub
+    })
+    expAll <- do.call(rbind, expAll)
+
+    #prepare annotations
+    annoTab <- expAll[!duplicated(expAll$rowName),c("rowName","UniprotID",
+                                                    "Gene","PeptideCounts")]
+    rownames(annoTab) <- annoTab$rowName
+    annoTab$rowName <- NULL
+
+    #prepare intensity matrix
+    protMat <- matrix(data = rep(NA, nrow(annoTab)*nrow(fileTable)),
+                      nrow(annoTab), nrow(fileTable),
+                      dimnames = list(rownames(annoTab),fileTable$id))
+    for (each_id in fileTable$id) {
+        eachTab <- expAll[(expAll$id %in% each_id),]
+        protMat[,each_id] <- eachTab[match(rownames(protMat),eachTab$rowName),][["Intensity"]]
+    }
+
+    #rename rownames
+    rownames(protMat) <- rownames(annoTab) <- paste0("p",seq(nrow(annoTab)))
+
+    #construct SummariseExperiment  object
+    fpe <- SummarizedExperiment(assays = list(Intensity = protMat),
+                                rowData = annoTab)
+    return(fpe)
+}
+
+#Read one proteome assay (DIA)
+readOneProteomDIA <- function(inputTab, sampleName) {
+
+    #define sample specific column names
+    colSele <- colnames(inputTab[grep(pattern = paste0("*", sampleName, ".raw.PG.Quantity"), colnames(inputTab))])
+
+    #convert character values to numeric
+    inputTab[[colSele]] <- suppressWarnings(as.numeric(inputTab[[colSele]]))
+
+    #remove NA or 0 quantification
+    keepRow <- (!is.na(inputTab[[colSele[1]]]) & inputTab[[colSele[1]]]>0)
+
+    #output useful information
+    outputTab <- inputTab[keepRow,c(colSele[1],
+                                    "PG.ProteinGroups", "PG.Genes")]
+    #create a uniqfied identifier
+    outputTab$rowName <- outputTab$PG.ProteinGroups
+    #it's important that identifiers are unique
+    stopifnot(all(!duplicated(outputTab$rowName)))
+    rownames(outputTab) <- outputTab$rowName
+    outputTab$rowName <- NULL
+
+    #rename columns
+    colnames(outputTab) <- c("Intensity","UniprotID","Gene")
+
+    return(outputTab)
+}
+
+#Read the whole full proteome and create a SummarizedExperiment object (DIA)
+readProteomeExperimentDIA <- function(fileTable) {
+    #select proteomic entries
+    fileTable <- fileTable[fileTable$type == "proteome",]
+
+    expAll <- lapply(unique(fileTable$fileName), function(eachFileName) {
+
+        fileTableSub <- fileTable[fileTable$fileName == eachFileName,]
+
+        #read input table, "\t" as delimiter
+        inputTab <- read.delim(eachFileName, sep = "\t")
+        #remove unnecessary rows
+        inputTab <- inputTab[!inputTab$PG.ProteinGroups %in% c(NA,""),]
+
+        #each data for each sample
+        expSub <- lapply(seq(nrow(fileTableSub)), function(i) {
+            eachTab <- readOneProteomDIA(inputTab,
+                                      fileTableSub[i,]$id)
+            eachTab$id <- fileTableSub[i,]$id
+            eachTab$rowName <- rownames(eachTab)
+            eachTab
+        })
+        expSub <- do.call(rbind, expSub)
+        expSub
+    })
+    expAll <- do.call(rbind, expAll)
+
+    #prepare annotations
+    annoTab <- expAll[!duplicated(expAll$rowName),c("rowName","UniprotID",
+                                                    "Gene")]
+    rownames(annoTab) <- annoTab$rowName
+    annoTab$rowName <- NULL
+
+    #prepare intensity matrix
+    protMat <- matrix(data = rep(NA, nrow(annoTab)*nrow(fileTable)),
+                      nrow(annoTab), nrow(fileTable),
+                      dimnames = list(rownames(annoTab),fileTable$id))
+    for (each_id in fileTable$id) {
+        eachTab <- expAll[(expAll$id %in% each_id),]
+        protMat[,each_id] <- eachTab[match(rownames(protMat),eachTab$rowName),][["Intensity"]]
+    }
+
+    #rename rownames
+    rownames(protMat) <- rownames(annoTab) <- paste0("p",seq(nrow(annoTab)))
+
+    #construct SummariseExperiment  object
+    fpe <- SummarizedExperiment(assays = list(Intensity = protMat),
+                                rowData = annoTab)
+    return(fpe)
+}
+
+#function to deal with one peptide mapped to several proteins (not used currently)
+dealMultiMap <- function(annoTab, method = "remove") {
+    getElement <- function(vec, pos) {
+        return(ifelse(pos == "first", vec[1], vec[length(vec)]))
+    }
+    #sanity check.
+    stopifnot(method %in% c("remove","first","last","copy"))
+    #get rows with multi-mapping
+    multiTab <- annoTab[grepl(";",rownames(annoTab)),]
+    uniqueTab <- annoTab[!grepl(";",rownames(annoTab)),]
+    if (method == "remove") {
+        return(uniqueTab)
+    } else if (method == "first") {
+        multiTab$Gene<- sapply(strsplit(multiTab$Gene, ";"), getElement, "first")
+        multiTab$Position <- sapply(strsplit(multiTab$Position, ";"), getElement, "first")
+        multiTab$Sequence <- sapply(strsplit(multiTab$Sequence, ";"), getElement, "first")
+    } else if (method == "last") {
+        multiTab$Gene<- sapply(strsplit(multiTab$Gene, ";"), getElement, "last")
+        multiTab$Position <- sapply(strsplit(multiTab$Position, ";"), getElement, "last")
+        multiTab$Sequence <- sapply(strsplit(multiTab$Sequence, ";"), getElement, "last")
+    }
+    fullTab <- bind_rows(uniqueTab, multiTab)
+    fullTab <- fullTab[order(rownames(fullTab)),]
+    return(fullTab)
+}

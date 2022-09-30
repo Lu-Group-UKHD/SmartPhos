@@ -1,0 +1,548 @@
+---
+title: "SmartPhos: a pipline for processing processing and analysis of phosphoproteome data from SMART-CARE"
+author: "Junyan Lu"
+date: "`r doc_date()`"
+output:
+  BiocStyle::html_document:
+    toc_float: true
+vignette: >
+  %\VignetteIndexEntry{"Introduction to SmartPhos"}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+# Load packages and dataset
+```{r setup}
+#package
+library(SmartPhos)
+library(PhosR)
+library(DEP)
+library(SummarizedExperiment)
+library(tidyverse)
+```
+
+# Create input file table
+
+```{r}
+rawFolder <- rawFolder <- system.file("example/rawData", package = "SmartPhos")
+fileTable <- generateInputTable(rawFolder)
+```
+
+Check if the table is correct
+```{r}
+fileTable
+```
+
+Add a new column indicate concentration and sample type (FP or Phospho)
+```{r}
+fileTable$conc <- as.numeric(str_remove(fileTable$batch,"ug_txt"))
+fileTable$sampleType <- str_extract(fileTable$sample,"FP|Phospho")
+```
+
+
+# Parse the whole experiment using the readExperiment function from SmartPhos
+```{r}
+testData <- readExperiment(fileTable, annotation_col = c("conc","sampleType"))
+```
+
+Check the data
+```{r}
+testData
+```
+
+# Explore the imported data set
+
+## Check phosphoproteome data
+
+Subset for phosphoproteomic data
+```{r}
+ppe <- testData[["Phosphoproteome"]]
+colData(ppe) <- colData(testData)
+```
+
+### Examin the data distrubution
+```{r}
+countMat <- assay(ppe)
+```
+
+### Missing value per sample
+```{r}
+plotTab <- tibble(sample = ppe$sample, 
+                  perNA = colSums(is.na(countMat))/nrow(countMat))
+ggplot(plotTab, aes(x=sample, y=1-perNA)) +
+    geom_bar(stat = "identity") +
+    ylab("completeness") +
+    theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust=0))
+    
+```
+
+### For paired FP and Phospho samples, if a peptide is detected in FP sample, what is the chance it can also be detected in phospho sample
+```{r}
+sumTab <- lapply(unique(ppe$batch), function(condi) {
+    subMat <- countMat[,ppe$batch == condi]
+    subMat <- subMat[!is.na(subMat[,grepl("FP",colnames(subMat))]),]
+    resTab <- tibble(nTotal = nrow(subMat),
+                     nPhos = sum(!is.na(subMat[,(grepl("Phospho",colnames(subMat)))])),
+                     batch = condi)
+}) %>% bind_rows() %>%
+    pivot_longer(-batch)
+
+ggplot(sumTab, aes(x=batch, y=value, fill=name)) +
+    geom_bar(stat = "identity", position = "stack") +
+    ylab("Number of detection")
+```
+
+The FP sample should not have too much meaning here...
+
+### Remove FP sample in the Phosphoproteome experiment
+```{r}
+ppePhos <- ppe[,ppe$sampleType != "FP"]
+ppePhos <- ppePhos[rowSums(!is.na(assay(ppePhos)))>0,]
+dim(ppePhos)
+```
+
+### How many feature have unique protein mapping?
+```{r}
+uniqueVal <- !str_detect(rowData(ppePhos)$UniprotID,";")
+table(uniqueVal)
+```
+
+### Missing value per sample
+```{r}
+countMat <- assay(ppePhos)
+plotTab <- tibble(sample = ppePhos$sample, 
+                  perNA = colSums(is.na(countMat))/nrow(countMat))
+ggplot(plotTab, aes(x=sample, y=1-perNA)) +
+    geom_bar(stat = "identity") +
+    ylab("completeness") +
+    theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust=0))
+```
+
+Plot a cumulative curve of missing value cut-off and remaining number of features
+```{r}
+missRate <- tibble(id = rownames(countMat),
+                   rate = rowSums(is.na(countMat))/ncol(countMat))
+cumTab <- lapply(seq(0,1,0.05), function(cutRate) {
+    tibble(cut= cutRate,
+           per = sum(missRate$rate <= cutRate)/nrow(missRate))
+} ) %>%
+    bind_rows()
+ggplot(cumTab, aes(x=cut,y=per)) +
+    geom_line() +
+    xlab("Allowed missing value rate") +
+    ylab("Percentage of remaining features")
+```
+
+Missing value heatmap to check missing value structure (sample 1000 sites)
+```{r, fig.height=15, fig.width=6}
+DEP::plot_missval(ppePhos[sample(seq(nrow(ppePhos)),1000),])
+```
+Rather random
+
+
+Missing value pattern
+```{r}
+ppeLog2 <- ppePhos
+assay(ppeLog2) <- log2(assay(ppeLog2))
+plot_detect(ppeLog2) 
+```
+
+Keep proteins detected in at least half of the sample (missing rate <= 0.5)
+```{r}
+ppePhosFilt <- ppePhos[filter(missRate, rate <=0.5)$id,]
+dim(ppePhosFilt)
+```
+
+### Look at count table distribution
+
+#### Raw scale
+```{r}
+countMat <- assay(ppePhosFilt)
+countTab <- countMat %>% as_tibble(rownames = "id") %>% 
+    pivot_longer(-id) %>%
+    filter(!is.na(value)) %>%
+    mutate(log2Val = log2(value))
+```
+
+```{r}
+ggplot(countTab, aes(x=name, y=log2Val)) +
+    geom_boxplot() + geom_point()
+```
+
+#### Imputation and normalization
+```{r}
+logMat <- log2(assay(ppePhosFilt))
+#assays(ppePhosFilt)[["Quantification"]] <- logMat
+logMat <- tImpute(logMat)
+logMat <- medianScaling(logMat, scale = FALSE)
+assays(ppePhosFilt)[["Quantification"]] <- logMat
+```
+
+#### Boxplot
+```{r}
+countMat <- assays(ppePhosFilt)[["Quantification"]]
+countTab <- countMat %>% as_tibble(rownames = "id") %>% 
+    pivot_longer(-id) %>%
+    filter(!is.na(value))
+```
+
+```{r}
+ggplot(countTab, aes(x=name, y=value)) +
+    geom_boxplot() + geom_point()
+```
+
+#### Mean versus variant
+```{r}
+plotTab <- tibble(meanVal = rowMeans(countMat),
+                  var = apply(countMat, 1, var))
+ggplot(plotTab, aes(x=meanVal,y=var)) +
+    geom_point()
+```
+
+#### Heatmap visualization
+```{r, fig.height=10, fig.width=5}
+library(pheatmap)
+#select top 1000 most variant
+plotMat <- countMat[order(plotTab$var, decreasing = TRUE)[1:1000],]
+pheatmap(plotMat, show_rownames = FALSE)
+```
+
+#### Sample similarity
+```{r, fig.height=5, fig.width=5}
+#select top 1000 most variant
+plotMat <- countMat[order(plotTab$var, decreasing = TRUE)[1:1000],]
+pheatmap(as.matrix(dist(t(plotMat))))
+```
+
+#### Detect proteins that follows the trend
+```{r}
+library(limma)
+testMat <- assays(ppePhosFilt)[["Quantification"]]
+conc <- ppePhosFilt$conc
+designMat <- model.matrix(~conc)
+rowAnno <- rowData(ppePhosFilt)
+fit <- lmFit(testMat, designMat)
+fit2 <- eBayes(fit)
+resTab <- topTable(fit2, number = Inf) %>%
+    as_tibble(rownames = "id") %>%
+    mutate(UniprotID = rowAnno[id,]$UniprotID,
+           Gene = rowAnno[id,]$Gene,
+           Site = rowAnno[id,]$Position,
+           Residue = rowAnno[id,]$Residue)
+```
+
+```{r}
+hist(resTab$P.Value)
+```
+Plot top 9 associations
+```{r, fig.height=10, fig.width=10}
+pList <- lapply(seq(9), function(i) {
+    rec <- resTab[i,]
+    plotTab <- tibble(expr = testMat[rec$id,],
+                      conc = conc)
+    ggplot(plotTab, aes(x=conc, y=expr)) +
+        geom_point() + geom_smooth(method="lm") +
+        ggtitle(sprintf("%s (%s%s)",rec$Gene, rec$Residue,rec$Site))
+})
+cowplot::plot_grid(plotlist = pList, nrow=3)
+```
+
+Table of significant associations
+```{r}
+resTab %>% filter(adj.P.Val < 0.2) %>% mutate_if(is.numeric, formatC, digits=1) %>%
+  DT::datatable()
+```
+
+## Check full proteome
+Subset for phosphoproteomic data
+```{r}
+fpe <- testData[["Proteome"]]
+colData(fpe) <- colData(testData)
+```
+
+### Examin the data distrubution
+```{r}
+countMat <- assay(fpe)
+```
+
+### Missing value per sample
+```{r}
+plotTab <- tibble(sample = fpe$sample, 
+                  perNA = colSums(is.na(countMat))/nrow(countMat))
+ggplot(plotTab, aes(x=sample, y=1-perNA)) +
+    geom_bar(stat = "identity") +
+    ylab("completeness") +
+    theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust=0))
+    
+```
+
+### For paired FP and Phospho samples, if a peptide is detected in FP sample, what is the chance it can also be detected in phospho sample
+```{r}
+sumTab <- lapply(unique(fpe$batch), function(condi) {
+    subMat <- countMat[,fpe$batch == condi]
+    subMat <- subMat[!is.na(subMat[,grepl("FP",colnames(subMat))]),]
+    resTab <- tibble(nTotal = nrow(subMat),
+                     nPhos = sum(!is.na(subMat[,(grepl("Phospho",colnames(subMat)))])),
+                     batch = condi)
+}) %>% bind_rows() %>%
+    pivot_longer(-batch)
+
+ggplot(sumTab, aes(x=batch, y=value, fill=name)) +
+    geom_bar(stat = "identity", position = "stack") +
+    ylab("Number of detection")
+```
+Less phospho proteome samples will be detect, which makes sense. As non-phosphorylated proteins will be lost during the enrichment process. 
+
+
+Missing value heatmap to check missing value structure
+```{r, fig.height=15, fig.width=6}
+DEP::plot_missval(fpe[sample(seq(nrow(fpe)),1000),])
+```
+
+### Look at full proteome only
+```{r}
+fpeProt <- fpe[,fpe$sampleType == "FP"]
+fpeProt <- fpeProt[rowSums(!is.na(assay(fpeProt)))>0,]
+countMat <- assay(fpeProt)
+dim(fpeProt)
+```
+
+
+### How many feature have unique protein mapping?
+```{r}
+uniqueVal <- !str_detect(rowData(fpeProt)$UniprotID,";")
+table(uniqueVal)
+```
+
+
+
+Plot a cumulative curve of missing value cut-off and remaining number of features
+```{r}
+missRate <- tibble(id = rownames(countMat),
+                   rate = rowSums(is.na(countMat))/ncol(countMat))
+cumTab <- lapply(seq(0,1,0.05), function(cutRate) {
+    tibble(cut= cutRate,
+           per = sum(missRate$rate <= cutRate)/nrow(missRate))
+} ) %>%
+    bind_rows()
+ggplot(cumTab, aes(x=cut,y=per)) +
+    geom_line() +
+    xlab("Allowed missing value rate") +
+    ylab("Percentage of remaining features")
+```
+
+
+
+Keep proteins detected in at least half of the samples (missing rate <= 0.5)
+```{r}
+fpeProtFilt <- fpeProt[filter(missRate, rate <=0.5)$id,]
+dim(fpeProtFilt)
+```
+
+### Look at count table distribution
+
+#### Raw scale
+```{r}
+countMat <- assay(fpeProtFilt)
+countTab <- countMat %>% as_tibble(rownames = "id") %>% 
+    pivot_longer(-id) %>%
+    filter(!is.na(value)) %>%
+    mutate(log2Val = log2(value))
+```
+
+```{r}
+ggplot(countTab, aes(x=name, y=log2Val)) +
+    geom_boxplot() + geom_point() +
+    theme(axis.text.x = element_text(angle = 90, hjust=1, vjust=0.5))
+```
+
+### Imputation and normalization
+```{r}
+logMat <- log2(assay(fpeProtFilt))
+#assays(ppePhosFilt)[["Quantification"]] <- logMat
+logMat <- tImpute(logMat)
+logMat <- medianScaling(logMat, scale = FALSE)
+assays(fpeProtFilt)[["Quantification"]] <- logMat
+```
+
+#### Boxplot
+```{r}
+countMat <- assays(fpeProtFilt)[["Quantification"]]
+countTab <- countMat %>% as_tibble(rownames = "id") %>% 
+    pivot_longer(-id) %>%
+    filter(!is.na(value))
+```
+
+```{r}
+ggplot(countTab, aes(x=name, y=value)) +
+    geom_boxplot() + geom_point()
+```
+
+#### Mean versus variant
+```{r}
+plotTab <- tibble(meanVal = rowMeans(countMat),
+                  var = apply(countMat, 1, var))
+ggplot(plotTab, aes(x=meanVal,y=var)) +
+    geom_point()
+```
+
+### Heatmap visualization
+```{r, fig.height=10, fig.width=5}
+library(pheatmap)
+#select top 1000 most variant
+plotMat <- countMat[order(plotTab$var, decreasing = TRUE)[1:1000],]
+pheatmap(plotMat, show_rownames = FALSE)
+```
+
+### Sample similarity
+```{r, fig.height=5, fig.width=5}
+#select top 1000 most variant
+plotMat <- countMat[order(plotTab$var, decreasing = TRUE)[1:1000],]
+pheatmap(as.matrix(dist(t(plotMat))))
+```
+
+### Detect proteins that follows the trend
+```{r}
+library(limma)
+testMat <- assays(fpeProtFilt)[["Quantification"]]
+conc <- fpeProtFilt$conc
+designMat <- model.matrix(~conc)
+rowAnno <- rowData(fpeProtFilt)
+fit <- lmFit(testMat, designMat)
+fit2 <- eBayes(fit)
+resTab <- topTable(fit2, number = Inf) %>%
+    as_tibble(rownames = "id") %>%
+    mutate(UniprotID = rowAnno[id,]$UniprotID,
+           Gene = rowAnno[id,]$Gene)
+```
+
+```{r}
+hist(resTab$P.Value)
+```
+Plot top 9 associations
+```{r, fig.height=10, fig.width=10}
+pList <- lapply(seq(9), function(i) {
+    rec <- resTab[i,]
+    plotTab <- tibble(expr = testMat[rec$id,],
+                      conc = conc)
+    ggplot(plotTab, aes(x=conc, y=expr)) +
+        geom_point() + geom_smooth(method="lm") +
+        ggtitle(sprintf("%s",rec$Gene))
+})
+cowplot::plot_grid(plotlist = pList, nrow=3)
+```
+
+## Compare phosphoproteomic measure and full proteomic measure
+
+
+### Overlap in the "Phos" samples
+```{r}
+phosData <- testData[,testData$sampleType == "Phospho"]
+
+sumTab <- lapply(unique(phosData$sample), function(n) {
+    subPhos <- phosData[["Phosphoproteome"]][,phosData$sample==n]
+    subProt <- phosData[["Proteome"]][,phosData$sample==n]
+    subPhos <- subPhos[!is.na(assay(subPhos)[,1]),]
+    subProt <- subProt[!is.na(assay(subProt)[,1]),]
+    idPhos <- unique(rowData(subPhos)$Gene)
+    idProt <- unique(rowData(subProt)$Gene)
+    tibble(sample = n, overlap = length(intersect(idPhos, idProt)),
+           onlyPhos = length(setdiff(idPhos, idProt)),
+           onlyProt = length(setdiff(idProt, idPhos)))
+}) %>% bind_rows() %>%
+    pivot_longer(-sample)
+ggplot(sumTab, aes(x=sample, y=value, fill = name)) +
+    geom_bar(stat="identity")
+```
+
+### Overlap between FP samples in proteomic measure and Phospho samples in phospho proteomic measure
+```{r}
+sumTab <- lapply(unique(testData$batch), function(n) {
+    subPhos <- testData[["Phosphoproteome"]][,testData$batch==n & testData$sampleType == "Phospho"]
+    subProt <- testData[["Proteome"]][,testData$batch==n & testData$sampleType == "FP"]
+    subPhos <- subPhos[!is.na(assay(subPhos)[,1]),]
+    subProt <- subProt[!is.na(assay(subProt)[,1]),]
+    idPhos <- unique(rowData(subPhos)$Gene)
+    idProt <- unique(rowData(subProt)$Gene)
+    tibble(sample = n, overlap = length(intersect(idPhos, idProt)),
+           onlyPhos = length(setdiff(idPhos, idProt)),
+           onlyProt = length(setdiff(idProt, idPhos)))
+}) %>% bind_rows() %>%
+    pivot_longer(-sample)
+ggplot(sumTab, aes(x=sample, y=value, fill = name)) +
+    geom_bar(stat="identity")
+```
+
+
+### Test for differentially phosphorylated considering the baseline protein expression
+
+Preprocess
+```{r}
+phosData <- testData[["Phosphoproteome"]][, testData$sampleType == "Phospho"]
+phosData <- phosData[rowSums(is.na(assay(phosData)))/ncol(phosData) <= 0.25,]
+phosMat <- assay(phosData)
+phosMat <- log2(phosMat)
+phosMat <- medianScaling(phosMat)
+assays(phosData)[["norm"]] <- phosMat
+
+protData <- testData[["Proteome"]][, testData$sampleType == "FP"]
+protData <- protData[rowSums(is.na(assay(protData)))/ncol(protData) <= 0.25,]
+proMat <- assay(protData)
+proMat <- log2(proMat)
+proMat <- medianScaling(proMat)
+assays(protData)[["norm"]] <- proMat
+```
+
+Get proteins detected both at proteome and phosphoproteome level
+```{r}
+overlap <- intersect(rowData(phosData)$UniprotID, rowData(protData)$UniprotID)
+idMap <- tibble(UniprotID = overlap) %>%
+    mutate(idProt = rownames(protData[match(overlap, rowData(protData)$UniprotID),]))
+rowData(phosData)$protID <- idMap[match(rowData(phosData)$UniprotID, idMap$UniprotID),]$idProt
+
+phosDataSub <- phosData[!is.na(rowData(phosData)$protID),]
+
+fullMat <- cbind(assays(phosDataSub)[["norm"]],assays(protData)[["norm"]][rowData(phosDataSub)$protID,])
+```
+
+Build design matrix
+```{r, warning=FALSE, message=FALSE}
+library(proDA)
+designTab <- data.frame(row.names = colnames(fullMat),
+                         type = rep(c("Phos","FP"),each=4),
+                         conc = rep(c(100, 200, 400, 50), 2))
+fit <- proDA(fullMat, design = ~ type*conc ,
+             col_data = designTab)
+```
+Get results
+```{r}
+contra <- "`typePhos:conc`"
+rowAnno <- rowData(phosDataSub) %>%
+    as_tibble(rownames = "name")
+resTab <- test_diff(fit, contra) %>%
+    left_join(rowAnno) %>%
+    arrange(pval, by = "name")
+
+resTab.sig <- filter(resTab, pval < 0.01)
+```
+
+Plot top 9 interactions
+```{r, fig.height=10, fig.width=10}
+pList <- lapply(seq(9), function(i) {
+    rec <- resTab.sig[i,]
+    plotTab <- designTab %>% as_tibble(rownames = "id") %>%
+        mutate(exp = fullMat[rec$name,id])
+    ggplot(plotTab, aes(x=factor(conc),y=exp, color = type, group = type)) +
+        geom_point() + geom_line() +
+        ggtitle(sprintf("%s (%s%s)", rec$Gene, rec$Residue, rec$Position)) +
+        theme_bw()
+})
+
+cowplot::plot_grid(plotlist= pList, ncol=3)
+```
+
+Table of significant associations
+```{r}
+resTab.sig %>% mutate_if(is.numeric, formatC, digits=1) %>%
+  DT::datatable()
+```
