@@ -97,7 +97,7 @@ readPhosphoExperiment <- function(fileTable, localProbCut, scoreDiffCut) {
 #-----------------------------------------------------------------------------------------------------------------
 
 #Function to parse one phosphoproteome table (DIA)
-readOnePhosDIA <- function(inputTab, sampleName, localProbCut) {
+readOnePhosDIA <- function(inputTab, sampleName, localProbCut, removeDup = FALSE) {
 
     #define sample specific column names
     colSele <- colnames(inputTab[grep(pattern = paste0("*", sampleName, ".raw.PTM.*"), colnames(inputTab))])
@@ -120,28 +120,40 @@ readOnePhosDIA <- function(inputTab, sampleName, localProbCut) {
     #deal with multiplicity
     # summarise(across(c(score, rank), sum))
     outputTab$PTM.CollapseKeyNew <- substring(outputTab$PTM.CollapseKey, 1, nchar(outputTab$PTM.CollapseKey)-1)
+
     outputTab1 <- outputTab %>%
         group_by(PTM.CollapseKeyNew) %>%
         summarise_at(.vars = colnames(.)[1:1] , sum)
+
     outputTab2 <- outputTab %>%
         group_by(PTM.CollapseKeyNew) %>%
         summarise(PG.UniProtIds = first(PG.UniProtIds),
                   PG.Genes = first(PG.Genes), PTM.Multiplicity = max(PTM.Multiplicity),
                   PTM.SiteLocation = first(PTM.SiteLocation), PTM.SiteAA = first(PTM.SiteAA),
                   PTM.FlankingRegion = first(PTM.FlankingRegion))
-    outputTab <- reduce(list(outputTab1, outputTab2),
-                         left_join, by = "PTM.CollapseKeyNew")
 
-    #change class back to data.frame
-    outputTab <- as.data.frame(outputTab)
+    outputTab <- reduce(list(outputTab1, outputTab2),
+                        left_join, by = "PTM.CollapseKeyNew")
+
+    if (removeDup) {
+        #remove duplicates
+        outputTab.rev <- outputTab[rev(seq(nrow(outputTab))),]
+        outputTab.rev <- outputTab.rev[!duplicated(paste0(outputTab.rev$PG.UniProtIds,"_",
+                                                          outputTab.rev[[colSele[[2]]]])),]
+        outputTab <- outputTab.rev[rev(seq(nrow(outputTab.rev))),]
+
+        #create a uniqfied identifier for rowname
+        outputTab$rowName <- paste0(outputTab$PG.UniProtIds, "_",
+                                    outputTab$PTM.SiteLocation)
+    } else {
+        outputTab$rowName <- outputTab$PTM.CollapseKeyNew
+    }
 
     #delete the PTM.CollapseKeyNew column
     outputTab$PTM.CollapseKeyNew <- NULL
 
-
-    #create a uniqfied identifier
-    outputTab$rowName <- paste0(outputTab$PG.UniProtIds, "_",
-                                outputTab$PTM.SiteLocation)
+    #change class back to data.frame
+    outputTab <- as.data.frame(outputTab)
 
     #it's important that identifiers are unique
     stopifnot(all(!duplicated(outputTab$rowName)))
@@ -156,7 +168,7 @@ readOnePhosDIA <- function(inputTab, sampleName, localProbCut) {
 }
 
 #Read the whole phosphoproteom and create a SummarizedExperiment object (DIA)
-readPhosphoExperimentDIA <- function(fileTable, localProbCut) {
+readPhosphoExperimentDIA <- function(fileTable, localProbCut, onlyReviewed = TRUE) {
     #select phosphoproteomic entries
     fileTable <- fileTable[fileTable$type == "phosphoproteome",]
 
@@ -173,13 +185,18 @@ readPhosphoExperimentDIA <- function(fileTable, localProbCut) {
         inputTab <- inputTab[!inputTab$PG.UniProtIds %in% c(NA,"") &
                                  #!inputTab$Gene.names %in% c("",NA) &
                                  !inputTab$PTM.SiteLocation %in% c(NA,""),]
-        #remove duplicates
-        inputTab <- inputTab[!duplicated(inputTab$PG.UniProtIds),]
+
+        #if only reviewed protiens are considered
+        if (onlyReviewed) {
+            data("swissProt")
+            inputTab <- inputTab[inputTab$PTM.ProteinId %in% swissProt$Entry,]
+        }
+
         #each data for each sample
         expSub <- lapply(seq(nrow(fileTableSub)), function(i) {
-            eachTab <- readOnePhosDIA(inputTab,
-                                   fileTableSub[i,]$id,
-                                   localProbCut)
+            eachTab <- readOnePhosDIA(inputTab = inputTab,
+                                   sampleName = fileTableSub[i,]$id,
+                                   localProbCut = localProbCut)
             eachTab$id <- fileTableSub[i,]$id
             eachTab$rowName <- rownames(eachTab)
             eachTab
