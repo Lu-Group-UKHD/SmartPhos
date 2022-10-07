@@ -33,7 +33,7 @@ The default value is 5.}
 
 \item{ifLFQ}{a logic variable, whether to use LFQ normalization from MaxQuant. Default is TRUE.}
 
-\item{annotation_col}{a charachter vector, the names of columns in the input file table that can be
+\item{annotation_col}{a character vector, the names of columns in the input file table that can be
 read in as sample annotations.}
 }
 \value{
