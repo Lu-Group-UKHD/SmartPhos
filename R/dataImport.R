@@ -16,7 +16,7 @@ generateInputTable <- function(rawFolder) {
         sumFile <- read.delim(file.path(folderPath,"summary.txt"))
         sampleName <- unique(sumFile$Experiment)
         #deal with special characters
-        sampleName <- str_replace_all(sampleName, "[+]",".")
+        sampleName <- gsub("[+]", ".", sampleName)
         sampleName <- sampleName[!sampleName %in% c(NA,"")]
         #files for full proteome
         fullTab <- data.frame(fileName = rep(file.path(folderPath,"proteinGroups.txt"),length(sampleName)))
@@ -49,12 +49,12 @@ generateInputTable_DIA <- function(rawFolder) {
     sumFile <- read.delim(file.path(rawFolder, getFile))
     #create a unique experimental id
     id <- c()
-    for (i in 1:length(sumFile$Sample.Type)) {
+    for (i in 1: length(sumFile$Sample.Type)) {
         id <- c(id, paste(sumFile$Sample.Type[i], sumFile$treatment[i],
                           sumFile$timepoint[i], sumFile$replicate[i], sep = "_"))
     }
     #deal with special characters
-    id <- str_replace_all(id, "[+]",".")
+    id <- gsub("[+]", ".", id)
     #file for full proteome
     getFileFP <- list.files(rawFolder, pattern = "*Protein Report.xls")
     fullTab <- data.frame(fileName = rep(file.path(rawFolder, getFileFP), length(id)))

@@ -101,10 +101,13 @@ readOnePhosDIA <- function(inputTab, sampleName, localProbCut, removeDup = FALSE
 
     #define sample specific column names
     colSele <- colnames(inputTab[grep(pattern = paste0("*", sampleName, ".raw.PTM.*"), colnames(inputTab))])
+    
+    #replace "filtered" values with NA
+    inputTab[inputTab == "Filtered"] <- NA
 
     #convert character values to numeric
-    inputTab[[colSele[1]]] <- suppressWarnings(as.numeric(inputTab[[colSele[1]]]))
-    inputTab[[colSele[2]]] <- suppressWarnings(as.numeric(inputTab[[colSele[2]]]))
+    inputTab[[colSele[1]]] <- as.numeric(inputTab[[colSele[1]]])
+    inputTab[[colSele[2]]] <- as.numeric(inputTab[[colSele[2]]])
 
     if (!all(colSele %in% colnames(inputTab))) stop("Sample not found in quantification file")
 
@@ -116,44 +119,44 @@ readOnePhosDIA <- function(inputTab, sampleName, localProbCut, removeDup = FALSE
     outputTab <- inputTab[keepRow,
                           c(colSele[2],"PTM.CollapseKey","PG.UniProtIds","PG.Genes","PTM.Multiplicity",
                             "PTM.SiteLocation","PTM.SiteAA","PTM.FlankingRegion")]
+    #rename column names
+    colnames(outputTab) <- c("Intensity","CollapseKey","UniprotID","Gene","Multiplicity","Position","Residue","Sequence")
+    
 
     #deal with multiplicity
-    # summarise(across(c(score, rank), sum))
-    outputTab$PTM.CollapseKeyNew <- substring(outputTab$PTM.CollapseKey, 1, nchar(outputTab$PTM.CollapseKey)-1)
+    outputTab$CollapseKeyNew <- substring(outputTab$CollapseKey, 1, nchar(outputTab$CollapseKey)-1)
+    
+    outputTab <- by(outputTab,
+                    INDICES = outputTab$CollapseKeyNew,
+                    FUN = function(x) {
+                      data.frame(CollapseKeyNew = unique(x$CollapseKeyNew),
+                                 Intensity = sum(x$Intensity),
+                                 UniprotID = x$UniprotID[1],
+                                 Gene = x$Gene[1],
+                                 Multiplicity = max(x$Multiplicity),
+                                 Position = x$Position[1],
+                                 Residue = x$Residue[1],
+                                 Sequence = x$Sequence[1])
+                    })
 
-    outputTab1 <- outputTab %>%
-        group_by(PTM.CollapseKeyNew) %>%
-        summarise_at(.vars = colnames(.)[1:1] , sum)
-
-    outputTab2 <- outputTab %>%
-        group_by(PTM.CollapseKeyNew) %>%
-        summarise(PG.UniProtIds = first(PG.UniProtIds),
-                  PG.Genes = first(PG.Genes), PTM.Multiplicity = max(PTM.Multiplicity),
-                  PTM.SiteLocation = first(PTM.SiteLocation), PTM.SiteAA = first(PTM.SiteAA),
-                  PTM.FlankingRegion = first(PTM.FlankingRegion))
-
-    outputTab <- reduce(list(outputTab1, outputTab2),
-                        left_join, by = "PTM.CollapseKeyNew")
-
+    outputTab <- do.call(rbind, outputTab)
+    
     if (removeDup) {
         #remove duplicates
         outputTab.rev <- outputTab[rev(seq(nrow(outputTab))),]
-        outputTab.rev <- outputTab.rev[!duplicated(paste0(outputTab.rev$PG.UniProtIds,"_",
+        outputTab.rev <- outputTab.rev[!duplicated(paste0(outputTab.rev$UniprotID,"_",
                                                           outputTab.rev[[colSele[[2]]]])),]
         outputTab <- outputTab.rev[rev(seq(nrow(outputTab.rev))),]
 
         #create a uniqfied identifier for rowname
-        outputTab$rowName <- paste0(outputTab$PG.UniProtIds, "_",
-                                    outputTab$PTM.SiteLocation)
+        outputTab$rowName <- paste0(outputTab$UniprotID, "_",
+                                    outputTab$Position)
     } else {
-        outputTab$rowName <- outputTab$PTM.CollapseKeyNew
+        outputTab$rowName <- outputTab$CollapseKeyNew
     }
 
     #delete the PTM.CollapseKeyNew column
-    outputTab$PTM.CollapseKeyNew <- NULL
-
-    #change class back to data.frame
-    outputTab <- as.data.frame(outputTab)
+    outputTab$CollapseKeyNew <- NULL
 
     #it's important that identifiers are unique
     stopifnot(all(!duplicated(outputTab$rowName)))
@@ -161,8 +164,6 @@ readOnePhosDIA <- function(inputTab, sampleName, localProbCut, removeDup = FALSE
     #output useful information
     rownames(outputTab) <- outputTab$rowName
     outputTab$rowName <- NULL
-    #rename columns
-    colnames(outputTab) <- c("Intensity","UniprotID","Gene","Multiplicity","Position","Residue","Sequence")
 
     return(outputTab)
 }
