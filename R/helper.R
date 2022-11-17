@@ -43,7 +43,7 @@ readPhosphoExperiment <- function(fileTable, localProbCut, scoreDiffCut) {
         fileTableSub <- fileTable[fileTable$fileName == eachFileName,]
 
         #read input table, "\t" as delimiter
-        inputTab <- read.delim(eachFileName, sep = "\t")
+        inputTab <- data.table::fread(eachFileName, sep = "\t", check.names = TRUE)
         #remove empty features
         inputTab <- inputTab[!inputTab$Proteins %in% c(NA,"") &
                                  #!inputTab$Gene.names %in% c("",NA) &
@@ -62,10 +62,10 @@ readPhosphoExperiment <- function(fileTable, localProbCut, scoreDiffCut) {
             eachTab$rowName <- rownames(eachTab)
             eachTab
         })
-        expSub <- do.call(rbind, expSub)
+        expSub <- data.table::rbindlist(expSub)
         expSub
     })
-    expAll <- do.call(rbind, expAll)
+    expAll <- data.table::rbindlist(expAll) #rbindlist is faster than do.call(rbind)
 
     #prepare annotations
     annoTab <- expAll[!duplicated(expAll$rowName),c("rowName","UniprotID",
@@ -101,13 +101,14 @@ readOnePhosDIA <- function(inputTab, sampleName, localProbCut, removeDup = FALSE
 
     #define sample specific column names
     colSele <- colnames(inputTab[grep(pattern = paste0("*", sampleName, ".raw.PTM.*"), colnames(inputTab))])
-    
-    #replace "filtered" values with NA
-    inputTab[inputTab == "Filtered"] <- NA
 
-    #convert character values to numeric
-    inputTab[[colSele[1]]] <- as.numeric(inputTab[[colSele[1]]])
-    inputTab[[colSele[2]]] <- as.numeric(inputTab[[colSele[2]]])
+    #replace "filtered" values with NA
+    inputTab[[colSele[1]]][inputTab[[colSele[1]]] == "Filtered"] <- NA
+    inputTab[[colSele[2]]][inputTab[[colSele[2]]] == "Filtered"] <- NA
+
+    #change to numeric values
+    inputTab[[colSele[1]]] <- as.numeric(gsub(",", ".", inputTab[[colSele[1]]]))
+    inputTab[[colSele[2]]] <- as.numeric(gsub(",", ".", inputTab[[colSele[2]]])) #change , to . if any. Sometimes the "," is used as decimal.
 
     if (!all(colSele %in% colnames(inputTab))) stop("Sample not found in quantification file")
 
@@ -121,26 +122,20 @@ readOnePhosDIA <- function(inputTab, sampleName, localProbCut, removeDup = FALSE
                             "PTM.SiteLocation","PTM.SiteAA","PTM.FlankingRegion")]
     #rename column names
     colnames(outputTab) <- c("Intensity","CollapseKey","UniprotID","Gene","Multiplicity","Position","Residue","Sequence")
-    
+
 
     #deal with multiplicity
-    outputTab$CollapseKeyNew <- substring(outputTab$CollapseKey, 1, nchar(outputTab$CollapseKey)-1)
-    
-    outputTab <- by(outputTab,
-                    INDICES = outputTab$CollapseKeyNew,
-                    FUN = function(x) {
-                      data.frame(CollapseKeyNew = unique(x$CollapseKeyNew),
-                                 Intensity = sum(x$Intensity),
-                                 UniprotID = x$UniprotID[1],
-                                 Gene = x$Gene[1],
-                                 Multiplicity = max(x$Multiplicity),
-                                 Position = x$Position[1],
-                                 Residue = x$Residue[1],
-                                 Sequence = x$Sequence[1])
-                    })
+    #outputTab$CollapseKeyNew <- substring(outputTab$CollapseKey, 1, nchar(outputTab$CollapseKey)-1)
+    outputTab$CollapseKeyNew <-  gsub("_M\\d+","",outputTab$CollapseKey) #it's safer to use regular expression to remove the suffix _M together with the numbers.
 
-    outputTab <- do.call(rbind, outputTab)
-    
+    # Summarise multiplicity
+    outputTab <- outputTab[order(outputTab$Multiplicity, decreasing = TRUE),]
+    outputTabNew <- outputTab[!duplicated(outputTab$CollapseKeyNew),]
+    outputTabNew$CollapseKey <- NULL
+    intensityTab <- aggregate(Intensity ~ CollapseKeyNew, outputTab, sum)
+    outputTabNew$Intensity <- intensityTab[match(outputTabNew$CollapseKeyNew, intensityTab$CollapseKeyNew),]$Intensity
+    outputTab <- outputTabNew
+
     if (removeDup) {
         #remove duplicates
         outputTab.rev <- outputTab[rev(seq(nrow(outputTab))),]
@@ -148,7 +143,7 @@ readOnePhosDIA <- function(inputTab, sampleName, localProbCut, removeDup = FALSE
                                                           outputTab.rev[[colSele[[2]]]])),]
         outputTab <- outputTab.rev[rev(seq(nrow(outputTab.rev))),]
 
-        #create a uniqfied identifier for rowname
+        #create a uniqfied identifier for rownames
         outputTab$rowName <- paste0(outputTab$UniprotID, "_",
                                     outputTab$Position)
     } else {
@@ -168,6 +163,7 @@ readOnePhosDIA <- function(inputTab, sampleName, localProbCut, removeDup = FALSE
     return(outputTab)
 }
 
+
 #Read the whole phosphoproteom and create a SummarizedExperiment object (DIA)
 readPhosphoExperimentDIA <- function(fileTable, localProbCut, onlyReviewed = TRUE) {
     #select phosphoproteomic entries
@@ -178,8 +174,8 @@ readPhosphoExperimentDIA <- function(fileTable, localProbCut, onlyReviewed = TRU
     expAll <- lapply(unique(fileTable$fileName), function(eachFileName) {
         fileTableSub <- fileTable[fileTable$fileName == eachFileName,]
 
-        #read input table, "\t" as delimiter
-        inputTab <- read.delim(eachFileName, sep = "\t")
+        #read input table, "\t" as delimiter, fread is faster than read.delim
+        inputTab <- data.table::fread(eachFileName, sep = "\t", check.names = TRUE)
         #keep only Phospho (STY) modifications
         inputTab <- inputTab[inputTab$PTM.ModificationTitle == "Phospho (STY)",]
         #remove empty features
@@ -194,18 +190,19 @@ readPhosphoExperimentDIA <- function(fileTable, localProbCut, onlyReviewed = TRU
         }
 
         #each data for each sample
-        expSub <- lapply(seq(nrow(fileTableSub)), function(i) {
+        expSub <- BiocParallel::bplapply(seq(nrow(fileTableSub)), function(i) {
             eachTab <- readOnePhosDIA(inputTab = inputTab,
                                    sampleName = fileTableSub[i,]$id,
                                    localProbCut = localProbCut)
             eachTab$id <- fileTableSub[i,]$id
             eachTab$rowName <- rownames(eachTab)
             eachTab
-        })
-        expSub <- do.call(rbind, expSub)
+        }, BPPARAM = BiocParallel::MulticoreParam(progressbar = TRUE))
+        expSub <- data.table::rbindlist(expSub) #faster than do.call
         expSub
     })
-    expAll <- do.call(rbind, expAll)
+    expAll <- data.table::rbindlist(expAll)
+    expAll <- expAll[order(expAll$rowName),]
 
     #prepare annotations
     annoTab <- expAll[!duplicated(expAll$rowName),c("rowName","UniprotID",
@@ -277,7 +274,7 @@ readProteomeExperiment <- function(fileTable, fdrCut, scoreCut, pepNumCut, ifLFQ
         fileTableSub <- fileTable[fileTable$fileName == eachFileName,]
 
         #read input table, "\t" as delimiter
-        inputTab <- read.delim(eachFileName, sep = "\t")
+        inputTab <- data.table::fread(eachFileName, sep = "\t", check.names = TRUE)
         #remove unnecessary rows
         inputTab <- inputTab[!inputTab$Protein.IDs %in% c(NA,"") &
                                  #!inputTab$Gene.names %in% c("",NA) &
@@ -294,14 +291,14 @@ readProteomeExperiment <- function(fileTable, fdrCut, scoreCut, pepNumCut, ifLFQ
             eachTab$rowName <- rownames(eachTab)
             eachTab
         })
-        expSub <- do.call(rbind, expSub)
+        expSub <- data.table::rbindlist(expSub)
         expSub
     })
-    expAll <- do.call(rbind, expAll)
+    expAll <- data.table::rbindlist(expAll)
 
     #prepare annotations
-    annoTab <- expAll[!duplicated(expAll$rowName),c("rowName","UniprotID",
-                                                    "Gene","PeptideCounts")]
+    annoTab <- expAll[!duplicated(expAll$rowName),c("rowName", "UniprotID",
+                                                    "Gene", "PeptideCounts")]
     rownames(annoTab) <- annoTab$rowName
     annoTab$rowName <- NULL
 
@@ -329,8 +326,11 @@ readOneProteomDIA <- function(inputTab, sampleName) {
     #define sample specific column names
     colSele <- colnames(inputTab[grep(pattern = paste0("*", sampleName, ".raw.PG.Quantity"), colnames(inputTab))])
 
+    #replace "filtered" values with NA
+    inputTab[[colSele[1]]][inputTab[[colSele[1]]] == "Filtered"] <- NA
+
     #convert character values to numeric
-    inputTab[[colSele]] <- suppressWarnings(as.numeric(inputTab[[colSele]]))
+    inputTab[[colSele]] <- as.numeric(gsub(",", ".", inputTab[[colSele]])) #also change , to . if present
 
     #remove NA or 0 quantification
     keepRow <- (!is.na(inputTab[[colSele[1]]]) & inputTab[[colSele[1]]]>0)
@@ -361,22 +361,22 @@ readProteomeExperimentDIA <- function(fileTable) {
         fileTableSub <- fileTable[fileTable$fileName == eachFileName,]
 
         #read input table, "\t" as delimiter
-        inputTab <- read.delim(eachFileName, sep = "\t")
+        inputTab <- data.table::fread(eachFileName, sep = "\t", check.names = TRUE)
         #remove unnecessary rows
         inputTab <- inputTab[!inputTab$PG.ProteinGroups %in% c(NA,""),]
 
         #each data for each sample
-        expSub <- lapply(seq(nrow(fileTableSub)), function(i) {
+        expSub <- BiocParallel::bplapply(seq(nrow(fileTableSub)), function(i) {
             eachTab <- readOneProteomDIA(inputTab,
                                       fileTableSub[i,]$id)
             eachTab$id <- fileTableSub[i,]$id
             eachTab$rowName <- rownames(eachTab)
             eachTab
-        })
-        expSub <- do.call(rbind, expSub)
+        },BPPARAM = BiocParallel::MulticoreParam(progressbar = TRUE))
+        expSub <- data.table::rbindlist(expSub)
         expSub
     })
-    expAll <- do.call(rbind, expAll)
+    expAll <- data.table::rbindlist(expAll)
 
     #prepare annotations
     annoTab <- expAll[!duplicated(expAll$rowName),c("rowName","UniprotID",
