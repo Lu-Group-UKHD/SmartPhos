@@ -100,7 +100,9 @@ readPhosphoExperiment <- function(fileTable, localProbCut, scoreDiffCut) {
 readOnePhosDIA <- function(inputTab, sampleName, localProbCut, removeDup = FALSE) {
 
     #define sample specific column names
-    colSele <- colnames(inputTab[grep(pattern = paste0("*", sampleName, ".raw.PTM.*"), colnames(inputTab))])
+    colSele <- c(NA,NA) # specify the order of localisation probability and quantity, in case the order changes in the output file
+    colSele[1] <- colnames(inputTab)[grep(pattern = paste0("*", sampleName, ".*PTM.SiteProbability"), colnames(inputTab))]
+    colSele[2] <- colnames(inputTab)[grep(pattern = paste0("*", sampleName, ".*PTM.Quantity"), colnames(inputTab))]
 
     #replace "filtered" values with NA
     inputTab[[colSele[1]]][inputTab[[colSele[1]]] == "Filtered"] <- NA
@@ -119,7 +121,7 @@ readOnePhosDIA <- function(inputTab, sampleName, localProbCut, removeDup = FALSE
     #subset
     outputTab <- inputTab[keepRow,
                           c(colSele[2],"PTM.CollapseKey","PG.UniProtIds","PG.Genes","PTM.Multiplicity",
-                            "PTM.SiteLocation","PTM.SiteAA","PTM.FlankingRegion")]
+                            "PTM.SiteLocation","PTM.SiteAA","PTM.FlankingRegion"), with=FALSE]
     #rename column names
     colnames(outputTab) <- c("Intensity","CollapseKey","UniprotID","Gene","Multiplicity","Position","Residue","Sequence")
 
@@ -165,7 +167,8 @@ readOnePhosDIA <- function(inputTab, sampleName, localProbCut, removeDup = FALSE
 
 
 #Read the whole phosphoproteom and create a SummarizedExperiment object (DIA)
-readPhosphoExperimentDIA <- function(fileTable, localProbCut, onlyReviewed = TRUE) {
+readPhosphoExperimentDIA <- function(fileTable, localProbCut, onlyReviewed = TRUE,
+                                     showProgressBar = FALSE) {
     #select phosphoproteomic entries
     fileTable <- fileTable[fileTable$type == "phosphoproteome",]
 
@@ -194,10 +197,14 @@ readPhosphoExperimentDIA <- function(fileTable, localProbCut, onlyReviewed = TRU
             eachTab <- readOnePhosDIA(inputTab = inputTab,
                                    sampleName = fileTableSub[i,]$id,
                                    localProbCut = localProbCut)
-            eachTab$id <- fileTableSub[i,]$id
+            if ("outputID" %in% colnames(fileTableSub)) { #use user-specified output sample IDs
+                eachTab$id <- fileTableSub[i,]$outputID
+            } else {
+                eachTab$id <- fileTableSub[i,]$id
+            }
             eachTab$rowName <- rownames(eachTab)
             eachTab
-        }, BPPARAM = BiocParallel::MulticoreParam(progressbar = TRUE))
+        }, BPPARAM = BiocParallel::MulticoreParam(progressbar = showProgressBar))
         expSub <- data.table::rbindlist(expSub) #faster than do.call
         expSub
     })
@@ -212,10 +219,15 @@ readPhosphoExperimentDIA <- function(fileTable, localProbCut, onlyReviewed = TRU
     annoTab$rowName <- NULL
 
     #prepare intensity matrix
+    if ("outputID" %in% colnames(fileTable)) { #use user specific sample ID
+        sampleID <- fileTable$outputID
+    } else {
+        sampleID <- fileTable$id
+    }
     phosMat <- matrix(data = rep(NA, nrow(annoTab)*nrow(fileTable)),
                       nrow(annoTab), nrow(fileTable),
-                      dimnames = list(rownames(annoTab),fileTable$id))
-    for (each_id in fileTable$id) {
+                      dimnames = list(rownames(annoTab),sampleID))
+    for (each_id in sampleID) {
         eachTab <- expAll[(expAll$id %in% each_id),]
         phosMat[,each_id] <- eachTab[match(rownames(phosMat),eachTab$rowName),][["Intensity"]]
     }
@@ -322,22 +334,21 @@ readProteomeExperiment <- function(fileTable, fdrCut, scoreCut, pepNumCut, ifLFQ
 
 #Read one proteome assay (DIA)
 readOneProteomDIA <- function(inputTab, sampleName) {
-
     #define sample specific column names
-    colSele <- colnames(inputTab[grep(pattern = paste0("*", sampleName, ".raw.PG.Quantity"), colnames(inputTab))])
+    colSele <- colnames(inputTab)[grep(pattern = paste0("*", sampleName, ".*PG.Quantity"), colnames(inputTab))]
 
     #replace "filtered" values with NA
     inputTab[[colSele[1]]][inputTab[[colSele[1]]] == "Filtered"] <- NA
 
     #convert character values to numeric
-    inputTab[[colSele]] <- as.numeric(gsub(",", ".", inputTab[[colSele]])) #also change , to . if present
+    inputTab[[colSele[1]]] <- as.numeric(gsub(",", ".", inputTab[[colSele[[1]]]])) #also change , to . if present
 
     #remove NA or 0 quantification
     keepRow <- (!is.na(inputTab[[colSele[1]]]) & inputTab[[colSele[1]]]>0)
 
     #output useful information
-    outputTab <- inputTab[keepRow,c(colSele[1],
-                                    "PG.ProteinGroups", "PG.Genes")]
+    outputTab <- inputTab[keepRow, c(colSele[1],"PG.ProteinGroups", "PG.Genes"), with=FALSE]
+
     #create a uniqfied identifier
     outputTab$rowName <- outputTab$PG.ProteinGroups
     #it's important that identifiers are unique
@@ -352,7 +363,7 @@ readOneProteomDIA <- function(inputTab, sampleName) {
 }
 
 #Read the whole full proteome and create a SummarizedExperiment object (DIA)
-readProteomeExperimentDIA <- function(fileTable) {
+readProteomeExperimentDIA <- function(fileTable, showProgressBar = FALSE) {
     #select proteomic entries
     fileTable <- fileTable[fileTable$type == "proteome",]
 
@@ -368,11 +379,16 @@ readProteomeExperimentDIA <- function(fileTable) {
         #each data for each sample
         expSub <- BiocParallel::bplapply(seq(nrow(fileTableSub)), function(i) {
             eachTab <- readOneProteomDIA(inputTab,
-                                      fileTableSub[i,]$id)
-            eachTab$id <- fileTableSub[i,]$id
+                                      sampleName = fileTableSub[i,]$id)
+
+            if ("outputID" %in% colnames(fileTableSub)) { #use user-specified output sample IDs
+                eachTab$id <- fileTableSub[i,]$outputID
+            } else {
+                eachTab$id <- fileTableSub[i,]$id
+            }
             eachTab$rowName <- rownames(eachTab)
             eachTab
-        },BPPARAM = BiocParallel::MulticoreParam(progressbar = TRUE))
+        },BPPARAM = BiocParallel::MulticoreParam(progressbar = showProgressBar))
         expSub <- data.table::rbindlist(expSub)
         expSub
     })
@@ -385,10 +401,15 @@ readProteomeExperimentDIA <- function(fileTable) {
     annoTab$rowName <- NULL
 
     #prepare intensity matrix
+    if ("outputID" %in% colnames(fileTable)) { #use user specific sample ID
+        sampleID <- fileTable$outputID
+    } else {
+        sampleID <- fileTable$id
+    }
     protMat <- matrix(data = rep(NA, nrow(annoTab)*nrow(fileTable)),
                       nrow(annoTab), nrow(fileTable),
-                      dimnames = list(rownames(annoTab),fileTable$id))
-    for (each_id in fileTable$id) {
+                      dimnames = list(rownames(annoTab),sampleID))
+    for (each_id in sampleID) {
         eachTab <- expAll[(expAll$id %in% each_id),]
         protMat[,each_id] <- eachTab[match(rownames(protMat),eachTab$rowName),][["Intensity"]]
     }

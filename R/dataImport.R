@@ -127,8 +127,14 @@ readExperimentDIA <- function(fileTable, localProbCut = 0.75, annotation_col = c
     #read full proteome data
     print("Processing proteomic data")
     fpe <- readProteomeExperimentDIA(fileTable)
+
+    if("outputID" %in% colnames(fileTable)) { #use user-specified output sample ID
+       fileTable$id <- fileTable$outputID
+    }
+
     #prepare sample annotation
     sampleTab <- fileTable[,c("id", annotation_col)]
+
     sampleTab <- sampleTab[!duplicated(sampleTab$id),]
     rownames(sampleTab) <- sampleTab$id
     sampleTab$sample <- sampleTab$id
