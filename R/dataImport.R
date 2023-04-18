@@ -103,7 +103,8 @@ readExperiment <- function(fileTable, localProbCut = 0.75, scoreDiffCut = 5, fdr
     print("Processing proteomic data")
     fpe <- readProteomeExperiment(fileTable, fdrCut, scoreCut, pepNumCut, ifLFQ)
     #prepare sample annotation
-    sampleTab <- fileTable[,c("id","sample","batch", annotation_col)]
+    if ("batch" %in% colnames(fileTable)) annotation_col <- c(annotation_col,"batch")
+    sampleTab <- fileTable[,c("id","sample", annotation_col)]
     sampleTab <- sampleTab[!duplicated(sampleTab$id),]
     rownames(sampleTab) <- sampleTab$id
     sampleTab$id <- NULL
@@ -140,9 +141,10 @@ readExperimentDIA <- function(fileTable, localProbCut = 0.75, annotation_col = c
     }
 
     #prepare sample annotation
-    sampleTab <- fileTable[,c("id", annotation_col)]
+    sampleTab <- fileTable[,c("id", annotation_col),drop=FALSE]
 
-    sampleTab <- sampleTab[!duplicated(sampleTab$id),]
+    sampleTab <- sampleTab[!duplicated(sampleTab$id),,drop=FALSE]
+
     rownames(sampleTab) <- sampleTab$id
     sampleTab$sample <- sampleTab$id
     sampleTab$id <- NULL

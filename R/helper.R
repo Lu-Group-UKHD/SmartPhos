@@ -67,13 +67,16 @@ readPhosphoExperiment <- function(fileTable, localProbCut, scoreDiffCut) {
             eachTab <- readOnePhos(inputTab,
                                    fileTableSub[i,]$sample,
                                    localProbCut, scoreDiffCut)
-            eachTab$id <- fileTableSub[i,]$id
-            eachTab$rowName <- rownames(eachTab)
+            if (!is.null(eachTab)) {
+                eachTab$id <- fileTableSub[i,]$id
+                eachTab$rowName <- rownames(eachTab)
+            }
             eachTab
         })
         expSub <- data.table::rbindlist(expSub)
         expSub
     })
+
     expAll <- data.table::rbindlist(expAll) #rbindlist is faster than do.call(rbind)
 
     # stop if none of the record passed chosen threshold
@@ -218,12 +221,15 @@ readPhosphoExperimentDIA <- function(fileTable, localProbCut, onlyReviewed = TRU
             eachTab <- readOnePhosDIA(inputTab = inputTab,
                                    sampleName = fileTableSub[i,]$id,
                                    localProbCut = localProbCut)
-            if ("outputID" %in% colnames(fileTableSub)) { #use user-specified output sample IDs
-                eachTab$id <- fileTableSub[i,]$outputID
-            } else {
-                eachTab$id <- fileTableSub[i,]$id
+
+            if (!is.null(eachTab)) {
+                if ("outputID" %in% colnames(fileTableSub)) { #use user-specified output sample IDs
+                    eachTab$id <- fileTableSub[i,]$outputID
+                } else {
+                    eachTab$id <- fileTableSub[i,]$id
+                }
+                eachTab$rowName <- rownames(eachTab)
             }
-            eachTab$rowName <- rownames(eachTab)
             eachTab
         }, BPPARAM = BiocParallel::MulticoreParam(progressbar = showProgressBar))
         expSub <- data.table::rbindlist(expSub) #faster than do.call
@@ -332,13 +338,19 @@ readProteomeExperiment <- function(fileTable, fdrCut, scoreCut, pepNumCut, ifLFQ
             eachTab <- readOneProteom(inputTab,
                                    fileTableSub[i,]$sample,
                                    pepNumCut,ifLFQ)
-            eachTab$id <- fileTableSub[i,]$id
-            eachTab$rowName <- rownames(eachTab)
+
+            if (!is.null(eachTab)) {
+                eachTab$id <- fileTableSub[i,]$id
+                eachTab$rowName <- rownames(eachTab)
+            }
+
             eachTab
+
         })
         expSub <- data.table::rbindlist(expSub)
         expSub
     })
+
     expAll <- data.table::rbindlist(expAll)
 
     # stop if none of the proteins passed chosen threshold
@@ -422,14 +434,17 @@ readProteomeExperimentDIA <- function(fileTable, showProgressBar = FALSE) {
         expSub <- BiocParallel::bplapply(seq(nrow(fileTableSub)), function(i) {
             eachTab <- readOneProteomDIA(inputTab,
                                       sampleName = fileTableSub[i,]$id)
-
-            if ("outputID" %in% colnames(fileTableSub)) { #use user-specified output sample IDs
-                eachTab$id <- fileTableSub[i,]$outputID
-            } else {
-                eachTab$id <- fileTableSub[i,]$id
+            if(!is.null(eachTab)) {
+                if ("outputID" %in% colnames(fileTableSub)) { #use user-specified output sample IDs
+                    eachTab$id <- fileTableSub[i,]$outputID
+                } else {
+                    eachTab$id <- fileTableSub[i,]$id
+                }
+                eachTab$rowName <- rownames(eachTab)
             }
-            eachTab$rowName <- rownames(eachTab)
+
             eachTab
+
         },BPPARAM = BiocParallel::MulticoreParam(progressbar = showProgressBar))
         expSub <- data.table::rbindlist(expSub)
         expSub
