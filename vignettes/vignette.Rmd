@@ -24,8 +24,40 @@ library(tidyverse)
 # Create input file table
 
 ```{r}
-rawFolder <- rawFolder <- system.file("example/rawData", package = "SmartPhos")
-fileTable <- generateInputTable(rawFolder)
+rawFolder <-  system.file("example/rawData/50ug_txt", package = "SmartPhos")
+fileTable <- generateInputTable(rawFolder, batchAsFolder = FALSE)
+```
+**rawFolder** should be the path where maxQuant or Spetronaut output files are
+
+```{r}
+list.files(rawFolder)
+```
+
+
+Check if the table is correct
+```{r}
+fileTable
+```
+
+Add a new column indicate concentration and sample type (FP or Phospho)
+```{r}
+fileTable$conc <- as.numeric(str_remove(fileTable$batch,"ug_txt"))
+fileTable$sampleType <- str_extract(fileTable$sample,"FP|Phospho")
+```
+
+
+## Alternatively, it is also possible to store the output files in separate sub-folders and use each sub-folder name as batch names
+
+Folder structure
+```{r}
+rawFolder <-  system.file("example/rawData/", package = "SmartPhos")
+list.dirs(rawFolder, full.names = FALSE, recursive = FALSE)
+```
+Each folder will be regarded as one batch.
+
+```{r}
+rawFolder <-  system.file("example/rawData/", package = "SmartPhos")
+fileTable <- generateInputTable(rawFolder, batchAsFolder = TRUE)
 ```
 
 Check if the table is correct
@@ -38,6 +70,8 @@ Add a new column indicate concentration and sample type (FP or Phospho)
 fileTable$conc <- as.numeric(str_remove(fileTable$batch,"ug_txt"))
 fileTable$sampleType <- str_extract(fileTable$sample,"FP|Phospho")
 ```
+
+
 
 
 # Parse the whole experiment using the readExperiment function from SmartPhos
@@ -507,31 +541,34 @@ fullMat <- cbind(assays(phosDataSub)[["norm"]],assays(protData)[["norm"]][rowDat
 
 Build design matrix
 ```{r, warning=FALSE, message=FALSE}
-library(proDA)
+
 designTab <- data.frame(row.names = colnames(fullMat),
                          type = rep(c("Phos","FP"),each=4),
                          conc = rep(c(100, 200, 400, 50), 2))
-fit <- proDA(fullMat, design = ~ type*conc ,
-             col_data = designTab)
+
+
+designMat <- model.matrix(~ type*conc , designTab)
+
 ```
 Get results
 ```{r}
-contra <- "`typePhos:conc`"
-rowAnno <- rowData(phosDataSub) %>%
-    as_tibble(rownames = "name")
-resTab <- test_diff(fit, contra) %>%
-    left_join(rowAnno) %>%
-    arrange(pval, by = "name")
+rowAnno <- rowData(phosDataSub)
+fit <- lmFit(fullMat, designMat)
+fit2 <- eBayes(fit)
+resTab <- topTable(fit2, number = Inf, coef = "typePhos:conc") %>%
+    as_tibble(rownames = "id") %>%
+    mutate(UniprotID = rowAnno[id,]$UniprotID,
+           Gene = rowAnno[id,]$Gene)
 
-resTab.sig <- filter(resTab, pval < 0.01)
+resTab.sig <- filter(resTab, P.Value < 0.01)
 ```
 
 Plot top 9 interactions
 ```{r, fig.height=10, fig.width=10}
 pList <- lapply(seq(9), function(i) {
     rec <- resTab.sig[i,]
-    plotTab <- designTab %>% as_tibble(rownames = "id") %>%
-        mutate(exp = fullMat[rec$name,id])
+    plotTab <- designTab %>% as_tibble(rownames = "smpID") %>%
+        mutate(exp = fullMat[rec$id,smpID])
     ggplot(plotTab, aes(x=factor(conc),y=exp, color = type, group = type)) +
         geom_point() + geom_line() +
         ggtitle(sprintf("%s (%s%s)", rec$Gene, rec$Residue, rec$Position)) +

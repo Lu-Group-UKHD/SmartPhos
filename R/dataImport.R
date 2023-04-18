@@ -4,12 +4,19 @@
 #' raw data folder structure.
 #'
 #' @param rawFolder a character string specifying the directory of the raw data folder
+#' @param BatchAsFolder whether measurements from different batches as stored in different sub-folders. If TRUE, the sub-folder names will be used as batch names.
 #' @return This function data frame contains the input file information
 #' @export
 
-generateInputTable <- function(rawFolder) {
-    allFolder <- list.dirs(rawFolder, full.names = FALSE)
-    allFolder <- allFolder[!allFolder %in% c(NA,"")]
+generateInputTable <- function(rawFolder, batchAsFolder = FALSE) {
+
+    if (batchAsFolder) {
+        allFolder <- list.dirs(rawFolder, full.names = FALSE)
+        allFolder <- allFolder[!allFolder %in% c(NA,"")]
+    } else {
+        allFolder <- ""
+    }
+
     inputTab <- lapply(allFolder, function(eachFolder) {
         folderPath <- file.path(rawFolder, eachFolder)
         #read summary
@@ -85,7 +92,7 @@ generateInputTable_DIA <- function(rawFolder) {
 #' @param annotation_col a character vector, the names of columns in the input file table that can be
 #' read in as sample annotations.
 #' @return This function returns a multi-assay experiment that contains the phosphoproteome and proteome data.
-#' @import MultiAssayExperiment SummarizedExperiment
+#' @import MultiAssayExperiment SummarizedExperiment data.table
 #' @export
 #'
 readExperiment <- function(fileTable, localProbCut = 0.75, scoreDiffCut = 5, fdrCut =0.1, scoreCut = 10, pepNumCut = 1, ifLFQ = TRUE, annotation_col = c()) {
@@ -117,7 +124,7 @@ readExperiment <- function(fileTable, localProbCut = 0.75, scoreDiffCut = 5, fdr
 #' @param annotation_col a character vector, the names of columns in the input file table that can be
 #' read in as sample annotations.
 #' @return This function returns a multi-assay experiment that contains the phosphoproteome and proteome data.
-#' @import MultiAssayExperiment SummarizedExperiment
+#' @import MultiAssayExperiment SummarizedExperiment data.table
 #' @export
 #'
 readExperimentDIA <- function(fileTable, localProbCut = 0.75, annotation_col = c()) {

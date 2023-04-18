@@ -4,10 +4,12 @@
 \alias{generateInputTable}
 \title{Create a template for input file list}
 \usage{
-generateInputTable(rawFolder)
+generateInputTable(rawFolder, batchAsFolder = FALSE)
 }
 \arguments{
 \item{rawFolder}{a character string specifying the directory of the raw data folder}
+
+\item{BatchAsFolder}{whether measurements from different batches as stored in different sub-folders. If TRUE, the sub-folder names will be used as batch names.}
 }
 \value{
 This function data frame contains the input file information

@@ -12,10 +12,17 @@ readOnePhos <- function(inputTab, sampleName, localProbCut, scoreDiffCut, multiM
         (!is.na(inputTab[[colSele[2]]]) & inputTab[[colSele[2]]] >= scoreDiffCut) &
         (!is.na(inputTab[[colSele[3]]]) & inputTab[[colSele[3]]]>0)
 
+    if (all(!keepRow)) {
+        warning(sprintf("sample %s does not contain any records after filtering"))
+        return(NULL)
+    }
+
     #subset
     outputTab <- inputTab[keepRow,
                        c(colSele[3],"Proteins","Gene.names",
-                         "Positions.within.proteins","Amino.acid","Sequence.window")]
+                         "Positions.within.proteins","Amino.acid","Sequence.window"),
+                       with=FALSE]
+
     #create a uniqfied identifier
     outputTab$rowName <- paste0(outputTab$Proteins, "_",
                                 outputTab$Positions.within.proteins)
@@ -52,6 +59,8 @@ readPhosphoExperiment <- function(fileTable, localProbCut, scoreDiffCut) {
         inputTab <- inputTab[!inputTab$Potential.contaminant %in% "+" &
                                  !inputTab$Reverse %in% "+",]
 
+        # stop if none of the record passed chosen threshold
+        if (nrow(inputTab) == 0) stop("No phosphorylation site could pass the specified threshold in any sample!")
 
         #each data for each sample
         expSub <- lapply(seq(nrow(fileTableSub)), function(i) {
@@ -67,6 +76,9 @@ readPhosphoExperiment <- function(fileTable, localProbCut, scoreDiffCut) {
     })
     expAll <- data.table::rbindlist(expAll) #rbindlist is faster than do.call(rbind)
 
+    # stop if none of the record passed chosen threshold
+    if (nrow(expAll) == 0) stop("No phosphorylation site could pass the specified threshold in any sample!")
+
     #prepare annotations
     annoTab <- expAll[!duplicated(expAll$rowName),c("rowName","UniprotID",
                                                     "Gene","Position","Residue","Sequence")]
@@ -80,7 +92,7 @@ readPhosphoExperiment <- function(fileTable, localProbCut, scoreDiffCut) {
                       dimnames = list(rownames(annoTab),fileTable$id))
     for (each_id in fileTable$id) {
         eachTab <- expAll[(expAll$id %in% each_id),]
-        phosMat[,each_id] <- eachTab[match(rownames(phosMat),eachTab$rowName),][["Intensity"]]
+        phosMat[,each_id] <- as.numeric(eachTab[match(rownames(phosMat),eachTab$rowName),][["Intensity"]])
     }
 
     #rename rownames
@@ -117,6 +129,12 @@ readOnePhosDIA <- function(inputTab, sampleName, localProbCut, removeDup = FALSE
     #get features passed quality filter and non zero intensity
     keepRow <- (!is.na(inputTab[[colSele[1]]]) & inputTab[[colSele[1]]] >= localProbCut) &
         (!is.na(inputTab[[colSele[2]]]) & inputTab[[colSele[2]]]>0)
+
+    if (all(!keepRow)) {
+        warning(sprintf("sample %s does not contain any records after filtering"))
+        return(NULL)
+    }
+
 
     #subset
     outputTab <- inputTab[keepRow,
@@ -186,6 +204,9 @@ readPhosphoExperimentDIA <- function(fileTable, localProbCut, onlyReviewed = TRU
                                  #!inputTab$Gene.names %in% c("",NA) &
                                  !inputTab$PTM.SiteLocation %in% c(NA,""),]
 
+        # stop if none of the record passed chosen threshold
+        if (nrow(inputTab) == 0) stop("No phosphorylation site could pass the specified threshold in any sample!")
+
         #if only reviewed protiens are considered
         if (onlyReviewed) {
             data("swissProt")
@@ -209,6 +230,10 @@ readPhosphoExperimentDIA <- function(fileTable, localProbCut, onlyReviewed = TRU
         expSub
     })
     expAll <- data.table::rbindlist(expAll)
+
+    # stop if none of the record passed chosen threshold
+    if (nrow(expAll) == 0) stop("No phosphorylation site could pass the specified threshold in any sample!")
+
     expAll <- expAll[order(expAll$rowName),]
 
     #prepare annotations
@@ -229,7 +254,7 @@ readPhosphoExperimentDIA <- function(fileTable, localProbCut, onlyReviewed = TRU
                       dimnames = list(rownames(annoTab),sampleID))
     for (each_id in sampleID) {
         eachTab <- expAll[(expAll$id %in% each_id),]
-        phosMat[,each_id] <- eachTab[match(rownames(phosMat),eachTab$rowName),][["Intensity"]]
+        phosMat[,each_id] <- as.numeric(eachTab[match(rownames(phosMat),eachTab$rowName),][["Intensity"]])
     }
 
     #rename rownames
@@ -252,13 +277,19 @@ readOneProteom <- function(inputTab, sampleName, pepNumCut, ifLFQ) {
     #peptide count filtering, based on Razor plus unique peptide
     keepRow <- inputTab[[colSele[3]]] >= pepNumCut
 
+    if (all(!keepRow)) {
+        warning(sprintf("sample %s does not contain any records after filtering"))
+        return(NULL)
+    }
+
     #whether use LFQ quantification, recommended
     if (ifLFQ) quantCol <- colSele[2] else quantCol <- colSele[1]
 
     #output useful information
     outputTab <- inputTab[keepRow,c(quantCol,
                              "Protein.IDs", "Peptide.counts..all.",
-                             "Gene.names")]
+                             "Gene.names"), with=FALSE]
+
     #create a uniqfied identifier
     outputTab$rowName <- outputTab$Protein.IDs
     #it's important that identifiers are unique
@@ -293,6 +324,8 @@ readProteomeExperiment <- function(fileTable, fdrCut, scoreCut, pepNumCut, ifLFQ
                                  (!is.na(inputTab$Q.value) & inputTab$Q.value <= fdrCut) &
                                  (!is.na(inputTab$Score) & inputTab$Score >= scoreCut),]
 
+        # stop if none of the proteins passed chosen threshold
+        if (nrow(inputTab) == 0) stop("No proteins could pass the specified threshold in any sample!")
 
         #each data for each sample
         expSub <- lapply(seq(nrow(fileTableSub)), function(i) {
@@ -308,6 +341,9 @@ readProteomeExperiment <- function(fileTable, fdrCut, scoreCut, pepNumCut, ifLFQ
     })
     expAll <- data.table::rbindlist(expAll)
 
+    # stop if none of the proteins passed chosen threshold
+    if (nrow(expAll) == 0) stop("No proteins could pass the specified threshold in any sample!")
+
     #prepare annotations
     annoTab <- expAll[!duplicated(expAll$rowName),c("rowName", "UniprotID",
                                                     "Gene", "PeptideCounts")]
@@ -318,9 +354,10 @@ readProteomeExperiment <- function(fileTable, fdrCut, scoreCut, pepNumCut, ifLFQ
     protMat <- matrix(data = rep(NA, nrow(annoTab)*nrow(fileTable)),
                       nrow(annoTab), nrow(fileTable),
                       dimnames = list(rownames(annoTab),fileTable$id))
+
     for (each_id in fileTable$id) {
         eachTab <- expAll[(expAll$id %in% each_id),]
-        protMat[,each_id] <- eachTab[match(rownames(protMat),eachTab$rowName),][["Intensity"]]
+        protMat[,each_id] <- as.numeric(eachTab[match(rownames(protMat),eachTab$rowName),][["Intensity"]])
     }
 
     #rename rownames
@@ -411,7 +448,7 @@ readProteomeExperimentDIA <- function(fileTable, showProgressBar = FALSE) {
                       dimnames = list(rownames(annoTab),sampleID))
     for (each_id in sampleID) {
         eachTab <- expAll[(expAll$id %in% each_id),]
-        protMat[,each_id] <- eachTab[match(rownames(protMat),eachTab$rowName),][["Intensity"]]
+        protMat[,each_id] <- as.numeric(eachTab[match(rownames(protMat),eachTab$rowName),][["Intensity"]])
     }
 
     #rename rownames
