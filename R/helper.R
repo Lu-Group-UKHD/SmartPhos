@@ -13,7 +13,7 @@ readOnePhos <- function(inputTab, sampleName, localProbCut, scoreDiffCut, multiM
         (!is.na(inputTab[[colSele[3]]]) & inputTab[[colSele[3]]]>0)
 
     if (all(!keepRow)) {
-        warning(sprintf("sample %s does not contain any records after filtering"))
+        warning(sprintf("sample %s does not contain any records after filtering",sampleName))
         return(NULL)
     }
 
@@ -278,7 +278,7 @@ readOneProteom <- function(inputTab, sampleName, pepNumCut, ifLFQ) {
     keepRow <- inputTab[[colSele[3]]] >= pepNumCut
 
     if (all(!keepRow)) {
-        warning(sprintf("sample %s does not contain any records after filtering"))
+        warning(sprintf("sample %s does not contain any records after filtering",sampleName))
         return(NULL)
     }
 
