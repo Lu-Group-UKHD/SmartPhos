@@ -131,7 +131,7 @@ readOnePhosDIA <- function(inputTab, sampleName, localProbCut, removeDup = FALSE
         (!is.na(inputTab[[colSele[2]]]) & inputTab[[colSele[2]]]>0)
 
     if (all(!keepRow)) {
-        warning(sprintf("sample %s does not contain any records after filtering"))
+        warning(sprintf("sample %s does not contain any records after filtering", sampleName))
         return(NULL)
     }
 
@@ -383,6 +383,11 @@ readOneProteomDIA <- function(inputTab, sampleName) {
     #remove NA or 0 quantification
     keepRow <- (!is.na(inputTab[[colSele[1]]]) & inputTab[[colSele[1]]]>0)
 
+    if (all(!keepRow)) {
+        warning(sprintf("sample %s does not contain any records after filtering",sampleName))
+        return(NULL)
+    }
+
     #output useful information
     outputTab <- inputTab[keepRow, c(colSele[1],"PG.ProteinGroups", "PG.Genes"), with=FALSE]
 
@@ -430,6 +435,9 @@ readProteomeExperimentDIA <- function(fileTable, showProgressBar = FALSE) {
         expSub
     })
     expAll <- data.table::rbindlist(expAll)
+
+    # stop if none of the proteins passed chosen threshold
+    if (nrow(expAll) == 0) stop("No proteins could pass the specified threshold in any sample!")
 
     #prepare annotations
     annoTab <- expAll[!duplicated(expAll$rowName),c("rowName","UniprotID",
