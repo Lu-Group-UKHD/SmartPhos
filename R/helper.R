@@ -483,6 +483,18 @@ readProteomeExperimentDIA <- function(fileTable, showProgressBar = FALSE) {
     return(fpe)
 }
 
+#function to run matrixQCvis
+runMatrixQCvis <- function(mae, index = 1) {
+  if (index > length(mae)) {
+    print("Index out of range of MultiAssayExperiment object")
+  }
+  else {
+    se <- mae[[index]]
+    colData(se) <- colData(mae)
+    qc <- shinyQC(se)
+  }
+}
+
 #function to deal with one peptide mapped to several proteins (not used currently)
 dealMultiMap <- function(annoTab, method = "remove") {
     getElement <- function(vec, pos) {
