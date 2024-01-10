@@ -43,9 +43,11 @@ readOnePhos <- function(inputTab, sampleName, localProbCut, scoreDiffCut, multiM
 readPhosphoExperiment <- function(fileTable, localProbCut, scoreDiffCut) {
     #select phosphoproteomic entries
     fileTable <- fileTable[fileTable$type == "phosphoproteome",]
+    if (nrow(fileTable) == 0) {
+      return(NULL)
+    }
 
     #read in all batch and store them in a list
-
     expAll <- lapply(unique(fileTable$fileName), function(eachFileName) {
         fileTableSub <- fileTable[fileTable$fileName == eachFileName,]
 
@@ -192,9 +194,11 @@ readPhosphoExperimentDIA <- function(fileTable, localProbCut, onlyReviewed = TRU
                                      showProgressBar = FALSE) {
     #select phosphoproteomic entries
     fileTable <- fileTable[fileTable$type == "phosphoproteome",]
+    if (nrow(fileTable) == 0) {
+      return(NULL)
+    }
 
     #read in all batch and store them in a list
-
     expAll <- lapply(unique(fileTable$fileName), function(eachFileName) {
         fileTableSub <- fileTable[fileTable$fileName == eachFileName,]
 
@@ -315,8 +319,11 @@ readOneProteom <- function(inputTab, sampleName, pepNumCut, ifLFQ) {
 
 #Read the whole full proteome and create a SummarizedExperiment object
 readProteomeExperiment <- function(fileTable, fdrCut, scoreCut, pepNumCut, ifLFQ) {
-    #select phosphoproteomic entries
+    #select proteomics entries
     fileTable <- fileTable[fileTable$type == "proteome",]
+    if (nrow(fileTable) == 0) {
+      return(NULL)
+    }
 
     expAll <- lapply(unique(fileTable$fileName), function(eachFileName) {
 
@@ -418,8 +425,11 @@ readOneProteomDIA <- function(inputTab, sampleName) {
 
 #Read the whole full proteome and create a SummarizedExperiment object (DIA)
 readProteomeExperimentDIA <- function(fileTable, showProgressBar = FALSE) {
-    #select proteomic entries
+    #select proteomics entries
     fileTable <- fileTable[fileTable$type == "proteome",]
+    if (nrow(fileTable) == 0) {
+      return(NULL)
+    }
 
     expAll <- lapply(unique(fileTable$fileName), function(eachFileName) {
 

@@ -132,9 +132,11 @@ readExperimentDIA <- function(fileTable, localProbCut = 0.75, annotation_col = c
     #read phospho data
     print("Processing phosphoproteomic data")
     ppe <- readPhosphoExperimentDIA(fileTable, localProbCut)
+    print("Successful!!")
     #read full proteome data
     print("Processing proteomic data")
     fpe <- readProteomeExperimentDIA(fileTable)
+    print("Successful!!")
 
     if("outputID" %in% colnames(fileTable)) { #use user-specified output sample ID
        fileTable$id <- fileTable$outputID
@@ -148,8 +150,17 @@ readExperimentDIA <- function(fileTable, localProbCut = 0.75, annotation_col = c
     rownames(sampleTab) <- sampleTab$id
     sampleTab$sample <- sampleTab$id
     sampleTab$id <- NULL
-    mae <- MultiAssayExperiment(list(Phosphoproteome = ppe,
-                                     Proteome = fpe),
-                                sampleTab)
+    
+    if (!is.null(ppe) & !is.null(fpe)) {
+      mae <- MultiAssayExperiment(list(Phosphoproteome = ppe, Proteome = fpe),
+                                  sampleTab)
+    }
+    else if (is.null(ppe)) {
+      mae <- MultiAssayExperiment(list(Proteome = fpe), sampleTab)
+    }
+    else {
+      mae <- MultiAssayExperiment(list(Phosphoproteome = ppe), sampleTab)
+    }
+    
     return(mae)
 }
