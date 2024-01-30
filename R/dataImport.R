@@ -108,9 +108,17 @@ readExperiment <- function(fileTable, localProbCut = 0.75, scoreDiffCut = 5, fdr
     sampleTab <- sampleTab[!duplicated(sampleTab$id),]
     rownames(sampleTab) <- sampleTab$id
     sampleTab$id <- NULL
-    mae <- MultiAssayExperiment(list(Phosphoproteome = ppe,
-                                     Proteome = fpe),
-                                sampleTab)
+    
+    if (!is.null(ppe) & !is.null(fpe)) {
+      mae <- MultiAssayExperiment(list(Phosphoproteome = ppe, Proteome = fpe),
+                                  sampleTab)
+    }
+    else if (is.null(ppe)) {
+      mae <- MultiAssayExperiment(list(Proteome = fpe), sampleTab)
+    }
+    else {
+      mae <- MultiAssayExperiment(list(Phosphoproteome = ppe), sampleTab)
+    }
     return(mae)
 }
 
@@ -144,8 +152,10 @@ readExperimentDIA <- function(fileTable, localProbCut = 0.75, annotation_col = c
 
     #prepare sample annotation
     sampleTab <- fileTable[,c("id", annotation_col),drop=FALSE]
+    saveRDS(as.data.drame(sampleTab), "~/Documents/work/SmartPhos_app/phosphoproteomicsExplorer/sampleTab.Rds")
 
     sampleTab <- sampleTab[!duplicated(sampleTab$id),,drop=FALSE]
+    saveRDS(as.data.drame(sampleTab), "~/Documents/work/SmartPhos_app/phosphoproteomicsExplorer/sampleTab_duplicate.Rds")
 
     rownames(sampleTab) <- sampleTab$id
     sampleTab$sample <- sampleTab$id
