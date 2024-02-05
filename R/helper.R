@@ -115,6 +115,9 @@ readPhosphoExperiment <- function(fileTable, localProbCut, scoreDiffCut) {
 
 #Function to parse one phosphoproteome table (DIA)
 readOnePhosDIA <- function(inputTab, sampleName, localProbCut, removeDup = FALSE) {
+  
+    sampleName <- gsub("(", ".", sampleName, fixed=TRUE)
+    sampleName <- gsub(")", ".", sampleName, fixed=TRUE)
 
     #define sample specific column names
     colSele <- c(NA,NA) # specify the order of localisation probability and quantity, in case the order changes in the output file
@@ -141,49 +144,83 @@ readOnePhosDIA <- function(inputTab, sampleName, localProbCut, removeDup = FALSE
     }
 
 
-    #subset
-    outputTab <- inputTab[keepRow,
-                          c(colSele[2],"PTM.CollapseKey","PG.UniProtIds","PG.Genes","PTM.Multiplicity",
-                            "PTM.SiteLocation","PTM.SiteAA","PTM.FlankingRegion"), with=FALSE]
-    #rename column names
-    colnames(outputTab) <- c("Intensity","CollapseKey","UniprotID","Gene","Multiplicity","Position","Residue","Sequence")
-
-
-    #deal with multiplicity
-    #outputTab$CollapseKeyNew <- substring(outputTab$CollapseKey, 1, nchar(outputTab$CollapseKey)-1)
-    outputTab$CollapseKeyNew <-  gsub("_M\\d+","",outputTab$CollapseKey) #it's safer to use regular expression to remove the suffix _M together with the numbers.
-
-    # Summarise multiplicity
-    outputTab <- outputTab[order(outputTab$Multiplicity, decreasing = TRUE),]
-    outputTabNew <- outputTab[!duplicated(outputTab$CollapseKeyNew),]
-    outputTabNew$CollapseKey <- NULL
-    intensityTab <- aggregate(Intensity ~ CollapseKeyNew, outputTab, sum)
-    outputTabNew$Intensity <- intensityTab[match(outputTabNew$CollapseKeyNew, intensityTab$CollapseKeyNew),]$Intensity
-    outputTab <- outputTabNew
-
-    if (removeDup) {
+    #check if multiplicity column is available or not
+    if (length(grep("PTM.Multiplicity", colnames(inputTab))) == 0) {
+      
+      #subset
+      outputTab <- inputTab[keepRow,
+                            c(colSele[2],"PTM.CollapseKey","PG.UniProtIds","PG.Genes",
+                              "PTM.SiteLocation","PTM.SiteAA","PTM.FlankingRegion"), with=FALSE]
+      #rename column names
+      colnames(outputTab) <- c("Intensity","CollapseKey","UniprotID","Gene","Position","Residue","Sequence")
+      
+      if (removeDup) {
         #remove duplicates
         outputTab.rev <- outputTab[rev(seq(nrow(outputTab))),]
         outputTab.rev <- outputTab.rev[!duplicated(paste0(outputTab.rev$UniprotID,"_",
                                                           outputTab.rev[[colSele[[2]]]])),]
         outputTab <- outputTab.rev[rev(seq(nrow(outputTab.rev))),]
-
+        
         #create a uniqfied identifier for rownames
         outputTab$rowName <- paste0(outputTab$UniprotID, "_",
                                     outputTab$Position)
-    } else {
-        outputTab$rowName <- outputTab$CollapseKeyNew
+      }
+      else {
+        outputTab$rowName <- outputTab$CollapseKey
+      }
+      
+      stopifnot(all(!duplicated(outputTab$rowName)))
+      rownames(outputTab) <- outputTab$rowName
+      outputTab$rowName <- NULL
+      
     }
-
-    #delete the PTM.CollapseKeyNew column
-    outputTab$CollapseKeyNew <- NULL
-
-    #it's important that identifiers are unique
-    stopifnot(all(!duplicated(outputTab$rowName)))
-
-    #output useful information
-    rownames(outputTab) <- outputTab$rowName
-    outputTab$rowName <- NULL
+    
+    if (length(grep("PTM.Multiplicity", colnames(inputTab))) != 0) {
+      #subset
+      outputTab <- inputTab[keepRow,
+                            c(colSele[2],"PTM.CollapseKey","PG.UniProtIds","PG.Genes","PTM.Multiplicity",
+                              "PTM.SiteLocation","PTM.SiteAA","PTM.FlankingRegion"), with=FALSE]
+      #rename column names
+      colnames(outputTab) <- c("Intensity","CollapseKey","UniprotID","Gene","Multiplicity","Position","Residue","Sequence")
+      
+      
+      #deal with multiplicity
+      #outputTab$CollapseKeyNew <- substring(outputTab$CollapseKey, 1, nchar(outputTab$CollapseKey)-1)
+      outputTab$CollapseKeyNew <-  gsub("_M\\d+","",outputTab$CollapseKey) #it's safer to use regular expression to remove the suffix _M together with the numbers.
+      
+      # Summarise multiplicity
+      outputTab <- outputTab[order(outputTab$Multiplicity, decreasing = TRUE),]
+      outputTabNew <- outputTab[!duplicated(outputTab$CollapseKeyNew),]
+      outputTabNew$CollapseKey <- NULL
+      intensityTab <- aggregate(Intensity ~ CollapseKeyNew, outputTab, sum)
+      outputTabNew$Intensity <- intensityTab[match(outputTabNew$CollapseKeyNew, intensityTab$CollapseKeyNew),]$Intensity
+      outputTab <- outputTabNew
+      
+      if (removeDup) {
+        #remove duplicates
+        outputTab.rev <- outputTab[rev(seq(nrow(outputTab))),]
+        outputTab.rev <- outputTab.rev[!duplicated(paste0(outputTab.rev$UniprotID,"_",
+                                                          outputTab.rev[[colSele[[2]]]])),]
+        outputTab <- outputTab.rev[rev(seq(nrow(outputTab.rev))),]
+        
+        #create a uniqfied identifier for rownames
+        outputTab$rowName <- paste0(outputTab$UniprotID, "_",
+                                    outputTab$Position)
+      }
+      else {
+        outputTab$rowName <- outputTab$CollapseKeyNew
+      }
+      
+      #delete the PTM.CollapseKeyNew column
+      outputTab$CollapseKeyNew <- NULL
+      
+      #it's important that identifiers are unique
+      stopifnot(all(!duplicated(outputTab$rowName)))
+      
+      #output useful information
+      rownames(outputTab) <- outputTab$rowName
+      outputTab$rowName <- NULL
+    }
 
     return(outputTab)
 }
@@ -247,8 +284,14 @@ readPhosphoExperimentDIA <- function(fileTable, localProbCut, onlyReviewed = TRU
     expAll <- expAll[order(expAll$rowName),]
 
     #prepare annotations
-    annoTab <- expAll[!duplicated(expAll$rowName),c("rowName","UniprotID",
-                                                    "Gene","Multiplicity","Position","Residue","Sequence")]
+    if ("Multiplicity" %in% colnames(expAll)) {
+      annoTab <- expAll[!duplicated(expAll$rowName),c("rowName","UniprotID",
+                                                      "Gene","Multiplicity","Position","Residue","Sequence")]
+    }
+    else {
+      annoTab <- expAll[!duplicated(expAll$rowName),c("rowName","UniprotID",
+                                                      "Gene","Position","Residue","Sequence")]
+    }
     annoTab$site <- annoTab$rowName
     rownames(annoTab) <- annoTab$rowName
     annoTab$rowName <- NULL
@@ -390,6 +433,9 @@ readProteomeExperiment <- function(fileTable, fdrCut, scoreCut, pepNumCut, ifLFQ
 
 #Read one proteome assay (DIA)
 readOneProteomDIA <- function(inputTab, sampleName) {
+  
+    sampleName <- gsub("(", ".", sampleName, fixed=TRUE)
+    sampleName <- gsub(")", ".", sampleName, fixed=TRUE)
     #define sample specific column names
     colSele <- colnames(inputTab)[grep(pattern = paste0("*", sampleName, ".*PG.Quantity"), colnames(inputTab))]
 
