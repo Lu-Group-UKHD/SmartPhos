@@ -115,9 +115,8 @@ readPhosphoExperiment <- function(fileTable, localProbCut, scoreDiffCut) {
 
 #Function to parse one phosphoproteome table (DIA)
 readOnePhosDIA <- function(inputTab, sampleName, localProbCut, removeDup = FALSE) {
-  
-    sampleName <- gsub("(", ".", sampleName, fixed=TRUE)
-    sampleName <- gsub(")", ".", sampleName, fixed=TRUE)
+    
+    sampleName <- make.names(sampleName)
 
     #define sample specific column names
     colSele <- c(NA,NA) # specify the order of localisation probability and quantity, in case the order changes in the output file
@@ -434,8 +433,7 @@ readProteomeExperiment <- function(fileTable, fdrCut, scoreCut, pepNumCut, ifLFQ
 #Read one proteome assay (DIA)
 readOneProteomDIA <- function(inputTab, sampleName) {
   
-    sampleName <- gsub("(", ".", sampleName, fixed=TRUE)
-    sampleName <- gsub(")", ".", sampleName, fixed=TRUE)
+    sampleName <- make.names(sampleName)
     #define sample specific column names
     colSele <- colnames(inputTab)[grep(pattern = paste0("*", sampleName, ".*PG.Quantity"), colnames(inputTab))]
 
