@@ -156,7 +156,10 @@ readExperimentDIA <- function(fileTable, localProbCut = 0.75, annotation_col = c
 
     sampleTab <- sampleTab[!duplicated(sampleTab$id),,drop=FALSE]
     #saveRDS(as.data.drame(sampleTab), "~/Documents/work/SmartPhos_app/phosphoproteomicsExplorer/sampleTab_duplicate.Rds")
-
+    
+    #change sample table to dataframe
+    sampleTab <- as.data.frame(sampleTab)
+    
     rownames(sampleTab) <- sampleTab$id
     sampleTab$sample <- sampleTab$id
     sampleTab$id <- NULL
