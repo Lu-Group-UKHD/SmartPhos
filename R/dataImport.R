@@ -226,7 +226,10 @@ normByFullProteome <- function(mae, replace = TRUE) {
     if (replace) {
         mae[["Phosphoproteome"]] <- ppe.norm
     } else {
-        mae[["PhosphoRatio"]] <- ppe.norm
+        mae <- MultiAssayExperiment(list(Phosphoproteome = mae[["Phosphoproteome"]],
+                                             Proteome = mae[["Proteome"]],
+                                             PhosphoRatio = ppe.norm),
+                                             colData = colData(mae))
     }
 
     return(mae)
