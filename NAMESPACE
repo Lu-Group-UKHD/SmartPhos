@@ -2,6 +2,7 @@
 
 export(generateInputTable)
 export(generateInputTable_DIA)
+export(normByFullProteome)
 export(readExperiment)
 export(readExperimentDIA)
 import(MultiAssayExperiment)

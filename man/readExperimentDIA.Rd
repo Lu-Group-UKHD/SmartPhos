@@ -4,7 +4,12 @@
 \alias{readExperimentDIA}
 \title{Read the whole experiment (DIA)}
 \usage{
-readExperimentDIA(fileTable, localProbCut = 0.75, annotation_col = c())
+readExperimentDIA(
+  fileTable,
+  localProbCut = 0.75,
+  annotation_col = c(),
+  normalizeByProtein = FALSE
+)
 }
 \arguments{
 \item{fileTable}{a data frame that contains the information of raw data files.
