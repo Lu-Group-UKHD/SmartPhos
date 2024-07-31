@@ -1,0 +1,4 @@
+"sample1.PG.Quantity"	"sample2.PG.Quantity"	"PG.ProteinGroups"	"PG.Genes"
+"1000"	"1500"	"P1"	"Gene1"
+"Filtered"	"Filtered"	"P2"	"Gene2"
+"2000"	"2500"	"P3"	"Gene3"
