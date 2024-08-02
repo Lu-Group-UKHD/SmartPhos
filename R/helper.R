@@ -186,29 +186,34 @@ readOnePhosDIA <- function(inputTab, sampleName, localProbCut = 0.75, removeDup 
 
     # Define sample-specific column names
     colSele <- c(NA,NA) # Placeholder for localization probability and quantity columns
-    colSele[1] <- colnames(inputTab)[grep(pattern = paste0("*", sampleName, ".*PTM.SiteProbability"), colnames(inputTab))]
-    colSele[2] <- colnames(inputTab)[grep(pattern = paste0("*", sampleName, ".*PTM.Quantity"), colnames(inputTab))]
-
+    if (length(grep(pattern = paste0("*", sampleName, ".*PTM.SiteProbability"), colnames(inputTab))) > 0) {
+      colSele[1] <- colnames(inputTab)[grep(pattern = paste0("*", sampleName, ".*PTM.SiteProbability"), colnames(inputTab))]
+    } else {
+      stop("Sample not found in quantification file")
+    }
+    if (length(grep(pattern = paste0("*", sampleName, ".*PTM.Quantity"), colnames(inputTab))) > 0) {
+      colSele[2] <- colnames(inputTab)[grep(pattern = paste0("*", sampleName, ".*PTM.Quantity"), colnames(inputTab))]
+    } else {
+      stop("Sample not found in quantification file")
+    }
+    
     # Replace "Filtered" values with NA
     inputTab[[colSele[1]]][inputTab[[colSele[1]]] == "Filtered"] <- NA
     inputTab[[colSele[2]]][inputTab[[colSele[2]]] == "Filtered"] <- NA
 
     # Convert to numeric values, handling commas as decimal points
     inputTab[[colSele[1]]] <- as.numeric(gsub(",", ".", inputTab[[colSele[1]]]))
-    inputTab[[colSele[2]]] <- as.numeric(gsub(",", ".", inputTab[[colSele[2]]])) #change , to . if any. Sometimes the "," is used as decimal.
-
-    # Check if columns exist in the input table
-    if (!all(colSele %in% colnames(inputTab))) stop("Sample not found in quantification file")
+    inputTab[[colSele[2]]] <- as.numeric(gsub(",", ".", inputTab[[colSele[2]]])) # Change , to . if any. Sometimes the "," is used as decimal.
 
     # Get features passing quality filters and non-zero intensity
     keepRow <- (!is.na(inputTab[[colSele[1]]]) & inputTab[[colSele[1]]] >= localProbCut) &
         (!is.na(inputTab[[colSele[2]]]) & inputTab[[colSele[2]]]>0)
-
-    if (all(!keepRow)) {
-        warning(sprintf("sample %s does not contain any records after filtering", sampleName))
-        return(NULL)
-    }
     
+    # Check if any rows remain after filtering
+    if (all(!keepRow)) {
+      warning(sprintf("sample %s does not contain any records after filtering", sampleName))
+      return(NULL)
+    }
     
     # Subset the table based on the filters
     outputTab <- inputTab[keepRow,
@@ -332,7 +337,7 @@ readPhosphoExperimentDIA <- function(fileTable, localProbCut = 0.75, onlyReviewe
             eachTab <- readOnePhosDIA(inputTab = inputTab,
                                    sampleName = fileTableSub[i,]$id,
                                    localProbCut = localProbCut)
-
+            
             if (!is.null(eachTab)) {
                 # Use user-specified output sample IDs if available
                 if ("outputID" %in% colnames(fileTableSub)) {
@@ -598,7 +603,11 @@ readOneProteomDIA <- function(inputTab, sampleName) {
     sampleName <- make.names(sampleName)  # Make sample name syntactically valid
     
     # Define sample-specific column names
-    colSele <- colnames(inputTab)[grep(pattern = paste0("*", sampleName, ".*PG.Quantity"), colnames(inputTab))]
+    if (length(grep(pattern = paste0("*", sampleName, ".*PG.Quantity"), colnames(inputTab))) > 0) {
+      colSele <- colnames(inputTab)[grep(pattern = paste0("*", sampleName, ".*PG.Quantity"), colnames(inputTab))]
+    } else {
+      stop("Sample not found in quantification file")
+    }
 
     # Replace "Filtered" values with NA
     inputTab[[colSele[1]]][inputTab[[colSele[1]]] == "Filtered"] <- NA

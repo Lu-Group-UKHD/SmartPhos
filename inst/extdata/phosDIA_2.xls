@@ -1,0 +1,5 @@
+"Sample_1.PTM.SiteProbability"	"Sample_1.PTM.Quantity"	"PTM.ModificationTitle"	"PG.Genes"	"PTM.Multiplicity"	"PTM.SiteLocation"	"PTM.SiteAA"	"PTM.FlankingRegion"
+"0.8"	"1000"	"Phospho (STY)"	"Gene1"	1	"Loc1"	"A"	"Region1"
+"Filtered"	"Filtered"	"Phospho (STY)"	"Gene2"	1	"Loc2"	"B"	"Region2"
+"0.9"	"2000"	"Phospho (STY)"	"Gene3"	2	"Loc3"	"C"	"Region3"
+"0.6"	"3000"	"Phospho (STY)"	"Gene4"	1	"Loc4"	"D"	"Region4"
