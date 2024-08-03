@@ -1,5 +1,5 @@
 #' @name readOnePhos
-#' 
+#'
 #' @title Read and Filter Phosphorylation Data for a Specific Sample
 #'
 #' @description
@@ -20,7 +20,7 @@
 #' @examples
 #' inputTab <- data.table::fread("phosphorylation_data.csv")
 #' filteredData <- readOnePhos(inputTab, sampleName = "Sample1", localProbCut = 0.75, scoreDiffCut = 5, multiMap = FALSE)
-#' 
+#'
 #' @export
 readOnePhos <- function(inputTab, sampleName, localProbCut = 0.75, scoreDiffCut = 5, multiMap) {
 
@@ -64,7 +64,7 @@ readOnePhos <- function(inputTab, sampleName, localProbCut = 0.75, scoreDiffCut 
 
 
 #' @name readPhosphoExperiment
-#' 
+#'
 #' @title Read Phosphorylation Experiment Data
 #'
 #' @description
@@ -83,11 +83,11 @@ readOnePhos <- function(inputTab, sampleName, localProbCut = 0.75, scoreDiffCut 
 #' @examples
 #' fileTable <- data.table::fread("file_information.csv")
 #' ppe <- readPhosphoExperiment(fileTable, localProbCut = 0.75, scoreDiffCut = 5)
-#' 
+#'
 #' @export
 readPhosphoExperiment <- function(fileTable, localProbCut = 0.75, scoreDiffCut = 5) {
-    
-  
+
+
     # Select only phosphoproteomic entries
     fileTable <- fileTable[fileTable$type == "phosphoproteome",]
     if (nrow(fileTable) == 0) {
@@ -158,10 +158,10 @@ readPhosphoExperiment <- function(fileTable, localProbCut = 0.75, scoreDiffCut =
 
 
 #' @name readOnePhosDIA
-#' 
+#'
 #' @title Read Phosphorylation Data for One Sample from DIA
 #'
-#' @description 
+#' @description
 #' `readOnePhosDIA` reads and processes phosphorylation data for a single sample from a DIA experiment, applying filters for localization probability and removing duplicates if specified.
 #'
 #' @param inputTab A data.table or data.frame containing phosphorylation data.
@@ -181,7 +181,7 @@ readPhosphoExperiment <- function(fileTable, localProbCut = 0.75, scoreDiffCut =
 #'
 #' @export
 readOnePhosDIA <- function(inputTab, sampleName, localProbCut = 0.75, removeDup = FALSE) {
-    
+
     sampleName <- make.names(sampleName) # Ensure sample name is syntactically valid
 
     # Define sample-specific column names
@@ -196,7 +196,7 @@ readOnePhosDIA <- function(inputTab, sampleName, localProbCut = 0.75, removeDup 
     } else {
       stop("Sample not found in quantification file")
     }
-    
+
     # Replace "Filtered" values with NA
     inputTab[[colSele[1]]][inputTab[[colSele[1]]] == "Filtered"] <- NA
     inputTab[[colSele[2]]][inputTab[[colSele[2]]] == "Filtered"] <- NA
@@ -208,24 +208,35 @@ readOnePhosDIA <- function(inputTab, sampleName, localProbCut = 0.75, removeDup 
     # Get features passing quality filters and non-zero intensity
     keepRow <- (!is.na(inputTab[[colSele[1]]]) & inputTab[[colSele[1]]] >= localProbCut) &
         (!is.na(inputTab[[colSele[2]]]) & inputTab[[colSele[2]]]>0)
-    
+
     # Check if any rows remain after filtering
     if (all(!keepRow)) {
       warning(sprintf("sample %s does not contain any records after filtering", sampleName))
       return(NULL)
     }
-    
+
     # Subset the table based on the filters
-    outputTab <- inputTab[keepRow,
-                          c(colSele[2],"PTM.CollapseKey","PG.UniProtIds","PG.Genes","PTM.Multiplicity",
-                            "PTM.SiteLocation","PTM.SiteAA","PTM.FlankingRegion"), with=FALSE]
-    # Rename columns
-    colnames(outputTab) <- c("Intensity","CollapseKey","UniprotID","Gene","Multiplicity","Position","Residue","Sequence")
-      
+    if ("PTM.Multiplicity" %in% colnames(inputTab)) { #Multiplicity is reported by Spectronaut
+        outputTab <- inputTab[keepRow,
+                              c(colSele[2],"PTM.CollapseKey","PG.UniProtIds","PG.Genes","PTM.Multiplicity",
+                                "PTM.SiteLocation","PTM.SiteAA","PTM.FlankingRegion"), with=FALSE]
+        # Rename columns
+        colnames(outputTab) <- c("Intensity","CollapseKey","UniprotID","Gene","Multiplicity","Position","Residue","Sequence")
+
+    } else { #Multiplicity not reported
+        outputTab <- inputTab[keepRow,
+                              c(colSele[2],"PTM.CollapseKey","PG.UniProtIds","PG.Genes",
+                                "PTM.SiteLocation","PTM.SiteAA","PTM.FlankingRegion"), with=FALSE]
+        # Rename columns
+        colnames(outputTab) <- c("Intensity","CollapseKey","UniprotID","Gene","Position","Residue","Sequence")
+    }
+
+
+
     if (length(grep("PTM.Multiplicity", colnames(inputTab))) != 0) {
       # Handle multiplicity
         outputTab$CollapseKey <-  gsub("_M\\d+","",outputTab$CollapseKey) #it's safer to use regular expression to remove the suffix _M together with the numbers.
-      
+
         # Summarize multiplicity
         outputTab <- outputTab[order(outputTab$Multiplicity, decreasing = TRUE),]
         outputTabNew <- outputTab[!duplicated(outputTab$CollapseKey),]
@@ -233,34 +244,34 @@ readOnePhosDIA <- function(inputTab, sampleName, localProbCut = 0.75, removeDup 
         outputTabNew$Intensity <- intensityTab[match(outputTabNew$CollapseKey, intensityTab$CollapseKey),]$Intensity
         outputTab <- outputTabNew
     }
-      
+
     if (removeDup) {
         # Remove duplicates
         outputTab.rev <- outputTab[rev(seq(nrow(outputTab))),]
         outputTab.rev <- outputTab.rev[!duplicated(paste0(outputTab.rev$UniprotID,"_",
                                                           outputTab.rev[[colSele[[2]]]])),]
         outputTab <- outputTab.rev[rev(seq(nrow(outputTab.rev))),]
-        
+
         # Create a unique identifier for row names
         outputTab$rowName <- paste0(outputTab$UniprotID, "_",
                                     outputTab$Position)
      } else {
         outputTab$rowName <- outputTab$CollapseKey
      }
-      
+
     # Ensure identifiers are unique
     stopifnot(all(!duplicated(outputTab$rowName)))
-    
+
     # Set row names and remove temporary identifier column
     rownames(outputTab) <- outputTab$rowName
     outputTab$rowName <- NULL
-    
+
     return(outputTab)
 }
 
 
 #' @name readPhosphoExperimentDIA
-#' 
+#'
 #' @title Read Phosphorylation Experiment Data from DIA
 #'
 #' @description
@@ -300,24 +311,24 @@ readPhosphoExperimentDIA <- function(fileTable, localProbCut = 0.75, onlyReviewe
         inputTab <- data.table::fread(eachFileName, sep = "\t", check.names = TRUE)
         # Keep only Phospho (STY) modifications
         inputTab <- inputTab[inputTab$PTM.ModificationTitle == "Phospho (STY)",]
-        
+
         # Decide whether "PG.ProteinGroups" or "PG.UniProtIds" should be used as protein IDs
         if ("PG.ProteinGroups" %in% colnames(inputTab) & !"PG.UniProtIds" %in% colnames(inputTab)) {
            inputTab$PG.UniProtIds <- inputTab$PG.ProteinGroups
         } else if (!"PG.ProteinGroups" %in% colnames(inputTab) & !"PG.UniProtIds" %in% colnames(inputTab)) {
             stop("Either PG.ProteinGroups or PG.UniProtIds should be in the quantification table")
         }
-    
+
         # Handle missing PTM.CollapseKey column
         if (!"PTM.CollapseKey" %in% colnames(inputTab)) {
             inputTab$PTM.CollapseKey <- paste0(inputTab$PG.UniProtIds, "_", inputTab$PTM.SiteAA, inputTab$PTM.SiteLocation)
         }
-        
+
         # Handle missing PG.Genes column
         if (!"PG.Genes" %in% colnames(inputTab)) {
             inputTab$PG.Genes <- NA
         }
-        
+
         # Remove empty features
         inputTab <- inputTab[!inputTab$PG.UniProtIds %in% c(NA,"") &
                                  #!inputTab$Gene.names %in% c("",NA) &
@@ -337,7 +348,7 @@ readPhosphoExperimentDIA <- function(fileTable, localProbCut = 0.75, onlyReviewe
             eachTab <- readOnePhosDIA(inputTab = inputTab,
                                    sampleName = fileTableSub[i,]$id,
                                    localProbCut = localProbCut)
-            
+
             if (!is.null(eachTab)) {
                 # Use user-specified output sample IDs if available
                 if ("outputID" %in% colnames(fileTableSub)) {
@@ -398,10 +409,10 @@ readPhosphoExperimentDIA <- function(fileTable, localProbCut = 0.75, onlyReviewe
 
 
 #' @name readOneProteom
-#' 
+#'
 #' @title Read and Process One Proteomics Sample
 #'
-#' @description 
+#' @description
 #' `readOneProteom` reads and processes proteomics data for a single sample, applying filters for peptide count and optionally using LFQ quantification. It returns a data.table with useful columns and unique identifiers.
 #'
 #' @param inputTab A data.table or data.frame containing the input data for the proteomics sample.
@@ -455,7 +466,7 @@ readOneProteom <- function(inputTab, sampleName, pepNumCut = 1, ifLFQ = TRUE) {
 
     # Create a unique identifier for each row
     outputTab$rowName <- outputTab$Protein.IDs
-    
+
     # Ensure that identifiers are unique
     stopifnot(all(!duplicated(outputTab$rowName)))
     rownames(outputTab) <- outputTab$rowName
@@ -473,10 +484,10 @@ readOneProteom <- function(inputTab, sampleName, pepNumCut = 1, ifLFQ = TRUE) {
 
 
 #' @name readProteomeExperiment
-#' 
+#'
 #' @title Read and Process Proteomics Experiment Data
 #'
-#' @description 
+#' @description
 #' `readProteomeExperiment` reads and processes proteomics data from multiple samples, applying various quality filters, and returns a `SummarizedExperiment` object.
 #'
 #' @param fileTable A data.table or data.frame containing the file information with columns for file names, sample names, and IDs.
@@ -574,7 +585,7 @@ readProteomeExperiment <- function(fileTable, fdrCut = 0.1, scoreCut = 10, pepNu
 
 
 #' @name readOneProteomDIA
-#' 
+#'
 #' @title Read and Process a Single DIA Proteomics Sample
 #'
 #' @description
@@ -599,9 +610,9 @@ readProteomeExperiment <- function(fileTable, fdrCut = 0.1, scoreCut = 10, pepNu
 #'
 #' @export
 readOneProteomDIA <- function(inputTab, sampleName) {
-  
+
     sampleName <- make.names(sampleName)  # Make sample name syntactically valid
-    
+
     # Define sample-specific column names
     if (length(grep(pattern = paste0("*", sampleName, ".*PG.Quantity"), colnames(inputTab))) > 0) {
       colSele <- colnames(inputTab)[grep(pattern = paste0("*", sampleName, ".*PG.Quantity"), colnames(inputTab))]
@@ -641,7 +652,7 @@ readOneProteomDIA <- function(inputTab, sampleName) {
 }
 
 #' @name readProteomeExperimentDIA
-#' 
+#'
 #' @title Read and Process a DIA Proteome Experiment
 #'
 #' @description
@@ -649,9 +660,9 @@ readOneProteomDIA <- function(inputTab, sampleName) {
 #'
 #' @param fileTable A data frame containing metadata about the files to be read. Must contain columns `type`, `fileName`, `id`, and optionally `outputID`.
 #' @param showProgressBar Logical, whether to show a progress bar during processing. Default is `FALSE`.
-#' 
+#'
 #' @return A `SummarizedExperiment` object containing the processed proteome data.
-#' #' @details 
+#' #' @details
 #' The function performs the following steps:
 #' \itemize{
 #'   \item Filters the `fileTable` to include only rows where `type` is "proteome".
@@ -663,15 +674,15 @@ readOneProteomDIA <- function(inputTab, sampleName) {
 #'   \item Constructs a `SummarizedExperiment` object with the intensity matrix and protein annotations.
 #' }
 #' The `readOneProteomDIA` function is used to read and filter the data for each individual sample, and it must be available in the environment.
-#' 
+#'
 #' @import data.table
 #' @import BiocParallel
 #' @import SummarizedExperiment
-#' 
+#'
 #' @examples
 #' # Example usage:
-#' fileTable <- data.frame(type = c("proteome", "proteome"), 
-#'                         fileName = c("file1.txt", "file2.txt"), 
+#' fileTable <- data.frame(type = c("proteome", "proteome"),
+#'                         fileName = c("file1.txt", "file2.txt"),
 #'                         id = c("sample1", "sample2"))
 #' result <- readProteomeExperimentDIA(fileTable)
 #' @export
@@ -697,7 +708,7 @@ readProteomeExperimentDIA <- function(fileTable, showProgressBar = FALSE) {
                                       sampleName = fileTableSub[i,]$id)
             if(!is.null(eachTab)) {
                 # Use user-specified output sample IDs if available
-                if ("outputID" %in% colnames(fileTableSub)) { 
+                if ("outputID" %in% colnames(fileTableSub)) {
                     eachTab$id <- fileTableSub[i,]$outputID
                 } else {
                     eachTab$id <- fileTableSub[i,]$id
@@ -723,7 +734,7 @@ readProteomeExperimentDIA <- function(fileTable, showProgressBar = FALSE) {
     annoTab$rowName <- NULL
 
     # Prepare intensity matrix
-    if ("outputID" %in% colnames(fileTable)) { 
+    if ("outputID" %in% colnames(fileTable)) {
         sampleID <- fileTable$outputID
     } else {
         sampleID <- fileTable$id
@@ -787,5 +798,5 @@ dealMultiMap <- function(annoTab, method = "remove") {
 removePreSuffix <- function(sampleName) {
     sampleName <- gsub("([._](FullProteome|FP|Phospho|PP)$)|(^(FullProteome|FP|Phospho|PP)[._])","",sampleName)
     return(sampleName)
-} 
+}
 
