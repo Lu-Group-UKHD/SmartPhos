@@ -168,7 +168,7 @@ generateInputTable_DIA <- function(rawFolder) {
 #' @import MultiAssayExperiment
 #' @export
 readExperiment <- function(fileTable, localProbCut = 0.75, scoreDiffCut = 5, fdrCut =0.1, scoreCut = 10, pepNumCut = 1, ifLFQ = TRUE, annotation_col = c()) {
-  . # Read phosphoproteomic data
+    # Read phosphoproteomic data
     print("Processing phosphoproteomic data")
     ppe <- readPhosphoExperiment(fileTable, localProbCut, scoreDiffCut)
     
@@ -208,6 +208,7 @@ readExperiment <- function(fileTable, localProbCut = 0.75, scoreDiffCut = 5, fdr
 #' @param fileTable A data frame containing metadata about the files to be read. Must contain columns `type`, `fileName`, `id`, and optionally `outputID`.
 #' @param localProbCut Numeric, the local probability cutoff for phosphoproteomic data. Default is `0.75`.
 #' @param annotation_col A character vector specifying the columns in `fileTable` to be used for sample annotation.
+#' @param onlyReviewed A logical value indicating whether to include only reviewed proteins. Default is `TRUE`.
 #' @param normalizeByProtein Logical, whether to normalize the data by protein. Default is `FALSE`.
 #' @return A `MultiAssayExperiment` object containing the processed phosphoproteome and proteome data.
 #' @details
@@ -230,11 +231,11 @@ readExperiment <- function(fileTable, localProbCut = 0.75, scoreDiffCut = 5, fdr
 #' 
 #' @import MultiAssayExperiment
 #' @export
-readExperimentDIA <- function(fileTable, localProbCut = 0.75, annotation_col = c(), normalizeByProtein=FALSE) {
+readExperimentDIA <- function(fileTable, localProbCut = 0.75, annotation_col = c(), onlyReviewed = TRUE, normalizeByProtein=FALSE) {
     
     # Read phospho data
     print("Processing phosphoproteomic data")
-    ppe <- readPhosphoExperimentDIA(fileTable, localProbCut)
+    ppe <- readPhosphoExperimentDIA(fileTable, localProbCut, onlyReviewed)
     print("Successful!!")
     
     # Read full proteome data

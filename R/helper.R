@@ -21,7 +21,6 @@
 #' inputTab <- data.table::fread("phosphorylation_data.csv")
 #' filteredData <- readOnePhos(inputTab, sampleName = "Sample1", localProbCut = 0.75, scoreDiffCut = 5, multiMap = FALSE)
 #' 
-#' @export
 readOnePhos <- function(inputTab, sampleName, localProbCut = 0.75, scoreDiffCut = 5, multiMap) {
 
     # Define sample specific column names
@@ -84,7 +83,6 @@ readOnePhos <- function(inputTab, sampleName, localProbCut = 0.75, scoreDiffCut 
 #' fileTable <- data.table::fread("file_information.csv")
 #' ppe <- readPhosphoExperiment(fileTable, localProbCut = 0.75, scoreDiffCut = 5)
 #' 
-#' @export
 readPhosphoExperiment <- function(fileTable, localProbCut = 0.75, scoreDiffCut = 5) {
     
   
@@ -107,6 +105,8 @@ readPhosphoExperiment <- function(fileTable, localProbCut = 0.75, scoreDiffCut =
         # Remove reverse and potential contaminants from the whole table
         inputTab <- inputTab[!inputTab$Potential.contaminant %in% "+" &
                                  !inputTab$Reverse %in% "+",]
+        
+        print(inputTab)
 
         # Stop if none of the records pass the chosen threshold
         if (nrow(inputTab) == 0) stop("No phosphorylation site could pass the specified threshold in any sample!")
@@ -216,11 +216,20 @@ readOnePhosDIA <- function(inputTab, sampleName, localProbCut = 0.75, removeDup 
     }
     
     # Subset the table based on the filters
-    outputTab <- inputTab[keepRow,
-                          c(colSele[2],"PTM.CollapseKey","PG.UniProtIds","PG.Genes","PTM.Multiplicity",
-                            "PTM.SiteLocation","PTM.SiteAA","PTM.FlankingRegion"), with=FALSE]
-    # Rename columns
-    colnames(outputTab) <- c("Intensity","CollapseKey","UniprotID","Gene","Multiplicity","Position","Residue","Sequence")
+    if ("PTM.Multiplicity" %in% colnames(inputTab)) { #Multiplicity is reported by Spectronaut
+      outputTab <- inputTab[keepRow,
+                            c(colSele[2],"PTM.CollapseKey","PG.UniProtIds","PG.Genes","PTM.Multiplicity",
+                              "PTM.SiteLocation","PTM.SiteAA","PTM.FlankingRegion"), with=FALSE]
+      # Rename columns
+      colnames(outputTab) <- c("Intensity","CollapseKey","UniprotID","Gene","Multiplicity","Position","Residue","Sequence")
+      
+    } else { #Multiplicity not reported
+      outputTab <- inputTab[keepRow,
+                            c(colSele[2],"PTM.CollapseKey","PG.UniProtIds","PG.Genes",
+                              "PTM.SiteLocation","PTM.SiteAA","PTM.FlankingRegion"), with=FALSE]
+      # Rename columns
+      colnames(outputTab) <- c("Intensity","CollapseKey","UniprotID","Gene","Position","Residue","Sequence")
+    }
       
     if (length(grep("PTM.Multiplicity", colnames(inputTab))) != 0) {
       # Handle multiplicity
@@ -425,8 +434,6 @@ readPhosphoExperimentDIA <- function(fileTable, localProbCut = 0.75, onlyReviewe
 #'     Gene.names = c("Gene1", "Gene2", "Gene3", "Gene4")
 #' )
 #' result <- readOneProteom(inputTab, sampleName = "sample1", pepNumCut = 1, ifLFQ = TRUE)
-#'
-#' @export
 readOneProteom <- function(inputTab, sampleName, pepNumCut = 1, ifLFQ = TRUE) {
 
     # Define sample specific column names
@@ -499,8 +506,6 @@ readOneProteom <- function(inputTab, sampleName, pepNumCut = 1, ifLFQ = TRUE) {
 #'     type = c("proteome", "proteome")
 #' )
 #' result <- readProteomeExperiment(fileTable, fdrCut = 0.1, scoreCut = 10, pepNumCut = 1, ifLFQ = TRUE)
-#'
-#' @export
 readProteomeExperiment <- function(fileTable, fdrCut = 0.1, scoreCut = 10, pepNumCut = 1, ifLFQ = TRUE) {
     # Select proteomics entries
     fileTable <- fileTable[fileTable$type == "proteome",]

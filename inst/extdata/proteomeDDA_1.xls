@@ -1,0 +1,5 @@
+"Intensity.sample1"	"LFQ.intensity.sample1"	"Razor...unique.peptides.sample1"	"Q.value"	"Score"	"Protein.IDs"	"Peptide.counts..all."	"Gene.names"
+100	90	2	0.05	20	"P1"	2	"Gene1"
+200	180	1	0.08	34	"P2"	1	"Gene2"
+NA	NA	0	1	-2	"P3"	0	"Gene3"
+50	45	3	0.04	5	"P4"	3	"Gene4"
