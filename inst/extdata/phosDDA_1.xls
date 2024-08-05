@@ -1,4 +1,4 @@
-"Localization.prob.Sample1"	"Score.diff.Sample1"	"Intensity.Sample1"	"Proteins"	"Gene.names"	"Positions.within.proteins"	"Amino.acid"	"Sequence.window"
-0.8	6	100	"P1"	"G1"	"123"	"S"	"AAAAA"
-0.7	4	0	"P2"	"G2"	"456"	"T"	"BBBBB"
-0.9	7	200	"P3"	"G3"	"789"	"Y"	"CCCCC"
+"Localization.prob.Sample1"	"Score.diff.Sample1"	"Intensity.Sample1"	"Potential.contaminant"	"Reverse"	"Proteins"	"Gene.names"	"Positions.within.proteins"	"Amino.acid"	"Sequence.window"
+0.8	6	100	""	""	"P1"	"G1"	"123"	"S"	"AAAAA"
+0.7	4	0	""	""	"P2"	"G2"	"456"	"T"	"BBBBB"
+0.9	7	200	""	""	"P3"	"G3"	"789"	"Y"	"CCCCC"

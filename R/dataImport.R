@@ -318,7 +318,7 @@ normByFullProteome <- function(mae, replace = TRUE) {
 
     # Check if proteome assay for the unenriched samples is present
     if (nrow(sampleTab.fp) ==0 ) {
-        stop("Proteome assay for the unenriched samples (sampleType = FullProteome) should be present")
+        stop("Proteome assay for the unenriched samples i.e., sampleType with FullProteome should be present")
     }
 
     # Extract assay data for phosphoproteome and proteome

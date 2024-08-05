@@ -100,10 +100,12 @@ readPhosphoExperiment <- function(fileTable, localProbCut = 0.75, scoreDiffCut =
     
     # Read input table with tab as delimiter
     inputTab <- data.table::fread(eachFileName, sep = "\t", check.names = TRUE)
+    
     # Remove empty features
     inputTab <- inputTab[!inputTab$Proteins %in% c(NA,"") &
                            #!inputTab$Gene.names %in% c("",NA) &
                            !inputTab$Positions.within.proteins %in% c(NA,""),]
+    
     # Remove reverse and potential contaminants from the whole table
     inputTab <- inputTab[!inputTab$Potential.contaminant %in% "+" &
                            !inputTab$Reverse %in% "+",]
