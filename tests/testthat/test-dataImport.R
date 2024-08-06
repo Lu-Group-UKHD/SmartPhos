@@ -143,7 +143,6 @@ test_that("readExperiment constructs sample annotations correctly", {
 
 ##################### Tests for normByFullProteome() ###########################
 
-
 # Helper function to create a mock MultiAssayExperiment
 create_mock_mae <- function() {
   # Create sample data

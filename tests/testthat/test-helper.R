@@ -1,4 +1,4 @@
-###################### Tests for readOnePhosDIA() #############################
+###################### Tests for readOnePhosDIA() ##############################
 
 # Mock data for testing
 inputTab <- data.table(
