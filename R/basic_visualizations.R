@@ -155,14 +155,14 @@ plotPCA <- function(pca, se, xaxis = "PC1", yaxis = "PC2", color = "none", shape
     g <- g + geom_point(size = 2)
   }
   else if (color == "none") {
-    g <- g + geom_point(aes_string(shape = shape), size = 2)
+    g <- g + geom_point(aes(shape = !!sym(shape)), size = 2)
   }
   else if (shape == "none") {
-    g <- g + geom_point(aes_string(color = color), size = 2)
+    g <- g + geom_point(aes(color = !!sym(color)), size = 2)
   }
   else {
-    g <- g + geom_point(aes_string(color = color,
-                                   shape = shape),
+    g <- g + geom_point(aes(color = !!sym(color),
+                                   shape = !!sym(shape)),
                         size = 2)
   }
 }
