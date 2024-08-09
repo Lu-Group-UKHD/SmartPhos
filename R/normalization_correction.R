@@ -147,7 +147,6 @@ getRatioMatrix <- function(maeData, normalization = FALSE, getAdjustedPP = FALSE
 
 # plot the log ration of PP/FP intensities
 
-
 #' @name plotLogRatio
 #' 
 #' @title Plot Log Ratio of PP/FP (Phosphoproteome to Full Proteome) intensities
