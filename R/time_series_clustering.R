@@ -86,6 +86,7 @@ mscale <- function(x, center = TRUE, scale = TRUE, censor = NULL, useMad = FALSE
 #' `addZeroTime` adds a zero timepoint to a specific treatment's data subset.
 #'
 #' @param data A SummarizedExperiment object containing the experimental data.
+#' @param condition The condition corresponds to one of the columns from the colData of SE object.
 #' @param treat Character string specifying the treatment to which zero timepoint should be added.
 #' @param zeroTreat Character string specifying the treatment representing the zero timepoint.
 #' @param timeRange Character vector specifying the timepoints to include for the treatment.
@@ -109,11 +110,11 @@ mscale <- function(x, center = TRUE, scale = TRUE, censor = NULL, useMad = FALSE
 #'
 #' @importFrom SummarizedExperiment colData rowData assay assays elementMetadata SummarizedExperiment
 #' @export 
-addZeroTime <- function(data, treat, zeroTreat, timeRange) {
+addZeroTime <- function(data, condition, treat, zeroTreat, timeRange) {
   # Subset the data for the specified treatment and time range
-  subset1 <- data[, data$treatment == treat & data$timepoint %in% timeRange]
+  subset1 <- data[, data[[condition]] == treat & data$timepoint %in% timeRange]
   # Subset the data for the zero timepoint of the specified zero treatment
-  subset2 <- data[, data$treatment == zeroTreat & data$timepoint %in% c("0min", "0", "0h")]
+  subset2 <- data[, data[[condition]] == zeroTreat & data$timepoint %in% c("0min", "0", "0h")]
   # Combine the assays from the treatment and zero timepoint subsets
   assay <- cbind(assay(subset1), assay(subset2))
   colnames(assay) <- gsub(zeroTreat, treat, colnames(assay))
@@ -122,7 +123,7 @@ addZeroTime <- function(data, treat, zeroTreat, timeRange) {
   cd1 <- colData(subset1)
   cd2 <- colData(subset2)
   cd <- rbind(cd1, cd2)
-  cd$treatment[cd$treatment == zeroTreat] = treat
+  cd[[condition]][cd[[condition]] == zeroTreat] = treat
   rownames(cd) <- gsub(zeroTreat, treat, rownames(cd))
   
   # Retrieve the element metadata from the original data
@@ -450,7 +451,7 @@ plotTimeSeries <- function(se, type, geneID, symbol, condition, treatment, refTr
   if (type == "expression") {
     # Handle zero time point addition if specified
     if (!is.null(zeroTreat) & addZero) {
-      seqMat <- addZeroTime(se, treatment, zeroTreat, timerange)
+      seqMat <- addZeroTime(se, condition, treatment, zeroTreat, timerange)
     }
     else {
       seqMat <- se[,se[[condition]] == treatment & se$timepoint %in% timerange]
@@ -466,16 +467,16 @@ plotTimeSeries <- function(se, type, geneID, symbol, condition, treatment, refTr
       
       # Handle zero time point addition for both treatment and reference
       if (!("0min" %in% allTimepoint) & !("0min" %in% timepointRef)) {
-        seqMat <- addZeroTime(se, treatment, zeroTreat, timerange)
-        refMat <- addZeroTime(se, refTreat, zeroTreat, timerange)
+        seqMat <- addZeroTime(se, condition, treatment, zeroTreat, timerange)
+        refMat <- addZeroTime(se, condition, refTreat, zeroTreat, timerange)
       }
       else if (!("0min" %in% allTimepoint) & ("0min" %in% timepointRef)) {
-        seqMat <- addZeroTime(se, treatment, zeroTreat, timerange)
+        seqMat <- addZeroTime(se, condition, treatment, zeroTreat, timerange)
         refMat <- se[,se[[condition]] == refTreat & se$timepoint %in% timerange]
       }
       else if (("0min" %in% allTimepoint) & !("0min" %in% timepointRef)) {
         seqMat <- se[,se[[condition]] == treatment & se$timepoint %in% timerange]
-        refMat <- addZeroTime(se, refTreat, zeroTreat, timerange)
+        refMat <- addZeroTime(se, condition, refTreat, zeroTreat, timerange)
       }
     }
     else {
@@ -526,8 +527,8 @@ plotTimeSeries <- function(se, type, geneID, symbol, condition, treatment, refTr
       
       # Handle zero time point addition for both conditions
       if (!("0min" %in% allTimepoint) & !("0min" %in% timepointRef)) {
-        se1 <- addZeroTime(se, treatment, zeroTreat, timerange)
-        se2 <- addZeroTime(se, refTreat, zeroTreat, timerange)
+        se1 <- addZeroTime(se, condition, treatment, zeroTreat, timerange)
+        se2 <- addZeroTime(se, condition, refTreat, zeroTreat, timerange)
         assay <- cbind(assay(se1), assay(se2))
         cd <- rbind(colData(se1), colData(se2))
         emeta <- elementMetadata(se)
@@ -535,7 +536,7 @@ plotTimeSeries <- function(se, type, geneID, symbol, condition, treatment, refTr
         seqMat <- SummarizedExperiment(assays=SimpleList(intensity=assay), colData = cd, rowData = emeta)
       }
       else if (!("0min" %in% allTimepoint) & ("0min" %in% timepointRef)) {
-        se1 <- addZeroTime(se, treatment, zeroTreat, timerange)
+        se1 <- addZeroTime(se, condition, treatment, zeroTreat, timerange)
         se2 <- se[, se[[condition]] == refTreat & se$timepoint %in% timerange]
         assay <- cbind(assay(se1), assay(se2))
         cd <- rbind(colData(se1), colData(se2))
@@ -545,7 +546,7 @@ plotTimeSeries <- function(se, type, geneID, symbol, condition, treatment, refTr
       }
       else if (("0min" %in% allTimepoint) & !("0min" %in% timepointRef)) {
         se1 <- se[, se[[condition]] == treatment & se$timepoint %in% timerange]
-        se2 <- addZeroTime(se, refTreat, zeroTreat, timerange)
+        se2 <- addZeroTime(se, condition, refTreat, zeroTreat, timerange)
         assay <- cbind(assay(se1), assay(se2))
         cd <- rbind(colData(se1), colData(se2))
         emeta <- elementMetadata(se)
