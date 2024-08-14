@@ -275,3 +275,125 @@ test_that("runFisher filters out gene sets with Set.size == 0", {
   # Other sets should be present
   expect_true(all(c("Set1", "Set2", "Set3", "Set4", "Set5") %in% result$Name))
 })
+
+
+
+######################### Tests for clusterEnrich() ############################
+
+# Mock data for testing
+set.seed(123)
+mock_clusterTab <- data.frame(
+  feature = paste0("gene", 1:10),
+  cluster = c(rep("Cluster1", 5), rep("Cluster2", 5))
+)
+
+mock_se <- function() {
+  # Create assay data
+  assay_data <- matrix(abs(rnorm(1000, 10, 2)), nrow = 100, ncol = 10)
+  colnames(assay_data) <- paste0("Sample", 1:10)
+  rownames(assay_data) <- paste0("gene", 1:100)
+  
+  # Create sample metadata
+  sample_data <- data.frame(sample = colnames(assay_data),
+                            sampleType = rep(c("FullProteome", "Phospho"), each = 5),
+                            group = rep(c("A", "B"), each = 5))
+  rownames(sample_data) <- colnames(assay_data)
+  
+  # Create gene metadata
+  gene_data <- data.frame(UniprotID = rownames(assay_data),
+                          Gene = paste0("gene", 1:100),
+                          site = paste0("site", 1:10))
+  rownames(gene_data) <- rownames(assay_data)
+  
+  # Create SummarizedExperiment object
+  se <- SummarizedExperiment(assays = list(Intensity = assay_data), colData = sample_data, rowData = gene_data)
+  return(se)
+}
+
+mock_inputSet <- list(
+  gsc = list(
+    pathway1 = c("gene1", "gene2", "gene3"),
+    pathway2 = c("gene6", "gene7", "gene8")
+  )
+)
+
+mock_reference <- c("gene1", "gene2", "gene3", "gene4", "gene5", "gene6", "gene7", "gene8", "gene9", "gene10")
+
+# Test that the function runs without errors with default parameters
+test_that("clusterEnrich runs without errors with default parameters", {
+  result <- clusterEnrich(
+    clusterTab = mock_clusterTab,
+    se = mock_se(),
+    inputSet = mock_inputSet
+  )
+  
+  expect_true(is.list(result))
+  expect_true("table" %in% names(result))
+  expect_true("plot" %in% names(result))
+  expect_s3_class(result$plot, "ggplot")
+})
+
+# Test that the correct number of clusters is returned
+test_that("clusterEnrich returns correct number of clusters", {
+  result <- clusterEnrich(
+    clusterTab = mock_clusterTab,
+    se = mock_se(),
+    inputSet = mock_inputSet
+  )
+
+  unique_clusters <- unique(mock_clusterTab$cluster)
+  result_clusters <- unique(result$table$cluster)
+
+  expect_equal(length(unique_clusters), length(result_clusters))
+  expect_equal(sort(unique_clusters), sort(result_clusters))
+})
+
+# Test that the function correctly filters results based on p-value threshold
+test_that("clusterEnrich filters results based on p-value threshold", {
+  result <- clusterEnrich(
+    clusterTab = mock_clusterTab,
+    se = mock_se(),
+    inputSet = mock_inputSet,
+    filterP = 0.01
+  )
+
+  expect_true(all(result$table$pval <= 0.01))
+})
+
+# Test that FDR adjustment is correctly applied
+test_that("clusterEnrich applies FDR adjustment correctly", {
+  result <- clusterEnrich(
+    clusterTab = mock_clusterTab,
+    se = mock_se(),
+    inputSet = mock_inputSet,
+    ifFDR = TRUE,
+    filterP = 0.05
+  )
+
+  expect_true(all(result$table$padj <= 0.05))
+})
+
+
+# Test PTM-specific gene sets analysis
+test_that("clusterEnrich handles PTM-specific gene sets correctly", {
+  
+  inputSet <- data.frame(
+    category = c(rep("CATEGORY1", 25), rep("KINASE", 5)), # 30 rows
+    site.ptm = c(rep("p", 25), rep("other", 5)),
+    signature = c(rep("Sig1", 5), rep("Sig2", 10), rep("Sig3", 15)),
+    site.direction = c(rep("u", 5), rep("d", 5), rep("u", 5), rep("d", 5), rep("u", 5), rep("d", 5)),
+    site.annotation = paste0("site", 1:30)
+    )
+  
+  result <- clusterEnrich(
+    clusterTab = mock_clusterTab,
+    se = mock_se(),
+    inputSet = inputSet,
+    ptm = TRUE
+  )
+
+  expect_true(is.list(result))
+  expect_true("table" %in% names(result))
+  expect_true("plot" %in% names(result))
+  expect_s3_class(result$plot, "ggplot")
+})
