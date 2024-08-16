@@ -1,3 +1,80 @@
+# Mock data for testing
+resTab <- data.frame(
+  site = c("EGFR_Y1172", "EGFR_Y1197", "EGFR_S1166", "ROCK2_S1374", "WASL_Y256", "GAB1_Y259", "ADD1_S586", "EPHA2_Y772", "PRKDC_T2638", "PRKDC_T2609", "PRKDC_S2612"),
+  stat = c(-10.038770, -5.945562, 5.773384, -7.303834, 5.585326, 5.971104, 5.199119, -5.169500, 5.130228, 5.407387, 4.493933),
+  log2FC = c(-2.6113343, -2.4858615, 1.0056629, -1.1561780, 1.6421145, 2.0296634, 1.3766283, -0.8531656, 1.0742881, 1.0042942, 1.0608129)
+)
+
+decoupler_network <- data.frame(
+  source = c(rep("ABL1", 5), rep("CDK2", 6)),
+  mor = c(rep(1, 11)),
+  target = c("EGFR_Y1172", "EGFR_Y1197", "EGFR_S1166", "ROCK2_S1374", "WASL_Y256", "GAB1_Y259", "ADD1_S586", "EPHA2_Y772", "PRKDC_T2638", "PRKDC_T2609", "PRKDC_S2612"),
+  likelihood = c(rep(1, 11))
+)
+
+
+######################## Tests for calcKinaseScore() ###########################
+
+# Test that the function runs without errors with default parameters
+test_that("calcKinaseScore runs without errors with default parameters", {
+  result <- calcKinaseScore(resTab, decoupler_network)
+  
+  expect_true(is.data.frame(result))
+  expect_true(all(c("source", "score", "p_value") %in% colnames(result)))
+})
+
+# Test that duplicate rows are removed based on the 'site' column
+test_that("calcKinaseScore removes duplicate rows based on the 'site' column", {
+  result <- calcKinaseScore(resTab, decoupler_network)
+
+  expect_equal(nrow(result), length(unique(decoupler_network$source[resTab$site %in% decoupler_network$target])))
+})
+
+# Test that the function correctly handles 'statType' = "stat"
+test_that("calcKinaseScore handles 'statType' = 'stat' correctly", {
+  result <- calcKinaseScore(resTab, decoupler_network, statType = "stat")
+
+  input_values <- resTab %>% filter(site %in% decoupler_network$target) %>% pull(stat)
+  expect_equal(length(result$score), length(unique(decoupler_network$source)))
+})
+
+# Test that the function correctly handles 'statType' = "log2FC"
+test_that("calcKinaseScore handles 'statType' = 'log2FC' correctly", {
+  result <- calcKinaseScore(resTab, decoupler_network, statType = "log2FC")
+
+  input_values <- resTab %>% filter(site %in% decoupler_network$target) %>% pull(log2FC)
+  expect_equal(length(result$score), length(unique(decoupler_network$source)))
+})
+
+# Test that the function filters out correlated regulons based on 'corrThreshold'
+test_that("calcKinaseScore filters out correlated regulons based on 'corrThreshold'", {
+  result <- calcKinaseScore(resTab, decoupler_network, corrThreshold = 0.9)
+
+  correlated <- check_corr(decoupler_network) %>%
+    filter(correlation >= 0.9)
+
+  expect_true(all(!result$source %in% correlated$source.2))
+})
+
+# Test that kinase activity scores are calculated and NA values are handled
+test_that("calcKinaseScore calculates kinase activity scores and handles NA values", {
+  result <- calcKinaseScore(resTab, decoupler_network)
+
+  expect_false(any(is.na(result$score)))
+  expect_false(any(is.na(result$p_value)))
+})
+
+# Test that the number of permutations affects the result
+test_that("calcKinaseScore produces different results with different number of permutations", {
+  result_100 <- calcKinaseScore(resTab, decoupler_network, nPerm = 100)
+  result_1000 <- calcKinaseScore(resTab, decoupler_network, nPerm = 1000)
+
+  expect_false(all(result_100$p_value == result_1000$p_value))
+})
+
+
+
+
 ######################### Tests for plotKinaseDE() #############################
 
 # Mock data for testing
