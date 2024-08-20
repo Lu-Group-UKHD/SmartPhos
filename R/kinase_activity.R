@@ -150,7 +150,8 @@ calcKinaseScore <- function(resTab, decoupler_network, corrThreshold = 0.9, stat
 #' print(plot)
 #'
 #' @importFrom dplyr mutate filter group_by slice_max
-#' @importFrom ggplot2 ggplot aes geom_bar scale_fill_manual theme_linedraw theme element_text unit coord_flip ggtitle xlab ylab reorder
+#' @importFrom stats reorder
+#' @importFrom ggplot2 ggplot aes geom_bar scale_fill_manual theme_linedraw theme element_text unit coord_flip ggtitle xlab ylab 
 #' @export
 plotKinaseDE <- function(scoreTab, nTop = 10, pCut = 0.05) {
   plotTab <- scoreTab %>% mutate(significance = ifelse(p_value <= pCut, paste0("p <= ",pCut), paste0("p > ",pCut)),

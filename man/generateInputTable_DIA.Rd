@@ -2,17 +2,31 @@
 % Please edit documentation in R/dataImport.R
 \name{generateInputTable_DIA}
 \alias{generateInputTable_DIA}
-\title{Create a template for input file list (DIA)}
+\title{Generate Input Table for DIA Analysis}
 \usage{
 generateInputTable_DIA(rawFolder)
 }
 \arguments{
-\item{rawFolder}{a character string specifying the directory of the raw data folder}
+\item{rawFolder}{A character string specifying the path to the folder containing the raw files.}
 }
 \value{
-This function data frame contains the input file information
+A data.frame with columns `fileName`, `type`, and `id` that can be used as input for further analysis.
 }
 \description{
-This function generate a template for preparing the input file list, based on the
-raw data folder structure.
+`generateInputTable_DIA` generates an input table for DIA analysis by reading files from a specified folder.
+}
+\details{
+The function performs the following steps:
+\itemize{
+  \item Reads the summary file containing experimental information.
+  \item Generates unique experimental IDs based on sample type, treatment, timepoint, and replicate.
+  \item Processes file paths for full proteome and phosphoproteome data.
+  \item Creates a combined input table with file names, types, and IDs.
+}
+}
+\examples{
+# Example usage:
+rawFolder <- "path/to/raw/files"
+inputTable <- generateInputTable_DIA(rawFolder)
+
 }

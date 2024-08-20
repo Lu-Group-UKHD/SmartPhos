@@ -337,7 +337,7 @@ normByFullProteome <- function(mae, replace = TRUE) {
     fpMat <- fpMat[match(rowData(ppe)$UniprotID, rowData(fpe)$UniprotID),fpSampleID]
 
     # Ensure the samples match
-    stopifnot(all(removePreSuffix(colnames(fpMat)) == removePreSuffix(colnames(ppMat))))
+    stopifnot(all((colnames(fpMat)) == removePreSuffix(colnames(ppMat))))
 
     # Normalize phosphoproteome data by the full proteome data
     ppMat.norm <- ppMat/fpMat

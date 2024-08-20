@@ -109,7 +109,6 @@ mscale <- function(x, center = TRUE, scale = TRUE, censor = NULL, useMad = FALSE
 #' # result <- addZeroTime(data, treat = "TreatmentA", zeroTreat = "Control", timeRange = c("10min", "20min"))
 #'
 #' @importFrom SummarizedExperiment colData rowData assay assays elementMetadata SummarizedExperiment
-#' @export 
 addZeroTime <- function(data, condition, treat, zeroTreat, timeRange) {
   # Subset the data for the specified treatment and time range
   subset1 <- data[, data[[condition]] == treat & data$timepoint %in% timeRange]
@@ -440,7 +439,6 @@ splineFilter <- function(exprMat, subjectID = NULL, time, df, pCut = 0.5, ifFDR 
 #' @importFrom SummarizedExperiment assays
 #' @importFrom dplyr %>% bind_cols filter
 #' @importFrom stringr str_extract
-#' @importFrom stats rowMeans
 #' @examples
 #' # Assuming 'se' is a SummarizedExperiment object with appropriate data:
 #' plotTimeSeries(se, type = "expression", geneID = "gene1", symbol = "Gene 1", condition = "treatment", treatment = "A", refTreat = "B", timerange = c("0h", "1h", "2h"))

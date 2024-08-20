@@ -2,19 +2,34 @@
 % Please edit documentation in R/dataImport.R
 \name{generateInputTable}
 \alias{generateInputTable}
-\title{Create a template for input file list}
+\title{Generate Input Table for Proteomic and Phosphoproteomic Analysis}
 \usage{
 generateInputTable(rawFolder, batchAsFolder = FALSE)
 }
 \arguments{
-\item{rawFolder}{a character string specifying the directory of the raw data folder}
+\item{rawFolder}{A character string specifying the path to the folder containing the raw files.}
 
-\item{BatchAsFolder}{whether measurements from different batches as stored in different sub-folders. If TRUE, the sub-folder names will be used as batch names.}
+\item{batchAsFolder}{A logical value indicating whether to treat subdirectories as separate batches. Default is `FALSE`.}
 }
 \value{
-This function data frame contains the input file information
+A data.frame with columns `fileName`, `sample`, `type`, `batch`, and `id` that can be used as input for further analysis.
 }
 \description{
-This function generate a template for preparing the input file list, based on the
-raw data folder structure.
+`generateInputTable` generates an input table for proteomic and phosphoproteomic analysis by reading files from a specified folder.
+}
+\details{
+The function performs the following steps:
+\itemize{
+  \item Optionally treats subdirectories as separate batches.
+  \item Reads the summary file containing experimental information.
+  \item Generates unique experimental IDs based on batch and sample names.
+  \item Processes file paths for full proteome and phosphoproteome data.
+  \item Creates a combined input table with file names, sample names, types, batches, and IDs.
+}
+}
+\examples{
+# Example usage:
+rawFolder <- "path/to/raw/files"
+inputTable <- generateInputTable(rawFolder, batchAsFolder = TRUE)
+
 }
