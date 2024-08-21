@@ -133,7 +133,7 @@ test_that("plotKinaseDE uses the correct fill colors based on significance", {
   plot <- plotKinaseDE(scoreTab, pCut = 0.05)
   
   expected_colors <- c("indianred", "lightgrey")
-  actual_colors <- ggplot_build(plot)$data[[1]]$fill
+  actual_colors <- ggplot2::ggplot_build(plot)$data[[1]]$fill
   
   expect_true(all(actual_colors %in% expected_colors))
 })
@@ -149,7 +149,7 @@ test_that("plotKinaseDE handles cases where no kinases are significant", {
   plot <- plotKinaseDE(scoreTab_no_sig, pCut = 0.05)
   
   expect_true(all(plot$data$significance == "p > 0.05"))
-  expect_true(all(ggplot_build(plot)$data[[1]]$fill == "lightgrey"))
+  expect_true(all(ggplot2::ggplot_build(plot)$data[[1]]$fill == "lightgrey"))
 })
 
 # Test that the function handles cases where all kinases are significant
@@ -163,7 +163,7 @@ test_that("plotKinaseDE handles cases where all kinases are significant", {
   plot <- plotKinaseDE(scoreTab_all_sig, pCut = 0.05)
   
   expect_true(all(plot$data$significance == "p <= 0.05"))
-  expect_true(all(ggplot_build(plot)$data[[1]]$fill == "indianred"))
+  expect_true(all(ggplot2::ggplot_build(plot)$data[[1]]$fill == "indianred"))
 })
 
 ###################### Tests for plotKinaseTimeSeries() ########################
@@ -189,7 +189,7 @@ test_that("plotKinaseTimeSeries runs without errors with default parameters", {
 test_that("plotKinaseTimeSeries adds significance markers based on pCut", {
   p <- plotKinaseTimeSeries(scoreTab, pCut = 0.05)
   
-  plot_data <- ggplot_build(p)$data[[2]]  # Data from geom_text layer
+  plot_data <- ggplot2::ggplot_build(p)$data[[2]]  # Data from geom_text layer
   
   significant_entries <- scoreTab %>% filter(p_value <= 0.05)
   
@@ -201,7 +201,7 @@ test_that("plotKinaseTimeSeries adds significance markers based on pCut", {
 test_that("plotKinaseTimeSeries respects the pCut parameter", {
   p <- plotKinaseTimeSeries(scoreTab, pCut = 0.03)
   
-  plot_data <- ggplot_build(p)$data[[2]]  # Data from geom_text layer
+  plot_data <- ggplot2::ggplot_build(p)$data[[2]]  # Data from geom_text layer
   
   significant_entries <- scoreTab %>% filter(p_value <= 0.03)
   
@@ -226,7 +226,7 @@ test_that("plotKinaseTimeSeries handles cases with no significant activities", {
   
   p <- plotKinaseTimeSeries(scoreTab_no_sig, pCut = 0.05)
   
-  plot_data <- ggplot_build(p)$data[[2]]  # Data from geom_text layer
+  plot_data <- ggplot2::ggplot_build(p)$data[[2]]  # Data from geom_text layer
   
   expect_equal(sum(plot_data$label == "*"), 0)  # No significant markers should be present
 })

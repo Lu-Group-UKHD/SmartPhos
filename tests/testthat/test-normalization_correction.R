@@ -484,7 +484,7 @@ test_that("plotAdjustmentResults plots are not empty", {
   plots <- plotAdjustmentResults(mae, normalization = FALSE)
 
   # Check that plots are not empty
-  expect_gt(length(ggplot_build(plots$ratioTrendPlot)$data), 0)
-  expect_gt(length(ggplot_build(plots$ratioBoxplot)$data), 0)
-  expect_gt(length(ggplot_build(plots$ppBoxplot)$data), 0)
+  expect_gt(length(ggplot2::ggplot_build(plots$ratioTrendPlot)$data), 0)
+  expect_gt(length(ggplot2::ggplot_build(plots$ratioBoxplot)$data), 0)
+  expect_gt(length(ggplot2::ggplot_build(plots$ppBoxplot)$data), 0)
 })

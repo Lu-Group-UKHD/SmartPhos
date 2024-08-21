@@ -46,7 +46,7 @@ test_that("plotMissing generates the correct ggplot object", {
   plot <- plotMissing(se)
 
   # Check if the returned object is a ggplot object
-  expect_true(is.ggplot(plot))
+  expect_s3_class(plot, "ggplot")
 
 })
 
@@ -90,7 +90,7 @@ test_that("plotIntensity generates the correct ggplot object", {
   plot <- plotIntensity(se, color = "none")
 
   # Check if the returned object is a ggplot object
-  expect_true(is.ggplot(plot))
+  expect_s3_class(plot, "ggplot")
 
   # Check plot title
   expect_equal(plot$labels$title, "Boxplot of intensities")
@@ -163,7 +163,7 @@ test_that("plotPCA generates a ggplot object", {
   plot <- plotPCA(pca, se)
 
   # Check if the returned object is a ggplot object
-  expect_true(is.ggplot(plot))
+  expect_s3_class(plot, "ggplot")
 })
 
 test_that("plotPCA correctly labels the axes with variance explained", {

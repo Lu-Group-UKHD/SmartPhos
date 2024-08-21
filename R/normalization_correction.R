@@ -291,6 +291,7 @@ checkRatioMat <- function(ratioMat, minOverlap = 3) {
 #' @importFrom stats optim
 #' @importFrom parallel makeCluster setDefaultCluster stopCluster
 #' @importFrom utils combn
+#' @importFrom optimParallel optimParallel
 #' @export
 runPhosphoAdjustment <- function(maeData, normalization = FALSE, minOverlap = 3, completeness = 0, ncore = 1 ) {
   

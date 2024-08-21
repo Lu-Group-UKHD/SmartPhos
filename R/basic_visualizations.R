@@ -55,7 +55,7 @@ plotMissing <- function(se) {
 #' @return A ggplot object showing boxplots of intensities for each sample.
 #'
 #' @importFrom SummarizedExperiment assay colData
-#' @importFrom ggplot2 ggplot aes geom_boxplot ggtitle theme element_text
+#' @importFrom ggplot2 ggplot aes geom_boxplot ggtitle theme element_text aes_string
 #' @importFrom dplyr filter left_join
 #' @importFrom tidyr pivot_longer
 #' @importFrom tibble as_tibble

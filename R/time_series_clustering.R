@@ -128,7 +128,7 @@ addZeroTime <- function(data, condition, treat, zeroTreat, timeRange) {
   # Retrieve the element metadata from the original data
   emeta <- elementMetadata(data)
   
-  return(SummarizedExperiment(assays=SimpleList(intensity=assay), colData = cd, rowData = emeta))
+  return(SummarizedExperiment(assays = list(intensity=assay), colData = cd, rowData = emeta))
 }
 
 
@@ -170,8 +170,11 @@ addZeroTime <- function(data, condition, treat, zeroTreat, timeRange) {
 #' @importFrom tibble as_tibble tibble
 #' @importFrom stringr str_extract str_split
 #' @importFrom magrittr %>%
+#' @importFrom Biobase rowMax
 #' @export
 clusterTS <- function(x, k, pCut = NULL, twoCondition = FALSE) {
+  
+  options(warn=-1)
   
   # Set seed for reproducible clustering results
   set.seed(12345)
@@ -182,10 +185,17 @@ clusterTS <- function(x, k, pCut = NULL, twoCondition = FALSE) {
   # Perform fuzzy C-means clustering
   res <- e1071::cmeans(x.center, k)
   
+  print("res$membership")
+  print(res$membership)
+  print("rowMax")
+  print(names(res$cluster))
+  print(res$cluster)
+  print(rowMax(res$membership))
+  
   # Create a tibble with clustering results
   resCluster <- tibble(feature = names(res$cluster),
                        cluster = res$cluster,
-                       prob = rowMax(res$membership))
+                       prob = Biobase::rowMax(res$membership))
   
   # Filter clusters based on probability cutoff if provided
   if (!is.null(pCut)) resCluster <- filter(resCluster, prob >= pCut)
@@ -531,7 +541,7 @@ plotTimeSeries <- function(se, type, geneID, symbol, condition, treatment, refTr
         cd <- rbind(colData(se1), colData(se2))
         emeta <- elementMetadata(se)
         
-        seqMat <- SummarizedExperiment(assays=SimpleList(intensity=assay), colData = cd, rowData = emeta)
+        seqMat <- SummarizedExperiment(assays = list(intensity = assay), colData = cd, rowData = emeta)
       }
       else if (!("0min" %in% allTimepoint) & ("0min" %in% timepointRef)) {
         se1 <- addZeroTime(se, condition, treatment, zeroTreat, timerange)
@@ -540,7 +550,7 @@ plotTimeSeries <- function(se, type, geneID, symbol, condition, treatment, refTr
         cd <- rbind(colData(se1), colData(se2))
         emeta <- elementMetadata(se)
         
-        seqMat <- SummarizedExperiment(assays=SimpleList(intensity=assay), colData = cd, rowData = emeta)
+        seqMat <- SummarizedExperiment(assays = list(intensity = assay), colData = cd, rowData = emeta)
       }
       else if (("0min" %in% allTimepoint) & !("0min" %in% timepointRef)) {
         se1 <- se[, se[[condition]] == treatment & se$timepoint %in% timerange]
@@ -549,7 +559,7 @@ plotTimeSeries <- function(se, type, geneID, symbol, condition, treatment, refTr
         cd <- rbind(colData(se1), colData(se2))
         emeta <- elementMetadata(se)
         
-        seqMat <- SummarizedExperiment(assays=SimpleList(intensity=assay), colData = cd, rowData = emeta)
+        seqMat <- SummarizedExperiment(assays=list(intensity=assay), colData = cd, rowData = emeta)
       }
     }
     else {

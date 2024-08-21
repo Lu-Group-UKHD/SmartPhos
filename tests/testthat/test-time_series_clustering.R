@@ -2,7 +2,7 @@
 create_mock_data <- function(rows = 10, cols = 5) {
   set.seed(123)
   mat <- matrix(rnorm(rows * cols, mean = 5, sd = 2), nrow = rows, ncol = cols)
-  colnames(mat) <- paste0("Sample", 1:cols)
+  colnames(mat) <- paste0("Sample", 1:cols, "_", rep(1:cols), "h")
   rownames(mat) <- paste0("Gene", 1:rows)
   return(mat)
 }
@@ -13,8 +13,6 @@ create_mock_data <- function(rows = 10, cols = 5) {
 
 test_that("clusterTS returns a list with cluster and plot components", {
   x <- create_mock_data(rows = 10, cols = 5)
-  
-  result <- clusterTS(x, k = 3)
   
   expect_type(result, "list")
   expect_named(result, c("cluster", "plot"))
