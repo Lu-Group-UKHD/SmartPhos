@@ -157,7 +157,7 @@ test_that("plotVolcano correctly categorizes genes based on thresholds", {
   
   v_plot <- plotVolcano(tableDE, pFilter = 0.05, fcFilter = 0.5)
   
-  dataVolcano <- ggplot_build(v_plot)
+  dataVolcano <- ggplot2::ggplot_build(v_plot)
   
   up_genes <- dataVolcano$data[[8]][dataVolcano$data[[8]]$colour == "firebrick3", ]
   down_genes <- dataVolcano$data[[8]][dataVolcano$data[[8]]$colour == "navy", ]
@@ -245,7 +245,7 @@ test_that("plotBox includes correct elements in the plot with subjectID", {
     target = "EGF"
   )
   p <- plotBox(result$seSub, id = "Gene1", symbol = "GeneSymbol1")
-  p_data <- ggplot_build(p)$data
+  p_data <- ggplot2::ggplot_build(p)$data
   
   # Expect a boxplot layer, points layer, and line layer
   expect_equal(length(p_data), 3)
@@ -262,7 +262,7 @@ test_that("plotBox handles different comparison groups", {
   se$comparison <- rep(c("A", "B", "C"), length.out = ncol(se))
   
   p <- plotBox(se, id = "Gene1", symbol = "GeneSymbol1")
-  p_data <- ggplot_build(p)$data
+  p_data <- ggplot2::ggplot_build(p)$data
   
   # Check that there are 3 groups plotted
   expect_equal(length(unique(p_data[[1]]$x)), 3)

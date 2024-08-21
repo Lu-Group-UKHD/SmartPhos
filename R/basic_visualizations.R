@@ -55,7 +55,7 @@ plotMissing <- function(se) {
 #' @return A ggplot object showing boxplots of intensities for each sample.
 #'
 #' @importFrom SummarizedExperiment assay colData
-#' @importFrom ggplot2 ggplot aes geom_boxplot ggtitle theme element_text aes_string
+#' @importFrom ggplot2 ggplot aes geom_boxplot ggtitle theme element_text
 #' @importFrom dplyr filter left_join
 #' @importFrom tidyr pivot_longer
 #' @importFrom tibble as_tibble
@@ -91,7 +91,7 @@ plotIntensity <- function(se, color = "none") {
     g <- g + geom_boxplot()
   }
   else {
-    g <- g + geom_boxplot(aes_string(fill = color))
+    g <- g + geom_boxplot(aes(color = !!sym(color)))
   }
   
   return(g)
@@ -195,6 +195,7 @@ plotPCA <- function(pca, se, xaxis = "PC1", yaxis = "PC2", color = "none", shape
 #' @importFrom dplyr arrange left_join
 #' @importFrom pheatmap pheatmap
 #' @importFrom tibble rownames_to_column
+#' @importFrom grDevices colorRampPalette
 #' @importFrom rlang sym
 #' @examples
 #' # Assuming 'se' is a SummarizedExperiment object and 'data' is a data frame:

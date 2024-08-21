@@ -176,7 +176,7 @@ plotVolcano <- function(tableDE, pFilter = 0.05, fcFilter = 0.5) {
   # Create the volcano plot
   v <- ggplot(dataVolcano, aes(x = log2FC, y = -log10(pvalue), label = Gene, customdata = ID)) +
     # Add vertical lines for fold-change thresholds
-    geom_vline(xintercept = 0, color = "black", linetype = "solid", size = 0.25) +
+    geom_vline(xintercept = 0, color = "black", linetype = "solid", linewidth = 0.25) +
     geom_vline(xintercept = as.numeric(fcFilter), color = "darkgrey", linetype = "dashed") +
     geom_vline(xintercept = -as.numeric(fcFilter), color = "darkgrey", linetype = "dashed") +
     # Add horizontal lines for p-value thresholds

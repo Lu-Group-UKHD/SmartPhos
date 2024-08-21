@@ -14,6 +14,8 @@ create_mock_data <- function(rows = 10, cols = 5) {
 test_that("clusterTS returns a list with cluster and plot components", {
   x <- create_mock_data(rows = 10, cols = 5)
   
+  result <- clusterTS(x, k = 3)
+  
   expect_type(result, "list")
   expect_named(result, c("cluster", "plot"))
   expect_s3_class(result$plot, "ggplot")
@@ -97,7 +99,7 @@ test_that("plotTimeSeries handles 'expression' type correctly", {
   colData <- data.frame(timepoint=c("0h", "1h", "2h", "0h", "1h", "2h"), 
                         condition=c(rep("A", 3), rep("B", 3)), 
                         treatment=c(rep("A", 3), rep("B", 3)))
-  se <- SummarizedExperiment(assays=SimpleList(intensity=mat), colData=colData)
+  se <- SummarizedExperiment(assays = list(intensity=mat), colData=colData)
   
   p <- plotTimeSeries(se, type = "expression", geneID = 1, symbol = "Gene 1", 
                       condition = "condition", treatment = "A", timerange = c("0h", "1h", "2h"))
@@ -112,7 +114,7 @@ test_that("plotTimeSeries handles 'logFC' type correctly", {
   mat <- create_mock_data(rows = 10, cols = 6)
   colData <- data.frame(timepoint=c("0min", "1h", "2h", "0min", "1h", "2h"),
                         treatment=c(rep("A", 3), rep("B", 3)))
-  se <- SummarizedExperiment(assays=SimpleList(intensity=mat), colData=colData)
+  se <- SummarizedExperiment(assays = list(intensity=mat), colData=colData)
 
   p <- plotTimeSeries(se, type = "logFC", geneID = "Gene1", symbol = "Gene1",
                       condition = "treatment", treatment = "A", refTreat = "B", timerange = c("0min", "1h", "2h"))
@@ -127,7 +129,7 @@ test_that("plotTimeSeries handles 'two-condition expression' type correctly", {
   mat <- create_mock_data(rows = 10, cols = 6)
   colData <- data.frame(timepoint=c("0min", "1h", "2h", "0min", "1h", "2h"),
                         treatment=c(rep("A", 3), rep("B", 3)))
-  se <- SummarizedExperiment(assays=SimpleList(intensity=mat), colData=colData)
+  se <- SummarizedExperiment(assays = list(intensity=mat), colData=colData)
 
   p <- plotTimeSeries(se, type = "two-condition expression", geneID = "Gene1", symbol = "Gene 1",
                       condition = "treatment", treatment = "A", refTreat = "B", timerange = c("0min", "1h", "2h"))
@@ -142,7 +144,7 @@ test_that("plotTimeSeries handles 'addZero' parameter correctly", {
   mat <- create_mock_data(rows = 10, cols = 5)
   colData <- data.frame(timepoint=c("2h", "3h", "0min", "2h", "3h"),
                         treatment=c(rep("A", 2), rep("B", 3)))
-  se <- SummarizedExperiment(assays=SimpleList(intensity=mat), colData=colData)
+  se <- SummarizedExperiment(assays=list(intensity=mat), colData=colData)
 
   p <- plotTimeSeries(se, type = "expression", geneID = "Gene1", symbol = "Gene1",
                       condition = "treatment", treatment = "A", addZero = TRUE,
@@ -159,7 +161,7 @@ test_that("plotTimeSeries handles subjectID correctly", {
   colData <- data.frame(timepoint=c("0min", "1h", "2h", "0min", "1h", "2h"),
                         treatment=c(rep("A", 3), rep("B", 3)),
                         subjectID=rep(1:2, each=3))
-  se <- SummarizedExperiment(assays=SimpleList(intensity=mat), colData=colData)
+  se <- SummarizedExperiment(assays=list(intensity=mat), colData=colData)
 
   p <- plotTimeSeries(se, type = "expression", geneID = "Gene1", symbol = "Gene 1",
                       condition = "treatment", treatment = "A", timerange = c("0min", "1h", "2h"))

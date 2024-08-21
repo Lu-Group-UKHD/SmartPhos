@@ -61,6 +61,7 @@ getOneSymbol <- function(Gene) {
 #' @importFrom SummarizedExperiment colData rowData assay assays
 #' @importFrom dplyr filter mutate
 #' @importFrom tidyr pivot_longer
+#' @importFrom vsn justvsn
 #' @importFrom DEP impute
 #' @importFrom limma removeBatchEffect
 #' @importFrom missForest missForest
@@ -234,6 +235,7 @@ preprocessProteome <- function(seData, filterList = NULL, missCut = 50,
 #' @importFrom dplyr filter mutate
 #' @importFrom tidyr pivot_longer
 #' @importFrom DEP impute
+#' @importFrom vsn justvsn
 #' @importFrom limma removeBatchEffect
 #' @importFrom missForest missForest
 #' @importFrom doParallel registerDoParallel

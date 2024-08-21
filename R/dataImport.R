@@ -23,6 +23,7 @@
 #' rawFolder <- "path/to/raw/files"
 #' inputTable <- generateInputTable(rawFolder, batchAsFolder = TRUE)
 #' 
+#' @importFrom utils read.delim
 #' @export
 generateInputTable <- function(rawFolder, batchAsFolder = FALSE) {
 
@@ -94,6 +95,7 @@ generateInputTable <- function(rawFolder, batchAsFolder = FALSE) {
 #' rawFolder <- "path/to/raw/files"
 #' inputTable <- generateInputTable_DIA(rawFolder)
 #' 
+#' @importFrom utils read.delim
 #' @export
 generateInputTable_DIA <- function(rawFolder) {
     # List all files in the rawFolder with pattern "*Labels.txt"

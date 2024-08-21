@@ -185,13 +185,6 @@ clusterTS <- function(x, k, pCut = NULL, twoCondition = FALSE) {
   # Perform fuzzy C-means clustering
   res <- e1071::cmeans(x.center, k)
   
-  print("res$membership")
-  print(res$membership)
-  print("rowMax")
-  print(names(res$cluster))
-  print(res$cluster)
-  print(rowMax(res$membership))
-  
   # Create a tibble with clustering results
   resCluster <- tibble(feature = names(res$cluster),
                        cluster = res$cluster,

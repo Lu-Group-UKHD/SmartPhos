@@ -120,6 +120,8 @@ create_test_mae <- function(adjusted = FALSE) {
 
 test_that("performCombinedNormalization returns matrix with correct dimensions", {
   mae <- create_test_mae()
+  
+  normalized_data <- performCombinedNormalization(mae)
 
   expect_equal(ncol(normalized_data), 5)
   expect_equal(nrow(normalized_data), 200)

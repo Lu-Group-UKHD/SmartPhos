@@ -177,6 +177,7 @@ readPhosphoExperiment <- function(fileTable, localProbCut = 0.75, scoreDiffCut =
 #' This function processes phosphorylation data for a single sample by filtering based on localization probability and non-zero intensity. It handles multiplicity by summarizing intensities and optionally removes duplicates. The resulting data is returned as a data.table with unique identifiers.
 #'
 #' @import data.table
+#' @importFrom stats aggregate
 #' @examples
 #' inputTab <- data.table::fread("phosphorylation_data.tsv")
 #' result <- readOnePhosDIA(inputTab, "Sample_1", localProbCut = 0.75, removeDup = TRUE)
@@ -292,6 +293,7 @@ readOnePhosDIA <- function(inputTab, sampleName, localProbCut = 0.75, removeDup 
 #' @import data.table
 #' @import BiocParallel
 #' @import SummarizedExperiment
+#' @importFrom utils data
 #' @examples
 #' fileTable <- data.table::data.table(fileName = c("file1.tsv", "file2.tsv"), type = "phosphoproteome")
 #' result <- readPhosphoExperimentDIA(fileTable, localProbCut = 0.75, onlyReviewed = TRUE, showProgressBar = TRUE)

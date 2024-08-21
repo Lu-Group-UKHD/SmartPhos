@@ -78,7 +78,7 @@ test_that("plotIntensity handles missing values correctly", {
   plot <- plotIntensity(se, color = "none")
 
   # Extract data used in the plot
-  plot_data <- ggplot_build(plot)$data[[1]]
+  plot_data <- ggplot2::ggplot_build(plot)$data[[1]]
 
   # Ensure no missing values are present in the plot data
   expect_false(any(is.na(plot_data$y)))
@@ -108,8 +108,8 @@ test_that("plotIntensity applies coloring correctly", {
   plot <- plotIntensity(se, color = "group")
 
   # Check if the fill aesthetic is set correctly
-  expect_true("fill" %in% names(plot$labels))
-  expect_equal(plot$labels$fill, "group")
+  expect_true("colour" %in% names(plot$labels))
+  expect_equal(plot$labels$colour, "group")
 })
 
 test_that("plotIntensity works correctly with color set to 'none'", {
@@ -131,7 +131,7 @@ test_that("plotIntensity handles SummarizedExperiment with all non-missing value
   se <- SummarizedExperiment(assays = list(counts = assay_data), colData = sample_data)
 
   plot <- plotIntensity(se, color = "none")
-  plot_data <- ggplot_build(plot)$data[[1]]
+  plot_data <- ggplot2::ggplot_build(plot)$data[[1]]
 
   # Expect no missing values in the plot data
   expect_false(any(is.na(plot_data$y)))
@@ -147,7 +147,7 @@ test_that("plotIntensity handles SummarizedExperiment with all missing values", 
   se <- SummarizedExperiment(assays = list(counts = assay_data), colData = sample_data)
 
   plot <- plotIntensity(se, color = "none")
-  plot_data <- ggplot_build(plot)$data[[1]]
+  plot_data <- ggplot2::ggplot_build(plot)$data[[1]]
 
   # Expect no data in the plot since all values are missing
   expect_equal(nrow(plot_data), 0)

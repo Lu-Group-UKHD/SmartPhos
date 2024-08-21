@@ -16,7 +16,7 @@
 #' # Load the mouse kinase-substrate interaction network
 #' mouse_network <- getDecouplerNetwork("Mus musculus")
 #'
-#' @importFrom utils read.table
+#' @importFrom utils read.table data
 getDecouplerNetwork <- function(speciesRef) {
   
   # load network of kinase-substrate interaction from omnipathR_kinase_network folder
