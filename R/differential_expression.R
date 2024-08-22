@@ -239,7 +239,7 @@ plotBox <- function(se, id, symbol) {
     plotTab <- data.frame(group = se$comparison,
                           value = exprMat[id,],
                           subjectID = se$subjectID)
-    p <- ggplot(plotTab, aes(x= group, y = value, label = subjectID)) +
+    p <- ggplot(plotTab, aes(x= group, y = value)) +
       geom_line(aes(group = subjectID), linetype = "dotted", color = "grey50")
   }
   

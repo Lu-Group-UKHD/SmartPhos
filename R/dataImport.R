@@ -54,7 +54,7 @@ generateInputTable <- function(rawFolder, batchAsFolder = FALSE) {
         fullTab$type <- "proteome"
         
         # Create a data frame for phosphoproteome files
-        phosphoTab <- data.frame(fileName = rep(file.path(folderPath,"Phospho (STY)Sites.txt"),length(sampleName)))
+        phosphoTab <- data.frame(fileName = rep(file.path(folderPath,"Phospho(STY)Sites.txt"),length(sampleName)))
         phosphoTab$sample <- sampleName
         phosphoTab$type <- "phosphoproteome"
         

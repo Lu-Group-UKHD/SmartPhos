@@ -12,7 +12,7 @@ preprocessProteome(
   normalize = FALSE,
   getPP = FALSE,
   removeOutlier = NULL,
-  impute = "QRILC",
+  impute = "none",
   batch = NULL,
   verbose = FALSE,
   scaleFactorTab = NULL
@@ -33,7 +33,7 @@ preprocessProteome(
 
 \item{removeOutlier}{Character vector of samples to be removed as outliers. Default is `NULL`.}
 
-\item{impute}{Character string specifying the imputation method ("QRILC", "MLE", "bpca", "missForest", "MinDet", "none"). Default is `"QRILC"`.}
+\item{impute}{Character string specifying the imputation method ("QRILC", "MLE", "bpca", "missForest", "MinDet", "none"). Default is `"none"`.}
 
 \item{batch}{Character vector specifying batch effects to remove. Default is `NULL`.}
 

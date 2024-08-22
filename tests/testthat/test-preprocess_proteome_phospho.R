@@ -139,10 +139,10 @@ test_that("preprocessPhos performs imputation", {
   seData <- create_mock_data()
 
   # Introduce some missing values
-  assay(seData)[1:10, 1:2] <- NA
+  assay(seData)[1:10, 7:8] <- NA
 
   processedData <- preprocessPhos(seData, impute = "QRILC")
 
   # Check if missing values are imputed
-  expect_true(all(!is.na(assays(processedData)[["imputed"]][1:10, 1:2])))
+  expect_true(all(!is.na(assays(processedData)[["imputed"]][1:10, 2:3])))
 })

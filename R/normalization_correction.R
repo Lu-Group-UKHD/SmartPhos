@@ -391,7 +391,7 @@ plotAdjustmentResults <- function(maeData, normalization = FALSE) {
   # For precursors present in all samples
   featureComplete <- rownames(ratioMat.ori)[complete.cases(ratioMat.ori)]
   if (!length(featureComplete) >0) {
-    warning("No feature (PP/FP ratio) has been detected in all samples. Raio trend line plot of will not be generated")
+    warning("No feature (PP/FP ratio) has been detected in all samples. Ratio trend line will not be generated")
     ratioTrendPlot <- NULL 
   } else {
     ratioPlotTab.complete <- filter(ratioPlotTab, id %in% featureComplete)

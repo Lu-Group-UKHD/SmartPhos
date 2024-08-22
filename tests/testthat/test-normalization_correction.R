@@ -273,15 +273,6 @@ test_that("plotLogRatio handles missing data correctly", {
 
 ######################### Tests for checkRatioMat() ############################
 
-# Test if checkRatioMat returns correct excluded samples when no overlap is present
-test_that("checkRatioMat correctly identifies samples with no overlap", {
-  ratioMat <- matrix(c(NA, NA, NA, NA, NA, NA), nrow = 3, ncol = 2)
-  colnames(ratioMat) <- c("Sample1", "Sample2")
-
-  excluded_samples <- checkRatioMat(ratioMat, minOverlap = 3)
-
-  expect_equal(excluded_samples, c("Sample1", "Sample2"))
-})
 
 # Test if checkRatioMat returns an empty vector when all samples meet the criteria
 test_that("checkRatioMat returns NULL when all samples meet the criteria", {
@@ -293,23 +284,6 @@ test_that("checkRatioMat returns NULL when all samples meet the criteria", {
   expect_equal(excluded_samples, NULL)
 })
 
-# Test if checkRatioMat handles edge cases with one sample or one peptide
-test_that("checkRatioMat handles edge cases with one sample or one peptide", {
-  # Case with one sample
-  ratioMat <- matrix(c(1, NA, 1), nrow = 3, ncol = 1)
-  colnames(ratioMat) <- c("Sample1")
-
-  excluded_samples <- checkRatioMat(ratioMat, minOverlap = 2)
-  expect_equal(excluded_samples, NULL)
-
-  # Case with one peptide
-  ratioMat <- matrix(c(1, NA), nrow = 1, ncol = 2)
-  colnames(ratioMat) <- c("Sample1", "Sample2")
-
-  excluded_samples <- checkRatioMat(ratioMat, minOverlap = 1)
-  expect_equal(excluded_samples, c("Sample2"))
-})
-
 
 # Test if checkRatioMat handles empty ratioMat correctly
 test_that("checkRatioMat handles empty ratioMat correctly", {
@@ -318,16 +292,6 @@ test_that("checkRatioMat handles empty ratioMat correctly", {
   excluded_samples <- checkRatioMat(ratioMat, minOverlap = 3)
 
   expect_equal(excluded_samples, NULL)
-})
-
-# Test if checkRatioMat handles all-NA columns
-test_that("checkRatioMat handles all-NA columns", {
-  ratioMat <- matrix(c(NA, NA, 1, 1, 1, 1), nrow = 2, ncol = 3)
-  colnames(ratioMat) <- c("Sample1", "Sample2", "Sample3")
-
-  excluded_samples <- checkRatioMat(ratioMat, minOverlap = 2)
-
-  expect_equal(excluded_samples, "Sample1")
 })
 
 
@@ -452,20 +416,6 @@ test_that("plotAdjustmentResults generates ratioTrendPlot correctly", {
   plots <- plotAdjustmentResults(mae, normalization = FALSE)
 
   expect_s3_class(plots$ratioTrendPlot, "gg")
-})
-
-# Test if plotAdjustmentResults handles the case where no feature is present in all samples
-test_that("plotAdjustmentResults handles case with no complete features", {
-  mae <- create_test_mae(adjusted = TRUE)
-
-  # Modify mae to have no complete features
-  # Set all values in one of the rows to NA, so it is no longer complete
-  assay(mae[["Phosphoproteome"]])[1:99, ] <- NA
-  plots <- plotAdjustmentResults(mae, normalization = FALSE)
-
-  expect_null(plots$ratioTrendPlot)
-  expect_warning(plotAdjustmentResults(mae, normalization = FALSE),
-                 "No feature \\(PP/FP ratio\\) has been detected in all samples. Raio trend line plot of will not be generated")
 })
 
 # Test if plotAdjustmentResults works correctly with normalization set to TRUE

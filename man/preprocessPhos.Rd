@@ -15,7 +15,7 @@ preprocessPhos(
   assayName = NULL,
   batch = NULL,
   scaleFactorTab = NULL,
-  impute = "QRILC",
+  impute = "none",
   verbose = FALSE
 )
 }
@@ -40,7 +40,7 @@ preprocessPhos(
 
 \item{scaleFactorTab}{Data frame containing scale factors for normalization. Default is `NULL`.}
 
-\item{impute}{Character string specifying the imputation method ("QRILC", "MLE", "bpca", "missForest", "MinDet", "none"). Default is `"QRILC"`.}
+\item{impute}{Character string specifying the imputation method ("QRILC", "MLE", "bpca", "missForest", "MinDet", "none"). Default is `"none"`.}
 
 \item{verbose}{Logical value indicating whether to print detailed information. Default is `FALSE`.}
 }

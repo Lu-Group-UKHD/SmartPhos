@@ -34,7 +34,7 @@ test_that("calcKinaseScore removes duplicate rows based on the 'site' column", {
 test_that("calcKinaseScore handles 'statType' = 'stat' correctly", {
   result <- calcKinaseScore(resTab, decoupler_network, statType = "stat")
 
-  input_values <- resTab %>% filter(site %in% decoupler_network$target) %>% pull(stat)
+  input_values <- resTab %>% filter(site %in% decoupler_network$target) %>% dplyr::pull(stat)
   expect_equal(length(result$score), length(unique(decoupler_network$source)))
 })
 
@@ -42,7 +42,7 @@ test_that("calcKinaseScore handles 'statType' = 'stat' correctly", {
 test_that("calcKinaseScore handles 'statType' = 'log2FC' correctly", {
   result <- calcKinaseScore(resTab, decoupler_network, statType = "log2FC")
 
-  input_values <- resTab %>% filter(site %in% decoupler_network$target) %>% pull(log2FC)
+  input_values <- resTab %>% filter(site %in% decoupler_network$target) %>% dplyr::pull(log2FC)
   expect_equal(length(result$score), length(unique(decoupler_network$source)))
 })
 

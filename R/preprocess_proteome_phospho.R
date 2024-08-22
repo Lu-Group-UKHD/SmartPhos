@@ -46,7 +46,7 @@ getOneSymbol <- function(Gene) {
 #' @param normalize Logical value indicating whether to normalize the data. Default is `FALSE`.
 #' @param getPP Logical value indicating whether to retrieve PP samples. Default is `FALSE`.
 #' @param removeOutlier Character vector of samples to be removed as outliers. Default is `NULL`.
-#' @param impute Character string specifying the imputation method ("QRILC", "MLE", "bpca", "missForest", "MinDet", "none"). Default is `"QRILC"`.
+#' @param impute Character string specifying the imputation method ("QRILC", "MLE", "bpca", "missForest", "MinDet", "none"). Default is `"none"`.
 #' @param batch Character vector specifying batch effects to remove. Default is `NULL`.
 #' @param verbose Logical value indicating whether to print detailed information. Default is `FALSE`.
 #' @param scaleFactorTab Data frame containing scale factors for normalization. Default is `NULL`.
@@ -70,7 +70,7 @@ getOneSymbol <- function(Gene) {
 #' @export
 preprocessProteome <- function(seData, filterList = NULL, missCut = 50,
                                transform = "log2", normalize = FALSE, getPP = FALSE,
-                               removeOutlier = NULL, impute = "QRILC", batch = NULL,
+                               removeOutlier = NULL, impute = "none", batch = NULL,
                                verbose = FALSE, scaleFactorTab = NULL) {
   
   # Retrieve desired sample type
@@ -221,7 +221,7 @@ preprocessProteome <- function(seData, filterList = NULL, missCut = 50,
 #' @param assayName Character string specifying the assay name in the SummarizedExperiment object. Default is `NULL`.
 #' @param batch Character vector specifying batch effects to remove. Default is `NULL`.
 #' @param scaleFactorTab Data frame containing scale factors for normalization. Default is `NULL`.
-#' @param impute Character string specifying the imputation method ("QRILC", "MLE", "bpca", "missForest", "MinDet", "none"). Default is `"QRILC"`.
+#' @param impute Character string specifying the imputation method ("QRILC", "MLE", "bpca", "missForest", "MinDet", "none"). Default is `"none"`.
 #' @param verbose Logical value indicating whether to print detailed information. Default is `FALSE`.
 #'
 #' @return A SummarizedExperiment object with preprocessed phosphoproteome data.
@@ -244,7 +244,7 @@ preprocessProteome <- function(seData, filterList = NULL, missCut = 50,
 preprocessPhos <- function(seData, filterList = NULL, missCut = 50,
                            transform="log2", normalize = FALSE, getFP = FALSE,
                            removeOutlier = NULL, assayName = NULL, batch = NULL,
-                           scaleFactorTab = NULL, impute = "QRILC", verbose = FALSE) {
+                           scaleFactorTab = NULL, impute = "none", verbose = FALSE) {
   
   # Retrieve the desired sample type or specified assay
   if (is.null(assayName)) {

@@ -21,7 +21,7 @@
 #' # and `geneSetCollection` is a list of gene sets
 #' # results <- runFisher(genesOfInterest, referenceGenes, geneSetCollection, ptm = FALSE)
 #'
-#' @importFrom dplyr filter group_by ungroup mutate bind_rows arrange tibble
+#' @importFrom dplyr filter group_by ungroup mutate bind_rows arrange tibble n
 #' @importFrom tidyr separate
 #' @importFrom stats fisher.test p.adjust
 #' @export
@@ -124,7 +124,7 @@ runFisher <- function (genes, reference, inputSet, ptm = FALSE) {
 #' # and `geneSetCollection` is a list or data frame of gene sets
 #' # results <- clusterEnrich(clusterTable, summarizedExp, geneSetCollection, ptm = FALSE)
 #'
-#' @importFrom dplyr filter mutate group_by summarise ungroup bind_rows arrange
+#' @importFrom dplyr filter mutate group_by summarise ungroup bind_rows arrange n
 #' @importFrom ggplot2 ggplot geom_point aes scale_fill_gradient xlab ylab theme element_text
 #' @importFrom tidyr separate
 #' @importFrom stats p.adjust
