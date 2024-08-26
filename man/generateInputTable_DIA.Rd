@@ -24,9 +24,3 @@ The function performs the following steps:
   \item Creates a combined input table with file names, types, and IDs.
 }
 }
-\examples{
-# Example usage:
-rawFolder <- "path/to/raw/files"
-inputTable <- generateInputTable_DIA(rawFolder)
-
-}

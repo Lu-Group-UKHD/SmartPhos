@@ -36,7 +36,6 @@ Imports:
     shinyBS (>= 0.61.1),
     shinyWidgets (>= 0.8.6),
     parallel (>= 4.4.1),
-    optimParallel (>= 1.0.2),
     DT (>= 0.33),
     tools (>= 4.4.1),
     stats (>= 4.4.1),

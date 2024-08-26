@@ -291,7 +291,6 @@ checkRatioMat <- function(ratioMat, minOverlap = 3) {
 #' @importFrom stats optim
 #' @importFrom parallel makeCluster setDefaultCluster stopCluster
 #' @importFrom utils combn
-#' @importFrom optimParallel optimParallel
 #' @export
 runPhosphoAdjustment <- function(maeData, normalization = FALSE, minOverlap = 3, completeness = 0, ncore = 1 ) {
   
@@ -317,10 +316,10 @@ runPhosphoAdjustment <- function(maeData, normalization = FALSE, minOverlap = 3,
   iniPar <- median(colMed) - colMed
   
   # Estimating adjusting factor
-  cl <- makeCluster(ncore)
-  setDefaultCluster(cl = cl)
-  optRes <- optimParallel(par=iniPar, fn=esFun, data=t(ratioMat))
-  stopCluster(cl)
+  #cl <- makeCluster(ncore)
+  #setDefaultCluster(cl = cl)
+  optRes <- optim(par=iniPar, fn=esFun, data=t(ratioMat))
+  #stopCluster(cl)
   
   # Add adjusting factor to sample annotation  
   adjFac[names(optRes$par)] <- optRes$par

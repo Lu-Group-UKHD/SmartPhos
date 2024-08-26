@@ -18,10 +18,6 @@
 #'   \item Creates a combined input table with file names, sample names, types, batches, and IDs.
 #' }
 #' 
-#' @examples
-#' # Example usage:
-#' rawFolder <- "path/to/raw/files"
-#' inputTable <- generateInputTable(rawFolder, batchAsFolder = TRUE)
 #' 
 #' @importFrom utils read.delim
 #' @export
@@ -90,10 +86,6 @@ generateInputTable <- function(rawFolder, batchAsFolder = FALSE) {
 #'   \item Creates a combined input table with file names, types, and IDs.
 #' }
 #' 
-#' @examples
-#' # Example usage:
-#' rawFolder <- "path/to/raw/files"
-#' inputTable <- generateInputTable_DIA(rawFolder)
 #' 
 #' @importFrom utils read.delim
 #' @export

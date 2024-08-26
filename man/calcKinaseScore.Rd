@@ -44,13 +44,15 @@ The function performs the following steps:
 \examples{
 # Example usage:
 resTab <- data.frame(
-  site = c("S1", "S2", "S3", "S4"),
-  stat = c(1.5, -2.3, 0.7, 1.2),
-  log2FC = c(0.5, -1.1, 0.3, 0.9)
+  site = c("EGFR_Y1172", "EGFR_Y1197", "EGFR_S1166", "ROCK2_S1374", "WASL_Y256", "GAB1_Y259", "ADD1_S586", "EPHA2_Y772", "PRKDC_T2638", "PRKDC_T2609", "PRKDC_S2612"),
+  stat = c(-10.038770, -5.945562, 5.773384, -7.303834, 5.585326, 5.971104, 5.199119, -5.169500, 5.130228, 5.407387, 4.493933),
+  log2FC = c(-2.6113343, -2.4858615, 1.0056629, -1.1561780, 1.6421145, 2.0296634, 1.3766283, -0.8531656, 1.0742881, 1.0042942, 1.0608129)
 )
 decoupler_network <- data.frame(
-  source = c("Kinase1", "Kinase2", "Kinase3"),
-  target = c("S1", "S2", "S4")
+  source = c(rep("ABL1", 5), rep("CDK2", 6)),
+  mor = c(rep(1, 11)),
+  target = c("EGFR_Y1172", "EGFR_Y1197", "EGFR_S1166", "ROCK2_S1374", "WASL_Y256", "GAB1_Y259", "ADD1_S586", "EPHA2_Y772", "PRKDC_T2638", "PRKDC_T2609", "PRKDC_S2612"),
+  likelihood = c(rep(1, 11))
 )
 result <- calcKinaseScore(resTab, decoupler_network, corrThreshold = 0.8, statType = "stat")
 print(result)
