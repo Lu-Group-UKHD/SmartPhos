@@ -51,8 +51,12 @@ A SummarizedExperiment object with preprocessed phosphoproteome data.
 `preprocessPhos` preprocesses phosphoproteome data stored in a SummarizedExperiment object by performing filtering, transformation, normalization, imputation, and batch effect removal.
 }
 \examples{
-# Example usage:
-# Assuming seData is a SummarizedExperiment object with appropriate data
-# processedData <- preprocessPhos(seData, filterList = list(sampleType = "Phospho"), missCut = 30, normalize = TRUE)
+# Load multiAssayExperiment object
+data("dia_example")
+# Get SummarizedExperiment object
+se <- dia_example[["Phosphoproteome"]]
+colData(se) <- colData(dia_example)
+# Call the function
+result <- preprocessPhos(seData = se, normalize = TRUE, impute = "QRILC")
 
 }

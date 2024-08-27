@@ -48,8 +48,12 @@ A SummarizedExperiment object with preprocessed proteome data.
 `preprocessProteome` preprocesses proteome data stored in a SummarizedExperiment object by performing filtering, transformation, normalization, imputation, and batch effect removal.
 }
 \examples{
-# Example usage:
-# Assuming seData is a SummarizedExperiment object with appropriate data
-# processedData <- preprocessProteome(seData, filterList = list(sampleType = "FP"), missCut = 30, normalize = TRUE)
+# Load multiAssayExperiment object
+data("dia_example")
+# Get SummarizedExperiment object
+se <- dia_example[["Proteome"]]
+colData(se) <- colData(dia_example)
+# Call the function
+result <- preprocessProteome(seData = se, normalize = TRUE, impute = "QRILC")
 
 }

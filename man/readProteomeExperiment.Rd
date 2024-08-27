@@ -33,12 +33,6 @@ A `SummarizedExperiment` object containing the processed proteomics data.
 This function processes proteomics data by filtering based on FDR, score, and peptide count, and optionally using LFQ quantification. It aggregates the data from multiple samples and constructs a SummarizedExperiment object.
 }
 \examples{
-fileTable <- data.table::data.table(
-    fileName = c("file1.txt", "file2.txt"),
-    sample = c("sample1", "sample2"),
-    id = c("ID1", "ID2"),
-    type = c("proteome", "proteome")
-)
-result <- readProteomeExperiment(fileTable, fdrCut = 0.1, scoreCut = 10, pepNumCut = 1, ifLFQ = TRUE)
+# se <- readProteomeExperiment(fileTable)
 
 }

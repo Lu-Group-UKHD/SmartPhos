@@ -30,9 +30,6 @@ The `readOneProteomDIA` function is used to read and filter the data for each in
 `readProteomeExperimentDIA` reads and processes DIA (Data-Independent Acquisition) proteome data from multiple files and constructs a `SummarizedExperiment` object.
 }
 \examples{
-# Example usage:
-fileTable <- data.frame(type = c("proteome", "proteome"),
-                        fileName = c("file1.txt", "file2.txt"),
-                        id = c("sample1", "sample2"))
-result <- readProteomeExperimentDIA(fileTable)
+# se <- readProteomeExperimentDIA(fileTable)
+
 }

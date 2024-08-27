@@ -18,9 +18,3 @@ A character vector containing the last gene symbol from each element of the inpu
 \details{
 This function processes a character vector where each element consists of gene symbols separated by semicolons. It splits each element by semicolons and extracts the last gene symbol from the resulting list. The output is a character vector of these last gene symbols.
 }
-\examples{
-gene_list <- c("GeneA;GeneB;GeneC", "GeneX;GeneY")
-getOneSymbol(gene_list)
-# Returns: "GeneC" "GeneY"
-
-}

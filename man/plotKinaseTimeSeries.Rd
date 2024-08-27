@@ -25,10 +25,10 @@ The heatmap shows kinase activity scores over different time points. Significant
 \examples{
 # Example usage:
 scoreTab <- data.frame(
-  timepoint = rep(c("0h", "1h", "2h"), each = 3),
-  source = rep(c("KinaseA", "KinaseB", "KinaseC"), times = 3),
-  score = runif(9, -2, 2),
-  p_value = runif(9, 0, 0.1)
+ timepoint = rep(c("0h", "1h", "2h"), each = 3),
+ source = rep(c("KinaseA", "KinaseB", "KinaseC"), times = 3),
+ score = runif(9, -2, 2),
+ p_value = runif(9, 0, 0.1)
 )
 p <- plotKinaseTimeSeries(scoreTab)
 print(p)

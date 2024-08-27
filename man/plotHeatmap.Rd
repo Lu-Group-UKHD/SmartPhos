@@ -13,8 +13,8 @@ plotHeatmap(
   cutRow = 1,
   clustCol = TRUE,
   clustRow = TRUE,
-  annotationCol,
-  title
+  annotationCol = NULL,
+  title = NULL
 )
 }
 \arguments{
@@ -36,7 +36,7 @@ plotHeatmap(
 
 \item{annotationCol}{A character vector specifying the columns in the metadata to use for annotation. Default is `NULL`.}
 
-\item{title}{A character string specifying the title of the heatmap.}
+\item{title}{A character string specifying the title of the heatmap. Default is `NULL`.}
 }
 \value{
 A pheatmap object showing the heatmap of Intensity data.
@@ -48,8 +48,15 @@ A pheatmap object showing the heatmap of Intensity data.
 This function creates a heatmap using the Intensity assay from a SummarizedExperiment object. The heatmap can show the top variants based on standard deviation, differentially expressed genes, or selected time series clusters. Row normalization is performed, and the heatmap can include annotations based on specified metadata columns.
 }
 \examples{
-# Assuming 'se' is a SummarizedExperiment object and 'data' is a data frame:
-heatmap <- plotHeatmap("Top variant", se, top = 50, annotationCol = "group", title = "Top Variants Heatmap")
-print(heatmap)
+# Load multiAssayExperiment object
+data("dia_example")
+# Get SummarizedExperiment object
+se <- dia_example[["Phosphoproteome"]]
+colData(se) <- colData(dia_example)
+# Generate the imputed assay
+result <- preprocessPhos(seData = se, normalize = TRUE, impute = "QRILC")
+# Plot heatmap for top variant
+plot <- plotHeatmap(type = "Top variant", top = 10, se = result, cutCol = 2)
+plot
 
 }

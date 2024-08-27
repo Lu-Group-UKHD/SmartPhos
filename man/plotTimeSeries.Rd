@@ -55,7 +55,15 @@ The function can add a zero time point if specified and handles data with and wi
 The x-axis represents time, and the y-axis represents the selected metric (normalized expression or logFC). The plot is customized with various aesthetic elements, such as point size, line type, axis labels, and title formatting.
 }
 \examples{
-# Assuming 'se' is a SummarizedExperiment object with appropriate data:
-plotTimeSeries(se, type = "expression", geneID = "gene1", symbol = "Gene 1", condition = "treatment", treatment = "A", refTreat = "B", timerange = c("0h", "1h", "2h"))
+# Load multiAssayExperiment object
+data("dda_example")
+# Get SummarizedExperiment object
+se <- dda_example[["Proteome"]]
+colData(se) <- colData(dda_example)
+# Preprocess the proteome assay
+result <- preprocessProteome(se, normalize = TRUE)
+# Plot a specific gene experssion over time
+plot <- plotTimeSeries(result, type = "expression", geneID = "p18", symbol = "TMEM238", condition = "treatment", treatment = "EGF", timerange = timerange)
+plot
 
 }

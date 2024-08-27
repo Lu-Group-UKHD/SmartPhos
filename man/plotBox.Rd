@@ -29,7 +29,17 @@ The function can handle both grouped data and repeated measures:
 The boxplot is customized with various aesthetic elements, such as box width, transparency, point size, axis labels, and title formatting.
 }
 \examples{
-# Assuming 'se' is a SummarizedExperiment object with appropriate data:
-plotBox(se, id = "gene1", symbol = "Gene 1")
+# Load multiAssayExperiment object
+data("dda_example")
+# Get SummarizedExperiment object
+se <- dda_example[["Proteome"]]
+colData(se) <- colData(dda_example)
+# Preprocess the proteome assay
+result <- preprocessProteome(se, normalize = TRUE)
+# Call the function to perform differential expression analyis
+de <- performDifferentialExp(se = result, assay = "Intensity", method = "limma", reference = "1stCrtl", target = "EGF", condition = "treatment")
+# Plot the box plot for the given id and symbol
+plot <- plotBox(de$seSub, "p99", "PPP6C")
+plot
 
 }

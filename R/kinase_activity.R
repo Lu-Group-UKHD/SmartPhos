@@ -11,12 +11,13 @@
 #' 
 #' @examples
 #' # Load the human kinase-substrate interaction network
-#' human_network <- getDecouplerNetwork("Homo sapiens")
+#' # human_network <- getDecouplerNetwork("Homo sapiens")
 #'
 #' # Load the mouse kinase-substrate interaction network
-#' mouse_network <- getDecouplerNetwork("Mus musculus")
+#' # mouse_network <- getDecouplerNetwork("Mus musculus")
 #'
 #' @importFrom utils read.table data
+#' @export
 getDecouplerNetwork <- function(speciesRef) {
   
   # load network of kinase-substrate interaction from omnipathR_kinase_network folder
@@ -56,25 +57,13 @@ getDecouplerNetwork <- function(speciesRef) {
 #'   \item Processes the results to handle `NA` values and formats the output.
 #' }
 #'
-#' @examples
-#' # Example usage:
-#' resTab <- data.frame(
-#'   site = c("EGFR_Y1172", "EGFR_Y1197", "EGFR_S1166", "ROCK2_S1374", "WASL_Y256", "GAB1_Y259", "ADD1_S586", "EPHA2_Y772", "PRKDC_T2638", "PRKDC_T2609", "PRKDC_S2612"),
-#'   stat = c(-10.038770, -5.945562, 5.773384, -7.303834, 5.585326, 5.971104, 5.199119, -5.169500, 5.130228, 5.407387, 4.493933),
-#'   log2FC = c(-2.6113343, -2.4858615, 1.0056629, -1.1561780, 1.6421145, 2.0296634, 1.3766283, -0.8531656, 1.0742881, 1.0042942, 1.0608129)
-#' )
-#' decoupler_network <- data.frame(
-#'   source = c(rep("ABL1", 5), rep("CDK2", 6)),
-#'   mor = c(rep(1, 11)),
-#'   target = c("EGFR_Y1172", "EGFR_Y1197", "EGFR_S1166", "ROCK2_S1374", "WASL_Y256", "GAB1_Y259", "ADD1_S586", "EPHA2_Y772", "PRKDC_T2638", "PRKDC_T2609", "PRKDC_S2612"),
-#'   likelihood = c(rep(1, 11))
-#' )
-#' result <- calcKinaseScore(resTab, decoupler_network, corrThreshold = 0.8, statType = "stat")
-#' print(result)
-#'
 #' @importFrom dplyr distinct filter select rename mutate
 #' @importFrom decoupleR intersect_regulons check_corr run_wmean
 #' @importFrom tibble column_to_rownames
+#' 
+#' @examples
+#' # result <- calcKinaseScore(resTab, decoupler_network, corrThreshold = 0.9, statType = "stat")
+#' 
 #' 
 #' @export
 calcKinaseScore <- function(resTab, decoupler_network, corrThreshold = 0.9, statType = "stat", nPerm = 100) {
@@ -143,13 +132,13 @@ calcKinaseScore <- function(resTab, decoupler_network, corrThreshold = 0.9, stat
 #'
 #' @examples
 #' # Example usage:
-#' scoreTab <- data.frame(
-#'   source = c("Kinase1", "Kinase2", "Kinase3", "Kinase4"),
-#'   score = c(2.3, -1.5, 0, 3.1),
-#'   p_value = c(0.01, 0.2, 0.05, 0.03)
-#' )
-#' plot <- plotKinaseDE(scoreTab, nTop = 3, pCut = 0.05)
-#' print(plot)
+#' # scoreTab <- data.frame(
+#' #  source = c("Kinase1", "Kinase2", "Kinase3", "Kinase4"),
+#' #  score = c(2.3, -1.5, 0, 3.1),
+#' #  p_value = c(0.01, 0.2, 0.05, 0.03)
+#' # )
+#' # plot <- plotKinaseDE(scoreTab, nTop = 3, pCut = 0.05)
+#' # print(plot)
 #'
 #' @importFrom dplyr mutate filter group_by slice_max
 #' @importFrom stats reorder
@@ -211,10 +200,10 @@ plotKinaseDE <- function(scoreTab, nTop = 10, pCut = 0.05) {
 #' @examples
 #' # Example usage:
 #' scoreTab <- data.frame(
-#'   timepoint = rep(c("0h", "1h", "2h"), each = 3),
-#'   source = rep(c("KinaseA", "KinaseB", "KinaseC"), times = 3),
-#'   score = runif(9, -2, 2),
-#'   p_value = runif(9, 0, 0.1)
+#'  timepoint = rep(c("0h", "1h", "2h"), each = 3),
+#'  source = rep(c("KinaseA", "KinaseB", "KinaseC"), times = 3),
+#'  score = runif(9, -2, 2),
+#'  p_value = runif(9, 0, 0.1)
 #' )
 #' p <- plotKinaseTimeSeries(scoreTab)
 #' print(p)

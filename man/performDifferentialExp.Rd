@@ -7,7 +7,7 @@
 performDifferentialExp(
   se,
   assay,
-  method,
+  method = "limma",
   condition = NULL,
   reference,
   target,
@@ -20,7 +20,7 @@ performDifferentialExp(
 
 \item{assay}{A character string specifying the assay to use for the analysis.}
 
-\item{method}{A character string specifying the method to use for differential expression analysis ('limma' or 'ProDA').}
+\item{method}{A character string specifying the method to use for differential expression analysis ('limma' or 'ProDA'). Default is "limma".}
 
 \item{condition}{A character string specifying the condition column in colData(se). Default is `NULL`.}
 
@@ -60,8 +60,15 @@ The main steps of the function are as follows:
 The function returns a list containing the formatted differential expression results and the subsetted SE object. This allows users to further explore or visualize the results as needed.
 }
 \examples{
-# Assuming 'se' is a SummarizedExperiment object with appropriate data:
-result <- performDifferentialExp(se, assay = "counts", method = "limma", condition = "group", reference = "control", target = "treatment")
-result$resDE
+# Load multiAssayExperiment object
+data("dda_example")
+# Get SummarizedExperiment object
+se <- dda_example[["Proteome"]]
+colData(se) <- colData(dda_example)
+# Preprocess the proteome assay
+result <- preprocessProteome(se, normalize = TRUE)
+# Call the function to perform differential expression analyis
+de <- performDifferentialExp(se = result, assay = "Intensity", method = "limma", reference = "1stCrtl", target = "EGF", condition = "treatment")
+print(de)
 
 }

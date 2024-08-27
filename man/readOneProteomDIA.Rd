@@ -21,11 +21,6 @@ A data.table containing the processed data with columns for intensity, UniProt I
 This function processes DIA proteomics data for a single sample by filtering out rows with non-quantitative data, converting character values to numeric, and renaming columns for consistency. It also ensures that each protein group has a unique identifier.
 }
 \examples{
-inputTab <- data.table::data.table(
-    PG.Quantity.Sample1 = c("1000", "Filtered", "2000"),
-    PG.ProteinGroups = c("P1", "P2", "P3"),
-    PG.Genes = c("Gene1", "Gene2", "Gene3")
-)
-result <- readOneProteomDIA(inputTab, "Sample1")
+# result <- readOneProteomDIA(inputTab, sampleName)
 
 }

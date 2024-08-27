@@ -7,7 +7,7 @@
 #'
 #' @param se A SummarizedExperiment object containing the data.
 #' @param assay A character string specifying the assay to use for the analysis.
-#' @param method A character string specifying the method to use for differential expression analysis ('limma' or 'ProDA').
+#' @param method A character string specifying the method to use for differential expression analysis ('limma' or 'ProDA'). Default is "limma".
 #' @param condition A character string specifying the condition column in colData(se). Default is `NULL`.
 #' @param reference A character string or vector specifying the reference group.
 #' @param target A character string or vector specifying the target group.
@@ -43,13 +43,21 @@
 #' @importFrom tibble as_tibble
 #' @importFrom SummarizedExperiment assays colData
 #' @importFrom stats model.matrix
+#' 
 #' @examples
-#' # Assuming 'se' is a SummarizedExperiment object with appropriate data:
-#' result <- performDifferentialExp(se, assay = "counts", method = "limma", condition = "group", reference = "control", target = "treatment")
-#' result$resDE
+#' # Load multiAssayExperiment object
+#' data("dda_example")
+#' # Get SummarizedExperiment object
+#' se <- dda_example[["Proteome"]]
+#' colData(se) <- colData(dda_example)
+#' # Preprocess the proteome assay
+#' result <- preprocessProteome(se, normalize = TRUE)
+#' # Call the function to perform differential expression analyis
+#' de <- performDifferentialExp(se = result, assay = "Intensity", method = "limma", reference = "1stCrtl", target = "EGF", condition = "treatment")
+#' print(de)
 #'
 #' @export
-performDifferentialExp <- function(se, assay, method, condition = NULL, reference, target, refTime = NULL, targetTime = NULL) {
+performDifferentialExp <- function(se, assay, method = "limma", condition = NULL, reference, target, refTime = NULL, targetTime = NULL) {
   
   # Stop if method is other than limma or proDA
   if (!(method %in% c("limma", "ProDA"))) stop("Invalid method!! Provide either limma or ProDA")
@@ -150,10 +158,20 @@ performDifferentialExp <- function(se, assay, method, condition = NULL, referenc
 #'
 #' @importFrom ggplot2 ggplot aes geom_vline geom_hline geom_point annotate scale_color_manual xlab ggtitle theme
 #' @importFrom dplyr mutate case_when
+#' 
 #' @examples
-#' # Assuming 'tableDE' is a data frame containing differential expression results:
-#' volcanoPlot <- plotVolcano(tableDE, pFilter = 0.05, fcFilter = 0.5)
-#' print(volcanoPlot)
+#' # Load multiAssayExperiment object
+#' data("dda_example")
+#' # Get SummarizedExperiment object
+#' se <- dda_example[["Proteome"]]
+#' colData(se) <- colData(dda_example)
+#' # Preprocess the proteome assay
+#' result <- preprocessProteome(se, normalize = TRUE)
+#' # Call the function to perform differential expression analyis
+#' de <- performDifferentialExp(se = result, assay = "Intensity", method = "limma", reference = "1stCrtl", target = "EGF", condition = "treatment")
+#' # Plot the volcano plot from the result
+#' plot <- plotVolcano(de$resDE)
+#' plot
 #'
 #' @export
 plotVolcano <- function(tableDE, pFilter = 0.05, fcFilter = 0.5) {
@@ -219,9 +237,20 @@ plotVolcano <- function(tableDE, pFilter = 0.05, fcFilter = 0.5) {
 #'
 #' @importFrom ggplot2 ggplot aes geom_boxplot geom_point geom_line ylab xlab ggtitle theme_bw theme element_text
 #' @importFrom SummarizedExperiment assays
+#' 
 #' @examples
-#' # Assuming 'se' is a SummarizedExperiment object with appropriate data:
-#' plotBox(se, id = "gene1", symbol = "Gene 1")
+#' # Load multiAssayExperiment object
+#' data("dda_example")
+#' # Get SummarizedExperiment object
+#' se <- dda_example[["Proteome"]]
+#' colData(se) <- colData(dda_example)
+#' # Preprocess the proteome assay
+#' result <- preprocessProteome(se, normalize = TRUE)
+#' # Call the function to perform differential expression analyis
+#' de <- performDifferentialExp(se = result, assay = "Intensity", method = "limma", reference = "1stCrtl", target = "EGF", condition = "treatment")
+#' # Plot the box plot for the given id and symbol
+#' plot <- plotBox(de$seSub, "p99", "PPP6C")
+#' plot
 #'
 #' @export
 plotBox <- function(se, id, symbol) {

@@ -15,11 +15,17 @@
 #' @importFrom SummarizedExperiment assay
 #' @importFrom ggplot2 ggplot aes geom_bar ggtitle ylab theme element_text
 #' @importFrom tibble tibble
+#' 
 #' @examples
-#' # Assuming 'se' is a SummarizedExperiment object:
+#' # Load multiAssayExperiment object
+#' data("dda_example")
+#' # Get SummarizedExperiment object
+#' se <- dda_example[["Phosphoproteome"]]
+#' colData(se) <- colData(dda_example)
+#' # Call the function
 #' plot <- plotMissing(se)
-#' print(plot)
-#'
+#' plot
+#' 
 #' @export
 plotMissing <- function(se) {
   
@@ -59,10 +65,18 @@ plotMissing <- function(se) {
 #' @importFrom dplyr filter left_join
 #' @importFrom tidyr pivot_longer
 #' @importFrom tibble as_tibble
+#' 
 #' @examples
-#' # Assuming 'se' is a SummarizedExperiment object:
-#' plot <- plotIntensity(se, color = "group")
-#' print(plot)
+#' # Load multiAssayExperiment object
+#' data("dia_example")
+#' # Get SummarizedExperiment object
+#' se <- dia_example[["Phosphoproteome"]]
+#' colData(se) <- colData(dia_example)
+#' # Preprocess the phosphoproteome assay
+#' result <- preprocessPhos(seData = se, normalize = TRUE, impute = "QRILC")
+#' # Call the plotting function
+#' plot <- plotIntensity(result, color = "replicate")
+#' plot
 #'
 #' @export
 plotIntensity <- function(se, color = "none") {
@@ -121,10 +135,20 @@ plotIntensity <- function(se, color = "none") {
 #' @importFrom dplyr left_join
 #' @importFrom tibble rownames_to_column
 #' @importFrom rlang sym
+#' 
 #' @examples
-#' # Assuming 'pca' is a PCA result object and 'se' is a SummarizedExperiment object:
-#' plot <- plotPCA(pca, se, xaxis = "PC1", yaxis = "PC2", color = "group", shape = "type")
-#' print(plot)
+#' # Load multiAssayExperiment object
+#' data("dia_example")
+#' # Get SummarizedExperiment object
+#' se <- dia_example[["Phosphoproteome"]]
+#' colData(se) <- colData(dia_example)
+#' # Generate the imputed assay
+#' result <- preprocessPhos(seData = se, normalize = TRUE, impute = "QRILC")
+#' # Perform PCA
+#' pca <- prcomp(t(assays(result)[["imputed"]]), center = TRUE, scale.=TRUE)
+#' # Plot PCA results
+#' plot <- plotPCA(pca = pca, se = result, color = "treatment")
+#' plot
 #'
 #' @export
 plotPCA <- function(pca, se, xaxis = "PC1", yaxis = "PC2", color = "none", shape = "none") {
@@ -183,7 +207,7 @@ plotPCA <- function(pca, se, xaxis = "PC1", yaxis = "PC2", color = "none", shape
 #' @param clustCol A logical value indicating whether to cluster columns. Default is `TRUE`.
 #' @param clustRow A logical value indicating whether to cluster rows. Default is `TRUE`.
 #' @param annotationCol A character vector specifying the columns in the metadata to use for annotation. Default is `NULL`.
-#' @param title A character string specifying the title of the heatmap.
+#' @param title A character string specifying the title of the heatmap. Default is `NULL`.
 #'
 #' @return A pheatmap object showing the heatmap of Intensity data.
 #'
@@ -197,13 +221,21 @@ plotPCA <- function(pca, se, xaxis = "PC1", yaxis = "PC2", color = "none", shape
 #' @importFrom tibble rownames_to_column
 #' @importFrom grDevices colorRampPalette
 #' @importFrom rlang sym
+#' 
 #' @examples
-#' # Assuming 'se' is a SummarizedExperiment object and 'data' is a data frame:
-#' heatmap <- plotHeatmap("Top variant", se, top = 50, annotationCol = "group", title = "Top Variants Heatmap")
-#' print(heatmap)
+#' # Load multiAssayExperiment object
+#' data("dia_example")
+#' # Get SummarizedExperiment object
+#' se <- dia_example[["Phosphoproteome"]]
+#' colData(se) <- colData(dia_example)
+#' # Generate the imputed assay
+#' result <- preprocessPhos(seData = se, normalize = TRUE, impute = "QRILC")
+#' # Plot heatmap for top variant
+#' plot <- plotHeatmap(type = "Top variant", top = 10, se = result, cutCol = 2)
+#' plot
 #'
 #' @export
-plotHeatmap <- function(type, se, data = NULL, top = 100, cutCol = 1, cutRow = 1, clustCol = TRUE, clustRow = TRUE, annotationCol, title) {
+plotHeatmap <- function(type, se, data = NULL, top = 100, cutCol = 1, cutRow = 1, clustCol = TRUE, clustRow = TRUE, annotationCol = NULL, title = NULL) {
   
   # Select the appropriate intensity assay and gene IDs based on the type of heatmap
   if (type == "Top variant") {
@@ -239,6 +271,9 @@ plotHeatmap <- function(type, se, data = NULL, top = 100, cutCol = 1, cutRow = 1
   cd <- as.data.frame(colData(se))
   annCol <- cd[row.names(cd) %in% colnames(exprMat),][c(annotationCol)]
   row.names(annCol) <- colnames(exprMat)
+  
+  # Prepare the title of heatmap if Null
+  if (is.null(title)) title = type
   
   # Prepare color scale for the heatmap
   color <- colorRampPalette(c("navy", "white", "firebrick"))(100)

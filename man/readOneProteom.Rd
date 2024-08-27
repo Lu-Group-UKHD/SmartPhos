@@ -26,12 +26,12 @@ This function processes proteomics data for a single sample by filtering based o
 }
 \examples{
 inputTab <- data.table::data.table(
-    Intensity.sample1 = c(100, 200, NA, 50),
-    LFQ.intensity.sample1 = c(90, 180, NA, 45),
-    Razor...unique.peptides.sample1 = c(2, 1, 0, 3),
-    Protein.IDs = c("P1", "P2", "P3", "P4"),
-    Peptide.counts..all. = c(2, 1, 0, 3),
-    Gene.names = c("Gene1", "Gene2", "Gene3", "Gene4")
+     Intensity.sample1 = c(100, 200, NA, 50),
+     LFQ.intensity.sample1 = c(90, 180, NA, 45),
+     Razor...unique.peptides.sample1 = c(2, 1, 0, 3),
+     Protein.IDs = c("P1", "P2", "P3", "P4"),
+     Peptide.counts..all. = c(2, 1, 0, 3),
+     Gene.names = c("Gene1", "Gene2", "Gene3", "Gene4")
 )
 result <- readOneProteom(inputTab, sampleName = "sample1", pepNumCut = 1, ifLFQ = TRUE)
 

@@ -4,12 +4,12 @@
 \alias{clusterTS}
 \title{Perform Clustering on Time-Series Data}
 \usage{
-clusterTS(x, k, pCut = NULL, twoCondition = FALSE)
+clusterTS(x, k = 5, pCut = NULL, twoCondition = FALSE)
 }
 \arguments{
 \item{x}{A numeric matrix with rows as features and columns as time points.}
 
-\item{k}{An integer specifying the number of clusters.}
+\item{k}{An integer specifying the number of clusters. Default is 5.}
 
 \item{pCut}{A numeric value specifying the probability cutoff for cluster membership. Default is `NULL`.}
 

@@ -21,7 +21,7 @@
 #' @examples
 #' # Example usage:
 #' x <- matrix(rnorm(20), nrow=5, ncol=4)
-#' normalized_x <- medianNorm(x, method = "median")
+#' normalized_x <- medianNorm(x, method = "median") 
 #' print(normalized_x)
 #'
 #' @importFrom matrixStats colMedians
@@ -65,10 +65,10 @@ medianNorm <- function(x, method = "median") {
 #' }
 #'
 #' @examples
-#' # Example usage:
-#' # Assuming maeData is a MultiAssayExperiment object with appropriate data
-#' # normalized_data <- performCombinedNormalization(maeData)
-#' # print(normalized_data)
+#' # Load multiAssayExperiment object
+#' data("dia_example")
+#' normalized_data <- performCombinedNormalization(dia_example)
+#' print(normalized_data)
 #'
 #' @importFrom MultiAssayExperiment assay
 #' @export

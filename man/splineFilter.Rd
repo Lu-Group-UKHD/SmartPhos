@@ -49,8 +49,16 @@ The function performs the following steps:
 }
 }
 \examples{
-# Example usage:
-# Assuming exprMat is a numeric matrix with expression data
-# filteredMat <- splineFilter(exprMat, time = timeVec, df = 4, pCut = 0.05, ifFDR = TRUE)
+# Load multiAssayExperiment object
+data("dda_example")
+# Get SummarizedExperiment object
+se <- dda_example[["Proteome"]]
+colData(se) <- colData(dda_example)
+# Preprocess the proteome assay
+result <- preprocessProteome(se, normalize = TRUE)
+# Subset the result
+resultSub <- result[, result$treatment == "EGF"]
+# Perform clustering
+clusterResult <- clusterTS(assay(resultSub), 5)
 
 }

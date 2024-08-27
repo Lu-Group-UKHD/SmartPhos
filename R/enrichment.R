@@ -204,15 +204,10 @@ clusterEnrich <- function(clusterTab, se, inputSet, reference = NULL, ptm = FALS
 #'
 #' @details
 #' This function runs GSEA on phosphorylation data to identify enriched PTM sets. It calculates enrichment scores and p-values for each set, normalizes the scores, and adjusts p-values for multiple testing.
-#' 
-#' @examples
-#' # Example usage:
-#' geneStat <- data.frame(stat = runif(100, -2, 2))
-#' row.names(geneStat) <- paste0("Gene", 1:100)
-#' ptmSetDb <- data.frame(signature = sample(letters, 100, replace = TRUE), category = "example", site.ptm = "p", site.direction = sample(c("u", "d"), 100, replace = TRUE))
-#' result <- runGSEAforPhospho(geneStat, ptmSetDb, nPerm = 1000)
-#' print(result)
 #'
+#' @examples
+#' # result <- runGSEAforPhospho(geneStat, ptmSetDb, nPerm, weight = 1, correl.type = "rank", statistic = "Kolmogorov-Smirnov", min.overlap = 5)
+#' 
 #' @importFrom dplyr mutate rename filter count tibble as_tibble group_by ungroup arrange bind_rows
 #' @importFrom tidyr separate
 #' @importFrom stats p.adjust

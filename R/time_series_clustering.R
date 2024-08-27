@@ -140,7 +140,7 @@ addZeroTime <- function(data, condition, treat, zeroTreat, timeRange) {
 #' `clusterTS` performs clustering on time-series data and generates plots for visualization.
 #'
 #' @param x A numeric matrix with rows as features and columns as time points.
-#' @param k An integer specifying the number of clusters.
+#' @param k An integer specifying the number of clusters. Default is 5.
 #' @param pCut A numeric value specifying the probability cutoff for cluster membership. Default is `NULL`.
 #' @param twoCondition A logical value indicating if the data contains two conditions. Default is `FALSE`.
 #'
@@ -172,7 +172,7 @@ addZeroTime <- function(data, condition, treat, zeroTreat, timeRange) {
 #' @importFrom magrittr %>%
 #' @importFrom Biobase rowMax
 #' @export
-clusterTS <- function(x, k, pCut = NULL, twoCondition = FALSE) {
+clusterTS <- function(x, k = 5, pCut = NULL, twoCondition = FALSE) {
   
   options(warn=-1)
   
@@ -325,9 +325,17 @@ clusterTS <- function(x, k, pCut = NULL, twoCondition = FALSE) {
 #' }
 #'
 #' @examples
-#' # Example usage:
-#' # Assuming exprMat is a numeric matrix with expression data
-#' # filteredMat <- splineFilter(exprMat, time = timeVec, df = 4, pCut = 0.05, ifFDR = TRUE)
+#' # Load multiAssayExperiment object
+#' data("dda_example")
+#' # Get SummarizedExperiment object
+#' se <- dda_example[["Proteome"]]
+#' colData(se) <- colData(dda_example)
+#' # Preprocess the proteome assay
+#' result <- preprocessProteome(se, normalize = TRUE)
+#' # Subset the result
+#' resultSub <- result[, result$treatment == "EGF"]
+#' # Perform clustering
+#' clusterResult <- clusterTS(assay(resultSub), 5)
 #'
 #' @importFrom limma lmFit eBayes topTable
 #' @importFrom splines ns
@@ -442,9 +450,18 @@ splineFilter <- function(exprMat, subjectID = NULL, time, df, pCut = 0.5, ifFDR 
 #' @importFrom SummarizedExperiment assays
 #' @importFrom dplyr %>% bind_cols filter
 #' @importFrom stringr str_extract
+#' 
 #' @examples
-#' # Assuming 'se' is a SummarizedExperiment object with appropriate data:
-#' plotTimeSeries(se, type = "expression", geneID = "gene1", symbol = "Gene 1", condition = "treatment", treatment = "A", refTreat = "B", timerange = c("0h", "1h", "2h"))
+#' # Load multiAssayExperiment object
+#' data("dda_example")
+#' # Get SummarizedExperiment object
+#' se <- dda_example[["Proteome"]]
+#' colData(se) <- colData(dda_example)
+#' # Preprocess the proteome assay
+#' result <- preprocessProteome(se, normalize = TRUE)
+#' # Plot a specific gene experssion over time
+#' plot <- plotTimeSeries(result, type = "expression", geneID = "p18", symbol = "TMEM238", condition = "treatment", treatment = "EGF", timerange = timerange)
+#' plot
 #'
 #' @export
 plotTimeSeries <- function(se, type, geneID, symbol, condition, treatment, refTreat, addZero = FALSE, zeroTreat = NULL, timerange) {

@@ -23,7 +23,7 @@ A `SummarizedExperiment` object containing the processed phosphorylation data.
 This function reads phosphorylation data from multiple files as specified in `fileTable`, filters the data based on localization probability and score difference, and removes reverse and potential contaminant entries. It constructs an intensity matrix and annotation data, which are then used to create a `SummarizedExperiment` object.
 }
 \examples{
-fileTable <- data.table::fread("file_information.csv")
-ppe <- readPhosphoExperiment(fileTable, localProbCut = 0.75, scoreDiffCut = 5)
+# fileTable <- data.table::fread("file_information.csv")
+# ppe <- readPhosphoExperiment(fileTable, localProbCut = 0.75, scoreDiffCut = 5)
 
 }

@@ -13,11 +13,6 @@
 #' This function processes a character vector where each element consists of gene symbols separated by semicolons. It splits each element by semicolons and extracts the last gene symbol from the resulting list. The output is a character vector of these last gene symbols.
 #'
 #' @importFrom stringr str_split
-#' @examples
-#' gene_list <- c("GeneA;GeneB;GeneC", "GeneX;GeneY")
-#' getOneSymbol(gene_list)
-#' # Returns: "GeneC" "GeneY"
-#' 
 getOneSymbol <- function(Gene) {
   # Apply a function to each element in the Gene vector
   outStr <- sapply(Gene, function(x) {
@@ -54,10 +49,14 @@ getOneSymbol <- function(Gene) {
 #' @return A SummarizedExperiment object with preprocessed proteome data.
 #'
 #' @examples
-#' # Example usage:
-#' # Assuming seData is a SummarizedExperiment object with appropriate data
-#' # processedData <- preprocessProteome(seData, filterList = list(sampleType = "FP"), missCut = 30, normalize = TRUE)
-#'
+#' # Load multiAssayExperiment object
+#' data("dia_example")
+#' # Get SummarizedExperiment object
+#' se <- dia_example[["Proteome"]]
+#' colData(se) <- colData(dia_example)
+#' # Call the function
+#' result <- preprocessProteome(seData = se, normalize = TRUE, impute = "QRILC")
+#' 
 #' @importFrom SummarizedExperiment colData rowData assay assays
 #' @importFrom dplyr filter mutate
 #' @importFrom tidyr pivot_longer
@@ -227,9 +226,13 @@ preprocessProteome <- function(seData, filterList = NULL, missCut = 50,
 #' @return A SummarizedExperiment object with preprocessed phosphoproteome data.
 #'
 #' @examples
-#' # Example usage:
-#' # Assuming seData is a SummarizedExperiment object with appropriate data
-#' # processedData <- preprocessPhos(seData, filterList = list(sampleType = "Phospho"), missCut = 30, normalize = TRUE)
+#' # Load multiAssayExperiment object
+#' data("dia_example")
+#' # Get SummarizedExperiment object
+#' se <- dia_example[["Phosphoproteome"]]
+#' colData(se) <- colData(dia_example)
+#' # Call the function
+#' result <- preprocessPhos(seData = se, normalize = TRUE, impute = "QRILC")
 #'
 #' @importFrom SummarizedExperiment colData rowData assay assays
 #' @importFrom dplyr filter mutate
