@@ -7,15 +7,15 @@
 generateInputTable(rawFolder, batchAsFolder = FALSE)
 }
 \arguments{
-\item{rawFolder}{A character string specifying the path to the folder containing the raw files.}
+\item{rawFolder}{A \code{character} string specifying the path to the folder containing the raw files.}
 
-\item{batchAsFolder}{A logical value indicating whether to treat subdirectories as separate batches. Default is `FALSE`.}
+\item{batchAsFolder}{A \code{logical} value indicating whether to treat subdirectories as separate batches. Default is \code{FALSE}.}
 }
 \value{
-A data.frame with columns `fileName`, `sample`, `type`, `batch`, and `id` that can be used as input for further analysis.
+A \code{data.frame} with columns fileName, sample, type, batch, and id that can be used as input for further analysis.
 }
 \description{
-`generateInputTable` generates an input table for proteomic and phosphoproteomic analysis by reading files from a specified folder.
+\code{generateInputTable} generates an input table for proteomic and phosphoproteomic analysis by reading files from a specified folder.
 }
 \details{
 The function performs the following steps:

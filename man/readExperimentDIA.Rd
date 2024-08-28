@@ -13,31 +13,31 @@ readExperimentDIA(
 )
 }
 \arguments{
-\item{fileTable}{A data frame containing metadata about the files to be read. Must contain columns `type`, `fileName`, `id`, and optionally `outputID`.}
+\item{fileTable}{A \code{data frame} containing metadata about the files to be read. Must contain columns type, fileName, id, and optionally outputID.}
 
-\item{localProbCut}{Numeric, the local probability cutoff for phosphoproteomic data. Default is `0.75`.}
+\item{localProbCut}{\code{Numeric}, the local probability cutoff for phosphoproteomic data. Default is 0.75.}
 
-\item{annotation_col}{A character vector specifying the columns in `fileTable` to be used for sample annotation.}
+\item{annotation_col}{A \code{character} vector specifying the columns in fileTable to be used for sample annotation.}
 
-\item{onlyReviewed}{A logical value indicating whether to include only reviewed proteins. Default is `TRUE`.}
+\item{onlyReviewed}{A \code{logical} value indicating whether to include only reviewed proteins. Default is \code{TRUE}.}
 
-\item{normalizeByProtein}{Logical, whether to normalize the data by protein. Default is `FALSE`.}
+\item{normalizeByProtein}{\code{Logical}, whether to normalize the data by protein. Default is \code{FALSE}.}
 }
 \value{
-A `MultiAssayExperiment` object containing the processed phosphoproteome and proteome data.
+A \code{MultiAssayExperiment} object containing the processed phosphoproteome and proteome data.
 }
 \description{
-`readExperimentDIA` reads and processes DIA (Data-Independent Acquisition) data for both phosphoproteome and proteome experiments, and constructs a `MultiAssayExperiment` object.
+\code{readExperimentDIA} reads and processes DIA (Data-Independent Acquisition) data for both phosphoproteome and proteome experiments, and constructs a \code{MultiAssayExperiment} object.
 }
 \details{
 The function performs the following steps:
 \itemize{
-  \item Reads and processes phosphoproteomic data using `readPhosphoExperimentDIA`.
-  \item Reads and processes proteomic data using `readProteomeExperimentDIA`.
-  \item Prepares sample annotations based on the provided `fileTable` and `annotation_col`.
-  \item Constructs a `MultiAssayExperiment` object with the processed data and sample annotations.
+  \item Reads and processes phosphoproteomic data using \code{readPhosphoExperimentDIA}.
+  \item Reads and processes proteomic data using \code{readProteomeExperimentDIA}.
+  \item Prepares sample annotations based on the provided fileTable and annotation_col.
+  \item Constructs a \code{MultiAssayExperiment} object with the processed data and sample annotations.
 }
-The `readPhosphoExperimentDIA` and `readProteomeExperimentDIA` functions are used to read and filter the data for phosphoproteome and proteome experiments, respectively, and they must be available in the environment.
+The \code{readPhosphoExperimentDIA} and \code{readProteomeExperimentDIA} functions are used to read and filter the data for phosphoproteome and proteome experiments, respectively, and they must be available in the environment.
 }
 \examples{
 # Example usage:

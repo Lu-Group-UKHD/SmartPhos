@@ -7,15 +7,15 @@
 plotIntensity(se, color = "none")
 }
 \arguments{
-\item{se}{A SummarizedExperiment object containing the assay data and metadata.}
+\item{se}{A \code{SummarizedExperiment} object containing the assay data and metadata.}
 
-\item{color}{A character string specifying the metadata column to use for coloring the boxplots. Default is "none".}
+\item{color}{A \code{character} string specifying the metadata column to use for coloring the boxplots. Default is "none".}
 }
 \value{
-A ggplot object showing boxplots of intensities for each sample.
+A \code{ggplot} object showing boxplots of intensities for each sample.
 }
 \description{
-`plotIntensity` generates boxplots of assay intensities for each sample in a SummarizedExperiment object. Optionally, the boxplots can be colored based on a specified metadata column. The function handles missing values by filtering them out before plotting.
+\code{plotIntensity} generates boxplots of assay intensities for each sample in a \code{SummarizedExperiment} object. Optionally, the boxplots can be colored based on a specified metadata column. The function handles missing values by filtering them out before plotting.
 }
 \examples{
 # Load multiAssayExperiment object

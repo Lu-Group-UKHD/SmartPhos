@@ -7,13 +7,13 @@
 generateInputTable_DIA(rawFolder)
 }
 \arguments{
-\item{rawFolder}{A character string specifying the path to the folder containing the raw files.}
+\item{rawFolder}{A \code{character} string specifying the path to the folder containing the raw files.}
 }
 \value{
-A data.frame with columns `fileName`, `type`, and `id` that can be used as input for further analysis.
+A \code{data.frame} with columns fileName, type, and id that can be used as input for further analysis.
 }
 \description{
-`generateInputTable_DIA` generates an input table for DIA analysis by reading files from a specified folder.
+\code{generateInputTable_DIA} generates an input table for DIA analysis by reading files from a specified folder.
 }
 \details{
 The function performs the following steps:

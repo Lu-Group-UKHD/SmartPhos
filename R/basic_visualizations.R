@@ -3,14 +3,14 @@
 #' @title Plot Missing Data Completeness
 #'
 #' @description 
-#' `plotMissing` generates a bar plot showing the completeness (percentage of non-missing values) for each sample in a SummarizedExperiment object.
+#' \code{plotMissing} generates a bar plot showing the completeness (percentage of non-missing values) for each sample in a \code{SummarizedExperiment} object.
 #'
-#' @param se A SummarizedExperiment object containing the assay data.
+#' @param se A \code{SummarizedExperiment} object containing the assay data.
 #'
-#' @return A ggplot object showing the percentage of completeness for each sample.
+#' @return A \code{ggplot} object showing the percentage of completeness for each sample.
 #'
 #' @details
-#' This function calculates the percentage of non-missing values for each sample in the provided SummarizedExperiment object. It then generates a bar plot where each bar represents a sample, and the height of the bar corresponds to the completeness (percentage of non-missing values) of that sample.
+#' This function calculates the percentage of non-missing values for each sample in the provided \code{SummarizedExperiment} object. It then generates a bar plot where each bar represents a sample, and the height of the bar corresponds to the completeness (percentage of non-missing values) of that sample.
 #'
 #' @importFrom SummarizedExperiment assay
 #' @importFrom ggplot2 ggplot aes geom_bar ggtitle ylab theme element_text
@@ -53,12 +53,12 @@ plotMissing <- function(se) {
 #' @title Plot Intensity Boxplots
 #'
 #' @description
-#' `plotIntensity` generates boxplots of assay intensities for each sample in a SummarizedExperiment object. Optionally, the boxplots can be colored based on a specified metadata column. The function handles missing values by filtering them out before plotting.
+#' \code{plotIntensity} generates boxplots of assay intensities for each sample in a \code{SummarizedExperiment} object. Optionally, the boxplots can be colored based on a specified metadata column. The function handles missing values by filtering them out before plotting.
 #'
-#' @param se A SummarizedExperiment object containing the assay data and metadata.
-#' @param color A character string specifying the metadata column to use for coloring the boxplots. Default is "none".
+#' @param se A \code{SummarizedExperiment} object containing the assay data and metadata.
+#' @param color A \code{character} string specifying the metadata column to use for coloring the boxplots. Default is "none".
 #'
-#' @return A ggplot object showing boxplots of intensities for each sample.
+#' @return A \code{ggplot} object showing boxplots of intensities for each sample.
 #'
 #' @importFrom SummarizedExperiment assay colData
 #' @importFrom ggplot2 ggplot aes geom_boxplot ggtitle theme element_text
@@ -116,19 +116,19 @@ plotIntensity <- function(se, color = "none") {
 #' @title Plot PCA
 #'
 #' @description
-#' `plotPCA` generates a PCA plot using the results from a PCA analysis and a SummarizedExperiment object. The points on the plot can be colored and shaped based on metadata.
+#' \code{plotPCA} generates a PCA plot using the results from a PCA analysis and a \code{SummarizedExperiment} object. The points on the plot can be colored and shaped based on metadata.
 #'
 #' @param pca A PCA result object, typically obtained from \code{prcomp}.
-#' @param se A SummarizedExperiment object containing the metadata.
-#' @param xaxis A character string specifying which principal component to use for the x-axis. Default is `"PC1"`.
-#' @param yaxis A character string specifying which principal component to use for the y-axis. Default is `"PC2"`.
-#' @param color A character string specifying the metadata column to use for coloring the points. Default is `"none"`.
-#' @param shape A character string specifying the metadata column to use for shaping the points. Default is `"none"`.
+#' @param se A \code{SummarizedExperiment} object containing the metadata.
+#' @param xaxis A \code{character} string specifying which principal component to use for the x-axis. Default is "PC1".
+#' @param yaxis A \code{character} string specifying which principal component to use for the y-axis. Default is "PC2".
+#' @param color A \code{character} string specifying the metadata column to use for coloring the points. Default is "none".
+#' @param shape A \code{character} string specifying the metadata column to use for shaping the points. Default is "none".
 #'
-#' @return A ggplot object showing the PCA plot.
+#' @return A \code{ggplot} object showing the PCA plot.
 #'
 #' @details
-#' This function creates a PCA plot using the scores from a PCA result object and metadata from a SummarizedExperiment object. The x-axis and y-axis can be customized to display different principal components, and the points can be optionally colored and shaped based on specified metadata columns.
+#' This function creates a PCA plot using the scores from a PCA result object and metadata from a \code{SummarizedExperiment} object. The x-axis and y-axis can be customized to display different principal components, and the points can be optionally colored and shaped based on specified metadata columns.
 #'
 #' @importFrom SummarizedExperiment colData
 #' @importFrom ggplot2 ggplot aes geom_point theme_bw theme labs scale_shape
@@ -196,23 +196,23 @@ plotPCA <- function(pca, se, xaxis = "PC1", yaxis = "PC2", color = "none", shape
 #' @title Plot Heatmap of Intensity assay
 #'
 #' @description
-#' `plotHeatmap` generates a heatmap for intensity assay for different conditions, including top variants, differentially expressed genes, and selected time series clusters.
+#' \code{plotHeatmap} generates a heatmap for intensity assay for different conditions, including top variants, differentially expressed genes, and selected time series clusters.
 #'
-#' @param type A character string specifying the type of heatmap to plot. Options are `"Top variant"`, `"Differentially expressed"`, and `"Selected time series cluster"`.
-#' @param se A SummarizedExperiment object containing the imputed intensity assay.
-#' @param data An optional data frame containing additional data for `"Differentially expressed"` and `"Selected time series cluster"` types. Default is `NULL`.
-#' @param top An integer specifying the number of top variants to plot. Default is `100`.
-#' @param cutCol An integer specifying the number of clusters for columns. Default is `1`.
-#' @param cutRow An integer specifying the number of clusters for rows. Default is `1`.
-#' @param clustCol A logical value indicating whether to cluster columns. Default is `TRUE`.
-#' @param clustRow A logical value indicating whether to cluster rows. Default is `TRUE`.
-#' @param annotationCol A character vector specifying the columns in the metadata to use for annotation. Default is `NULL`.
-#' @param title A character string specifying the title of the heatmap. Default is `NULL`.
+#' @param type A \code{character} string specifying the type of heatmap to plot. Options are "Top variant", "Differentially expressed", and "Selected time series cluster".
+#' @param se A \code{SummarizedExperiment} object containing the imputed intensity assay.
+#' @param data An optional \code{data frame} containing additional data for "Differentially expressed" and "Selected time series cluster" types. Default is \code{NULL}.
+#' @param top A \code{numeric} value specifying the number of top variants to plot. Default is 100.
+#' @param cutCol A \code{numeric} value specifying the number of clusters for columns. Default is 1.
+#' @param cutRow A \code{numeric} value specifying the number of clusters for rows. Default is 1.
+#' @param clustCol A \code{logical} value indicating whether to cluster columns. Default is \code{TRUE}.
+#' @param clustRow A \code{logical} value indicating whether to cluster rows. Default is \code{TRUE}.
+#' @param annotationCol A \code{character} vector specifying the columns in the metadata to use for annotation. Default is \code{NULL}.
+#' @param title A \code{character} string specifying the title of the heatmap. Default is \code{NULL}.
 #'
 #' @return A pheatmap object showing the heatmap of Intensity data.
 #'
 #' @details
-#' This function creates a heatmap using the Intensity assay from a SummarizedExperiment object. The heatmap can show the top variants based on standard deviation, differentially expressed genes, or selected time series clusters. Row normalization is performed, and the heatmap can include annotations based on specified metadata columns.
+#' This function creates a heatmap using the Intensity assay from a \code{SummarizedExperiment} object. The heatmap can show the top variants based on standard deviation, differentially expressed genes, or selected time series clusters. Row normalization is performed, and the heatmap can include annotations based on specified metadata columns.
 #'
 #' @importFrom SummarizedExperiment assays colData rowData
 #' @importFrom ggplot2 ggplot aes geom_point theme_bw theme labs scale_shape

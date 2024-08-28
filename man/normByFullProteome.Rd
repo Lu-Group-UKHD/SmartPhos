@@ -7,25 +7,25 @@
 normByFullProteome(mae, replace = TRUE)
 }
 \arguments{
-\item{mae}{A `MultiAssayExperiment` object containing both phosphoproteome and proteome assays.}
+\item{mae}{A \code{MultiAssayExperiment} object containing both phosphoproteome and proteome assays.}
 
-\item{replace}{Logical, whether to replace the existing phosphoproteome assay in the `MultiAssayExperiment` object. If replace = FALSE, a new assay, `phosphoRatio`, will be created. Default is `TRUE`.}
+\item{replace}{\code{Logical}, whether to replace the existing phosphoproteome assay in the \code{MultiAssayExperiment} object. If replace = \code{FALSE}, a new assay, phosphoRatio, will be created. Default is \code{TRUE}.}
 }
 \value{
-A `MultiAssayExperiment` object with the normalized phosphoproteome data.
+A \code{MultiAssayExperiment} object with the normalized phosphoproteome data.
 }
 \description{
-`normByFullProteome` normalizes the phosphoproteome data by the corresponding full proteome data in a `MultiAssayExperiment` object. The "Phosphoproteome" assay
+\code{normByFullProteome} normalizes the phosphoproteome data by the corresponding full proteome data in a \code{MultiAssayExperiment} object. The "Phosphoproteome" assay
 in the MultiAssayExperiment will be replaced by the ratio.
 }
 \details{
 The function performs the following steps:
 \itemize{
-  \item Checks if both phosphoproteome and proteome assays are present in the `MultiAssayExperiment` object.
+  \item Checks if both phosphoproteome and proteome assays are present in the \code{MultiAssayExperiment} object.
   \item Extracts the phosphoproteome and proteome assays along with the sample annotations.
   \item Matches the samples between the phosphoproteome and proteome assays.
   \item Normalizes the phosphoproteome data by dividing it by the corresponding proteome data.
-  \item Replaces the phosphoproteome assay in the `MultiAssayExperiment` object or adds the normalized data as a new assay, depending on the `replace` parameter.
+  \item Replaces the phosphoproteome assay in the \code{MultiAssayExperiment} object or adds the normalized data as a new assay, depending on the \code{replace} parameter.
 }
 }
 \examples{

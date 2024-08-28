@@ -3,11 +3,11 @@
 #' @title Generate Input Table for Proteomic and Phosphoproteomic Analysis
 #'
 #' @description
-#' `generateInputTable` generates an input table for proteomic and phosphoproteomic analysis by reading files from a specified folder.
+#' \code{generateInputTable} generates an input table for proteomic and phosphoproteomic analysis by reading files from a specified folder.
 #'
-#' @param rawFolder A character string specifying the path to the folder containing the raw files.
-#' @param batchAsFolder A logical value indicating whether to treat subdirectories as separate batches. Default is `FALSE`.
-#' @return A data.frame with columns `fileName`, `sample`, `type`, `batch`, and `id` that can be used as input for further analysis.
+#' @param rawFolder A \code{character} string specifying the path to the folder containing the raw files.
+#' @param batchAsFolder A \code{logical} value indicating whether to treat subdirectories as separate batches. Default is \code{FALSE}.
+#' @return A \code{data.frame} with columns fileName, sample, type, batch, and id that can be used as input for further analysis.
 #' @details
 #' The function performs the following steps:
 #' \itemize{
@@ -76,10 +76,10 @@ generateInputTable <- function(rawFolder, batchAsFolder = FALSE) {
 #' @title Generate Input Table for DIA Analysis
 #'
 #' @description
-#' `generateInputTable_DIA` generates an input table for DIA analysis by reading files from a specified folder.
+#' \code{generateInputTable_DIA} generates an input table for DIA analysis by reading files from a specified folder.
 #'
-#' @param rawFolder A character string specifying the path to the folder containing the raw files.
-#' @return A data.frame with columns `fileName`, `type`, and `id` that can be used as input for further analysis.
+#' @param rawFolder A \code{character} string specifying the path to the folder containing the raw files.
+#' @return A \code{data.frame} with columns fileName, type, and id that can be used as input for further analysis.
 #' @details
 #' The function performs the following steps:
 #' \itemize{
@@ -136,26 +136,26 @@ generateInputTable_DIA <- function(rawFolder) {
 #' @title Read and Process the DDA experiment.
 #'
 #' @description
-#' `readExperiment` reads and processes DDA (Data-Dependent Acquisition) phosphoproteomic and proteomic data from a given file table, and returns a `MultiAssayExperiment` object.
+#' \code{readExperiment} reads and processes DDA (Data-Dependent Acquisition) phosphoproteomic and proteomic data from a given file table, and returns a \code{MultiAssayExperiment} object.
 #'
-#' @param fileTable A data.frame containing information about the input files, including type, id, sample, and other annotations.
-#' @param localProbCut Numeric, local probability cutoff for filtering phosphoproteomic data. Default is `0.75`.
-#' @param scoreDiffCut Numeric, score difference cutoff for filtering phosphoproteomic data. Default is `5`.
-#' @param fdrCut Numeric, false discovery rate cutoff for filtering proteomic data. Default is `0.1`.
-#' @param scoreCut Numeric, score cutoff for filtering proteomic data. Default is `10`.
-#' @param pepNumCut Numeric, peptide number cutoff for filtering proteomic data. Default is `1`.
-#' @param ifLFQ Logical, whether to use LFQ quantification for proteomic data. Default is `TRUE`.
-#' @param annotation_col A character vector specifying additional columns to be included in the sample annotation. Default is an empty vector.
+#' @param fileTable A \code{data.frame} containing information about the input files, including type, id, sample, and other annotations.
+#' @param localProbCut \code{Numeric}, local probability cutoff for filtering phosphoproteomic data. Default is 0.75.
+#' @param scoreDiffCut \code{Numeric}, score difference cutoff for filtering phosphoproteomic data. Default is 5.
+#' @param fdrCut \code{Numeric}, false discovery rate cutoff for filtering proteomic data. Default is 0.1.
+#' @param scoreCut \code{Numeric}, score cutoff for filtering proteomic data. Default is 10.
+#' @param pepNumCut \code{Numeric}, peptide number cutoff for filtering proteomic data. Default is 1.
+#' @param ifLFQ \code{Logical}, whether to use LFQ quantification for proteomic data. Default is \code{TRUE}.
+#' @param annotation_col A \code{character} vector specifying additional columns to be included in the sample annotation. Default is an empty vector.
 #' 
-#' @return A `MultiAssayExperiment` object containing the processed phosphoproteomic and proteomic data from a DDA experiment.
+#' @return A \code{MultiAssayExperiment} object containing the processed phosphoproteomic and proteomic data from a DDA experiment.
 #' 
 #' @details
 #' The function performs the following steps:
 #' \itemize{
-#'   \item Reads and processes the phosphoproteomic data using the `readPhosphoExperiment` function.
-#'   \item Reads and processes the proteomic data using the `readProteomeExperiment` function.
+#'   \item Reads and processes the phosphoproteomic data using the \code{readPhosphoExperiment} function.
+#'   \item Reads and processes the proteomic data using the \code{readProteomeExperiment} function.
 #'   \item Prepares the sample annotation table.
-#'   \item Constructs and returns a `MultiAssayExperiment` object containing the processed data.
+#'   \item Constructs and returns a \code{MultiAssayExperiment} object containing the processed data.
 #' }
 #' 
 #' @examples
@@ -201,23 +201,23 @@ readExperiment <- function(fileTable, localProbCut = 0.75, scoreDiffCut = 5, fdr
 #' @title Read and Process a DIA Experiment
 #'
 #' @description
-#' `readExperimentDIA` reads and processes DIA (Data-Independent Acquisition) data for both phosphoproteome and proteome experiments, and constructs a `MultiAssayExperiment` object.
+#' \code{readExperimentDIA} reads and processes DIA (Data-Independent Acquisition) data for both phosphoproteome and proteome experiments, and constructs a \code{MultiAssayExperiment} object.
 #'
-#' @param fileTable A data frame containing metadata about the files to be read. Must contain columns `type`, `fileName`, `id`, and optionally `outputID`.
-#' @param localProbCut Numeric, the local probability cutoff for phosphoproteomic data. Default is `0.75`.
-#' @param annotation_col A character vector specifying the columns in `fileTable` to be used for sample annotation.
-#' @param onlyReviewed A logical value indicating whether to include only reviewed proteins. Default is `TRUE`.
-#' @param normalizeByProtein Logical, whether to normalize the data by protein. Default is `FALSE`.
-#' @return A `MultiAssayExperiment` object containing the processed phosphoproteome and proteome data.
+#' @param fileTable A \code{data frame} containing metadata about the files to be read. Must contain columns type, fileName, id, and optionally outputID.
+#' @param localProbCut \code{Numeric}, the local probability cutoff for phosphoproteomic data. Default is 0.75.
+#' @param annotation_col A \code{character} vector specifying the columns in fileTable to be used for sample annotation.
+#' @param onlyReviewed A \code{logical} value indicating whether to include only reviewed proteins. Default is \code{TRUE}.
+#' @param normalizeByProtein \code{Logical}, whether to normalize the data by protein. Default is \code{FALSE}.
+#' @return A \code{MultiAssayExperiment} object containing the processed phosphoproteome and proteome data.
 #' @details
 #' The function performs the following steps:
 #' \itemize{
-#'   \item Reads and processes phosphoproteomic data using `readPhosphoExperimentDIA`.
-#'   \item Reads and processes proteomic data using `readProteomeExperimentDIA`.
-#'   \item Prepares sample annotations based on the provided `fileTable` and `annotation_col`.
-#'   \item Constructs a `MultiAssayExperiment` object with the processed data and sample annotations.
+#'   \item Reads and processes phosphoproteomic data using \code{readPhosphoExperimentDIA}.
+#'   \item Reads and processes proteomic data using \code{readProteomeExperimentDIA}.
+#'   \item Prepares sample annotations based on the provided fileTable and annotation_col.
+#'   \item Constructs a \code{MultiAssayExperiment} object with the processed data and sample annotations.
 #' }
-#' The `readPhosphoExperimentDIA` and `readProteomeExperimentDIA` functions are used to read and filter the data for phosphoproteome and proteome experiments, respectively, and they must be available in the environment.
+#' The \code{readPhosphoExperimentDIA} and \code{readProteomeExperimentDIA} functions are used to read and filter the data for phosphoproteome and proteome experiments, respectively, and they must be available in the environment.
 #' 
 #' @examples
 #' # Example usage:
@@ -277,20 +277,20 @@ readExperimentDIA <- function(fileTable, localProbCut = 0.75, annotation_col = c
 #' @title Normalize Phosphoproteome by Full Proteome
 #'
 #' @description
-#' `normByFullProteome` normalizes the phosphoproteome data by the corresponding full proteome data in a `MultiAssayExperiment` object. The "Phosphoproteome" assay
+#' \code{normByFullProteome} normalizes the phosphoproteome data by the corresponding full proteome data in a \code{MultiAssayExperiment} object. The "Phosphoproteome" assay
 #' in the MultiAssayExperiment will be replaced by the ratio.
 #'
-#' @param mae A `MultiAssayExperiment` object containing both phosphoproteome and proteome assays.
-#' @param replace Logical, whether to replace the existing phosphoproteome assay in the `MultiAssayExperiment` object. If replace = FALSE, a new assay, `phosphoRatio`, will be created. Default is `TRUE`.
-#' @return A `MultiAssayExperiment` object with the normalized phosphoproteome data.
+#' @param mae A \code{MultiAssayExperiment} object containing both phosphoproteome and proteome assays.
+#' @param replace \code{Logical}, whether to replace the existing phosphoproteome assay in the \code{MultiAssayExperiment} object. If replace = \code{FALSE}, a new assay, phosphoRatio, will be created. Default is \code{TRUE}.
+#' @return A \code{MultiAssayExperiment} object with the normalized phosphoproteome data.
 #' @details
 #' The function performs the following steps:
 #' \itemize{
-#'   \item Checks if both phosphoproteome and proteome assays are present in the `MultiAssayExperiment` object.
+#'   \item Checks if both phosphoproteome and proteome assays are present in the \code{MultiAssayExperiment} object.
 #'   \item Extracts the phosphoproteome and proteome assays along with the sample annotations.
 #'   \item Matches the samples between the phosphoproteome and proteome assays.
 #'   \item Normalizes the phosphoproteome data by dividing it by the corresponding proteome data.
-#'   \item Replaces the phosphoproteome assay in the `MultiAssayExperiment` object or adds the normalized data as a new assay, depending on the `replace` parameter.
+#'   \item Replaces the phosphoproteome assay in the \code{MultiAssayExperiment} object or adds the normalized data as a new assay, depending on the \code{replace} parameter.
 #' }
 #' 
 #' @examples

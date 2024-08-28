@@ -16,35 +16,35 @@ readExperiment(
 )
 }
 \arguments{
-\item{fileTable}{A data.frame containing information about the input files, including type, id, sample, and other annotations.}
+\item{fileTable}{A \code{data.frame} containing information about the input files, including type, id, sample, and other annotations.}
 
-\item{localProbCut}{Numeric, local probability cutoff for filtering phosphoproteomic data. Default is `0.75`.}
+\item{localProbCut}{\code{Numeric}, local probability cutoff for filtering phosphoproteomic data. Default is 0.75.}
 
-\item{scoreDiffCut}{Numeric, score difference cutoff for filtering phosphoproteomic data. Default is `5`.}
+\item{scoreDiffCut}{\code{Numeric}, score difference cutoff for filtering phosphoproteomic data. Default is 5.}
 
-\item{fdrCut}{Numeric, false discovery rate cutoff for filtering proteomic data. Default is `0.1`.}
+\item{fdrCut}{\code{Numeric}, false discovery rate cutoff for filtering proteomic data. Default is 0.1.}
 
-\item{scoreCut}{Numeric, score cutoff for filtering proteomic data. Default is `10`.}
+\item{scoreCut}{\code{Numeric}, score cutoff for filtering proteomic data. Default is 10.}
 
-\item{pepNumCut}{Numeric, peptide number cutoff for filtering proteomic data. Default is `1`.}
+\item{pepNumCut}{\code{Numeric}, peptide number cutoff for filtering proteomic data. Default is 1.}
 
-\item{ifLFQ}{Logical, whether to use LFQ quantification for proteomic data. Default is `TRUE`.}
+\item{ifLFQ}{\code{Logical}, whether to use LFQ quantification for proteomic data. Default is \code{TRUE}.}
 
-\item{annotation_col}{A character vector specifying additional columns to be included in the sample annotation. Default is an empty vector.}
+\item{annotation_col}{A \code{character} vector specifying additional columns to be included in the sample annotation. Default is an empty vector.}
 }
 \value{
-A `MultiAssayExperiment` object containing the processed phosphoproteomic and proteomic data from a DDA experiment.
+A \code{MultiAssayExperiment} object containing the processed phosphoproteomic and proteomic data from a DDA experiment.
 }
 \description{
-`readExperiment` reads and processes DDA (Data-Dependent Acquisition) phosphoproteomic and proteomic data from a given file table, and returns a `MultiAssayExperiment` object.
+\code{readExperiment} reads and processes DDA (Data-Dependent Acquisition) phosphoproteomic and proteomic data from a given file table, and returns a \code{MultiAssayExperiment} object.
 }
 \details{
 The function performs the following steps:
 \itemize{
-  \item Reads and processes the phosphoproteomic data using the `readPhosphoExperiment` function.
-  \item Reads and processes the proteomic data using the `readProteomeExperiment` function.
+  \item Reads and processes the phosphoproteomic data using the \code{readPhosphoExperiment} function.
+  \item Reads and processes the proteomic data using the \code{readProteomeExperiment} function.
   \item Prepares the sample annotation table.
-  \item Constructs and returns a `MultiAssayExperiment` object containing the processed data.
+  \item Constructs and returns a \code{MultiAssayExperiment} object containing the processed data.
 }
 }
 \examples{

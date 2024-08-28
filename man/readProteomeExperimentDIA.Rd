@@ -7,12 +7,12 @@
 readProteomeExperimentDIA(fileTable, showProgressBar = FALSE)
 }
 \arguments{
-\item{fileTable}{A data frame containing metadata about the files to be read. Must contain columns `type`, `fileName`, `id`, and optionally `outputID`.}
+\item{fileTable}{A \code{data frame} containing metadata about the files to be read. Must contain columns type, fileName, id, and optionally outputID.}
 
-\item{showProgressBar}{Logical, whether to show a progress bar during processing. Default is `FALSE`.}
+\item{showProgressBar}{\code{Logical}, whether to show a progress bar during processing. Default is \code{FALSE}.}
 }
 \value{
-A `SummarizedExperiment` object containing the processed proteome data.
+A \code{SummarizedExperiment} object containing the processed proteome data.
 #' @details
 The function performs the following steps:
 \itemize{
@@ -24,10 +24,10 @@ The function performs the following steps:
   \item Constructs a matrix of intensities with rows corresponding to proteins and columns corresponding to samples.
   \item Constructs a `SummarizedExperiment` object with the intensity matrix and protein annotations.
 }
-The `readOneProteomDIA` function is used to read and filter the data for each individual sample, and it must be available in the environment.
+The \code{readOneProteomDIA} function is used to read and filter the data for each individual sample, and it must be available in the environment.
 }
 \description{
-`readProteomeExperimentDIA` reads and processes DIA (Data-Independent Acquisition) proteome data from multiple files and constructs a `SummarizedExperiment` object.
+\code{readProteomeExperimentDIA} reads and processes DIA (Data-Independent Acquisition) proteome data from multiple files and constructs a \code{SummarizedExperiment} object.
 }
 \examples{
 # se <- readProteomeExperimentDIA(fileTable)

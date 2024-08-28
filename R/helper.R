@@ -3,15 +3,15 @@
 #' @title Read and Filter Phosphorylation Data for a Specific Sample
 #'
 #' @description
-#' `readOnePhos` reads phosphorylation data from an input table, filters it based on localization probability, score difference, and intensity, and returns the filtered data for a specific sample.
+#' \code{readOnePhos} reads phosphorylation data from an input table, filters it based on localization probability, score difference, and intensity, and returns the filtered data for a specific sample.
 #'
-#' @param inputTab A data.table or data.frame containing phosphorylation data with columns for localization probability, score difference, and intensity for various samples.
-#' @param sampleName A character string specifying the sample name to filter data for.
-#' @param localProbCut A numeric value specifying the cutoff for localization probability. Default is `0.75`.
-#' @param scoreDiffCut A numeric value specifying the cutoff for score difference. Default is `5`.
-#' @param multiMap A logical value indicating whether to allow multiple mapping (not used in this function but could be relevant for further extensions).
+#' @param inputTab A \code{data.table} or \code{data.frame} containing phosphorylation data with columns for localization probability, score difference, and intensity for various samples.
+#' @param sampleName A \code{character} string specifying the sample name to filter data for.
+#' @param localProbCut A \code{numeric} value specifying the cutoff for localization probability. Default is 0.75.
+#' @param scoreDiffCut A \code{numeric} value specifying the cutoff for score difference. Default is 5.
+#' @param multiMap A \code{logical} value indicating whether to allow multiple mapping (not used in this function but could be relevant for further extensions).
 #'
-#' @return A data.frame containing the filtered phosphorylation data for the specified sample, with columns for intensity, Uniprot ID, gene name, position within proteins, amino acid residue, and sequence window.
+#' @return A \code{data.frame} containing the filtered phosphorylation data for the specified sample, with columns for intensity, Uniprot ID, gene name, position within proteins, amino acid residue, and sequence window.
 #'
 #' @details
 #' The function filters the input phosphorylation data based on three criteria: localization probability, score difference, and intensity. Only rows that meet or exceed the specified cutoffs for these criteria and have non-zero intensity are retained. The filtered data is then returned with a unique identifier for each row.
@@ -68,16 +68,16 @@ readOnePhos <- function(inputTab, sampleName, localProbCut = 0.75, scoreDiffCut 
 #' @title Read Phosphorylation Experiment Data
 #'
 #' @description
-#' `readPhosphoExperiment` reads and processes phosphorylation experiment data from multiple files, filtering based on localization probability and score difference, and constructs a `SummarizedExperiment` object.
+#' \code{readPhosphoExperiment} reads and processes phosphorylation experiment data from multiple files, filtering based on localization probability and score difference, and constructs a \code{SummarizedExperiment} object.
 #'
-#' @param fileTable A data.table or data.frame containing information about the files, including columns for file names, sample names, and other relevant metadata. It must include a column named `type` with value "phosphoproteome" for relevant entries.
-#' @param localProbCut A numeric value specifying the cutoff for localization probability. Default is `0.75`.
-#' @param scoreDiffCut A numeric value specifying the cutoff for score difference. Default is `5`.
+#' @param fileTable A \code{data.table} or \code{data.frame} containing information about the files, including columns for file names, sample names, and other relevant metadata. It must include a column named "type" with value "phosphoproteome" for relevant entries.
+#' @param localProbCut A \code{numeric} value specifying the cutoff for localization probability. Default is 0.75.
+#' @param scoreDiffCut A \code{numeric} value specifying the cutoff for score difference. Default is 5.
 #'
-#' @return A `SummarizedExperiment` object containing the processed phosphorylation data.
+#' @return A \code{SummarizedExperiment} object containing the processed phosphorylation data.
 #'
 #' @details
-#' This function reads phosphorylation data from multiple files as specified in `fileTable`, filters the data based on localization probability and score difference, and removes reverse and potential contaminant entries. It constructs an intensity matrix and annotation data, which are then used to create a `SummarizedExperiment` object.
+#' This function reads phosphorylation data from multiple files as specified in fileTable, filters the data based on localization probability and score difference, and removes reverse and potential contaminant entries. It constructs an intensity matrix and annotation data, which are then used to create a \code{SummarizedExperiment} object.
 #'
 #' @import data.table SummarizedExperiment
 #' @examples
@@ -164,14 +164,14 @@ readPhosphoExperiment <- function(fileTable, localProbCut = 0.75, scoreDiffCut =
 #' @title Read Phosphorylation Data for One Sample from DIA
 #'
 #' @description
-#' `readOnePhosDIA` reads and processes phosphorylation data for a single sample from a DIA experiment, applying filters for localization probability and removing duplicates if specified.
+#' \code{readOnePhosDIA} reads and processes phosphorylation data for a single sample from a DIA experiment, applying filters for localization probability and removing duplicates if specified.
 #'
-#' @param inputTab A data.table or data.frame containing phosphorylation data.
-#' @param sampleName A character string specifying the sample name.
-#' @param localProbCut A numeric value specifying the cutoff for localization probability. Default is `0.75`.
-#' @param removeDup A logical value indicating whether to remove duplicate entries based on `UniprotID` and intensity. Default is FALSE.
+#' @param inputTab A \code{data.table} or \code{data.frame} containing phosphorylation data.
+#' @param sampleName A \code{character} string specifying the sample name.
+#' @param localProbCut A \code{numeric} value specifying the cutoff for localization probability. Default is 0.75.
+#' @param removeDup A \code{logical} value indicating whether to remove duplicate entries based on UniprotID and intensity. Default is \code{FALSE}.
 #'
-#' @return A data.table containing the processed phosphorylation data for the specified sample.
+#' @return A \code{data.table} containing the processed phosphorylation data for the specified sample.
 #'
 #' @details
 #' This function processes phosphorylation data for a single sample by filtering based on localization probability and non-zero intensity. It handles multiplicity by summarizing intensities and optionally removes duplicates. The resulting data is returned as a data.table with unique identifiers.
@@ -278,17 +278,17 @@ readOnePhosDIA <- function(inputTab, sampleName, localProbCut = 0.75, removeDup 
 #' @title Read Phosphorylation Experiment Data from DIA
 #'
 #' @description
-#' `readPhosphoExperimentDIA` reads and processes phosphorylation data from DIA experiments, applying filters for localization probability, and optionally including only reviewed proteins. It constructs a `SummarizedExperiment` object.
+#' \code{readPhosphoExperimentDIA} reads and processes phosphorylation data from DIA experiments, applying filters for localization probability, and optionally including only reviewed proteins. It constructs a \code{SummarizedExperiment} object.
 #'
-#' @param fileTable A data.table or data.frame containing metadata about the files to read. Must include columns `fileName`, `type`, and optionally `outputID`.
-#' @param localProbCut A numeric value specifying the cutoff for localization probability. Default is `0.75`.
-#' @param onlyReviewed A logical value indicating whether to include only reviewed proteins. Default is `TRUE`.
-#' @param showProgressBar A logical value indicating whether to show a progress bar. Default is `FALSE`.
+#' @param fileTable A \code{data.table} or \code{data.frame} containing metadata about the files to read. Must include columns fileName, type, and optionally outputID.
+#' @param localProbCut A \code{numeric} value specifying the cutoff for localization probability. Default is 0.75.
+#' @param onlyReviewed A \code{logical} value indicating whether to include only reviewed proteins. Default is \code{TRUE}.
+#' @param showProgressBar A \code{logical} value indicating whether to show a progress bar. Default is \code{FALSE}.
 #'
-#' @return A `SummarizedExperiment` object containing the processed phosphorylation data.
+#' @return A \code{SummarizedExperiment} object containing the processed phosphorylation data.
 #'
 #' @details
-#' This function processes phosphorylation data from DIA experiments by filtering based on localization probability and non-zero intensity, handling multiplicity, and optionally including only reviewed proteins. The resulting data is returned as a SummarizedExperiment object with annotations and an intensity matrix.
+#' This function processes phosphorylation data from DIA experiments by filtering based on localization probability and non-zero intensity, handling multiplicity, and optionally including only reviewed proteins. The resulting data is returned as a \code{SummarizedExperiment} object with annotations and an intensity matrix.
 #'
 #' @import data.table
 #' @import BiocParallel
@@ -417,14 +417,14 @@ readPhosphoExperimentDIA <- function(fileTable, localProbCut = 0.75, onlyReviewe
 #' @title Read and Process One Proteomics Sample
 #'
 #' @description
-#' `readOneProteom` reads and processes proteomics data for a single sample, applying filters for peptide count and optionally using LFQ quantification. It returns a data.table with useful columns and unique identifiers.
+#' \code{readOneProteom} reads and processes proteomics data for a single sample, applying filters for peptide count and optionally using LFQ quantification. It returns a \code{data.table} with useful columns and unique identifiers.
 #'
-#' @param inputTab A data.table or data.frame containing the input data for the proteomics sample.
-#' @param sampleName A character string specifying the name of the sample to be processed.
-#' @param pepNumCut A numeric value specifying the minimum number of peptides required for a protein to be included. Default is `1`.
-#' @param ifLFQ A logical value indicating whether to use LFQ quantification. Default is `TRUE`.
+#' @param inputTab A \code{data.table} or \code{data.frame} containing the input data for the proteomics sample.
+#' @param sampleName A \code{character} string specifying the name of the sample to be processed.
+#' @param pepNumCut A \code{numeric} value specifying the minimum number of peptides required for a protein to be included. Default is 1.
+#' @param ifLFQ A \code{logical} value indicating whether to use LFQ quantification. Default is \code{TRUE}.
 #'
-#' @return A data.table with the processed proteomics data, including columns for intensity, Uniprot ID, peptide counts, and gene names.
+#' @return A \code{data.table} with the processed proteomics data, including columns for intensity, Uniprot ID, peptide counts, and gene names.
 #'
 #' @details
 #' This function processes proteomics data for a single sample by filtering based on the number of peptides and optionally using LFQ quantification. It ensures that unique identifiers are created for each protein, and removes rows with missing or zero quantification values.
@@ -492,18 +492,18 @@ readOneProteom <- function(inputTab, sampleName, pepNumCut = 1, ifLFQ = TRUE) {
 #' @title Read and Process Proteomics Experiment Data
 #'
 #' @description
-#' `readProteomeExperiment` reads and processes proteomics data from multiple samples, applying various quality filters, and returns a `SummarizedExperiment` object.
+#' \code{readProteomeExperiment} reads and processes proteomics data from multiple samples, applying various quality filters, and returns a \code{SummarizedExperiment} object.
 #'
-#' @param fileTable A data.table or data.frame containing the file information with columns for file names, sample names, and IDs.
-#' @param fdrCut A numeric value specifying the maximum false discovery rate (FDR) threshold. Default is `0.1`.
-#' @param scoreCut A numeric value specifying the minimum score threshold. Default is `10`.
-#' @param pepNumCut A numeric value specifying the minimum number of peptides required for a protein to be included. Default is `1`.
-#' @param ifLFQ A logical value indicating whether to use LFQ quantification. Default is `TRUE`.
+#' @param fileTable A \code{data.table} or \code{data.frame} containing the file information with columns for file names, sample names, and IDs.
+#' @param fdrCut A \code{numeric} value specifying the maximum false discovery rate (FDR) threshold. Default is 0.1.
+#' @param scoreCut A \code{numeric} value specifying the minimum score threshold. Default is 10.
+#' @param pepNumCut A \code{numeric} value specifying the minimum number of peptides required for a protein to be included. Default is 1.
+#' @param ifLFQ A \code{logical} value indicating whether to use LFQ quantification. Default is \code{TRUE}.
 #'
-#' @return A `SummarizedExperiment` object containing the processed proteomics data.
+#' @return A \code{SummarizedExperiment} object containing the processed proteomics data.
 #'
 #' @details
-#' This function processes proteomics data by filtering based on FDR, score, and peptide count, and optionally using LFQ quantification. It aggregates the data from multiple samples and constructs a SummarizedExperiment object.
+#' This function processes proteomics data by filtering based on FDR, score, and peptide count, and optionally using LFQ quantification. It aggregates the data from multiple samples and constructs a \code{SummarizedExperiment} object.
 #'
 #' @examples
 #' # se <- readProteomeExperiment(fileTable)
@@ -588,12 +588,12 @@ readProteomeExperiment <- function(fileTable, fdrCut = 0.1, scoreCut = 10, pepNu
 #' @title Read and Process a Single DIA Proteomics Sample
 #'
 #' @description
-#' `readOneProteomDIA` reads and processes data from a single DIA proteomics sample, applying filtering and data transformation steps.
+#' \code{readOneProteomDIA} reads and processes data from a single DIA proteomics sample, applying filtering and data transformation steps.
 #'
-#' @param inputTab A data.table or data.frame containing the input data.
-#' @param sampleName A character string specifying the sample name.
+#' @param inputTab A \code{data.table} or \code{data.frame} containing the input data.
+#' @param sampleName A \code{character} string specifying the sample name.
 #'
-#' @return A data.table containing the processed data with columns for intensity, UniProt ID, and gene name.
+#' @return A \code{data.table} containing the processed data with columns for intensity, UniProt ID, and gene name.
 #'
 #' @details
 #' This function processes DIA proteomics data for a single sample by filtering out rows with non-quantitative data, converting character values to numeric, and renaming columns for consistency. It also ensures that each protein group has a unique identifier.
@@ -650,12 +650,12 @@ readOneProteomDIA <- function(inputTab, sampleName) {
 #' @title Read and Process a DIA Proteome Experiment
 #'
 #' @description
-#' `readProteomeExperimentDIA` reads and processes DIA (Data-Independent Acquisition) proteome data from multiple files and constructs a `SummarizedExperiment` object.
+#' \code{readProteomeExperimentDIA} reads and processes DIA (Data-Independent Acquisition) proteome data from multiple files and constructs a \code{SummarizedExperiment} object.
 #'
-#' @param fileTable A data frame containing metadata about the files to be read. Must contain columns `type`, `fileName`, `id`, and optionally `outputID`.
-#' @param showProgressBar Logical, whether to show a progress bar during processing. Default is `FALSE`.
+#' @param fileTable A \code{data frame} containing metadata about the files to be read. Must contain columns type, fileName, id, and optionally outputID.
+#' @param showProgressBar \code{Logical}, whether to show a progress bar during processing. Default is \code{FALSE}.
 #'
-#' @return A `SummarizedExperiment` object containing the processed proteome data.
+#' @return A \code{SummarizedExperiment} object containing the processed proteome data.
 #' #' @details
 #' The function performs the following steps:
 #' \itemize{
@@ -667,7 +667,7 @@ readOneProteomDIA <- function(inputTab, sampleName) {
 #'   \item Constructs a matrix of intensities with rows corresponding to proteins and columns corresponding to samples.
 #'   \item Constructs a `SummarizedExperiment` object with the intensity matrix and protein annotations.
 #' }
-#' The `readOneProteomDIA` function is used to read and filter the data for each individual sample, and it must be available in the environment.
+#' The \code{readOneProteomDIA} function is used to read and filter the data for each individual sample, and it must be available in the environment.
 #'
 #' @examples
 #' # se <- readProteomeExperimentDIA(fileTable)

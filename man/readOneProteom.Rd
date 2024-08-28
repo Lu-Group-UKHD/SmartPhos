@@ -7,19 +7,19 @@
 readOneProteom(inputTab, sampleName, pepNumCut = 1, ifLFQ = TRUE)
 }
 \arguments{
-\item{inputTab}{A data.table or data.frame containing the input data for the proteomics sample.}
+\item{inputTab}{A \code{data.table} or \code{data.frame} containing the input data for the proteomics sample.}
 
-\item{sampleName}{A character string specifying the name of the sample to be processed.}
+\item{sampleName}{A \code{character} string specifying the name of the sample to be processed.}
 
-\item{pepNumCut}{A numeric value specifying the minimum number of peptides required for a protein to be included. Default is `1`.}
+\item{pepNumCut}{A \code{numeric} value specifying the minimum number of peptides required for a protein to be included. Default is 1.}
 
-\item{ifLFQ}{A logical value indicating whether to use LFQ quantification. Default is `TRUE`.}
+\item{ifLFQ}{A \code{logical} value indicating whether to use LFQ quantification. Default is \code{TRUE}.}
 }
 \value{
-A data.table with the processed proteomics data, including columns for intensity, Uniprot ID, peptide counts, and gene names.
+A \code{data.table} with the processed proteomics data, including columns for intensity, Uniprot ID, peptide counts, and gene names.
 }
 \description{
-`readOneProteom` reads and processes proteomics data for a single sample, applying filters for peptide count and optionally using LFQ quantification. It returns a data.table with useful columns and unique identifiers.
+\code{readOneProteom} reads and processes proteomics data for a single sample, applying filters for peptide count and optionally using LFQ quantification. It returns a \code{data.table} with useful columns and unique identifiers.
 }
 \details{
 This function processes proteomics data for a single sample by filtering based on the number of peptides and optionally using LFQ quantification. It ensures that unique identifiers are created for each protein, and removes rows with missing or zero quantification values.

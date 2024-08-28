@@ -12,22 +12,22 @@ readPhosphoExperimentDIA(
 )
 }
 \arguments{
-\item{fileTable}{A data.table or data.frame containing metadata about the files to read. Must include columns `fileName`, `type`, and optionally `outputID`.}
+\item{fileTable}{A \code{data.table} or \code{data.frame} containing metadata about the files to read. Must include columns fileName, type, and optionally outputID.}
 
-\item{localProbCut}{A numeric value specifying the cutoff for localization probability. Default is `0.75`.}
+\item{localProbCut}{A \code{numeric} value specifying the cutoff for localization probability. Default is 0.75.}
 
-\item{onlyReviewed}{A logical value indicating whether to include only reviewed proteins. Default is `TRUE`.}
+\item{onlyReviewed}{A \code{logical} value indicating whether to include only reviewed proteins. Default is \code{TRUE}.}
 
-\item{showProgressBar}{A logical value indicating whether to show a progress bar. Default is `FALSE`.}
+\item{showProgressBar}{A \code{logical} value indicating whether to show a progress bar. Default is \code{FALSE}.}
 }
 \value{
-A `SummarizedExperiment` object containing the processed phosphorylation data.
+A \code{SummarizedExperiment} object containing the processed phosphorylation data.
 }
 \description{
-`readPhosphoExperimentDIA` reads and processes phosphorylation data from DIA experiments, applying filters for localization probability, and optionally including only reviewed proteins. It constructs a `SummarizedExperiment` object.
+\code{readPhosphoExperimentDIA} reads and processes phosphorylation data from DIA experiments, applying filters for localization probability, and optionally including only reviewed proteins. It constructs a \code{SummarizedExperiment} object.
 }
 \details{
-This function processes phosphorylation data from DIA experiments by filtering based on localization probability and non-zero intensity, handling multiplicity, and optionally including only reviewed proteins. The resulting data is returned as a SummarizedExperiment object with annotations and an intensity matrix.
+This function processes phosphorylation data from DIA experiments by filtering based on localization probability and non-zero intensity, handling multiplicity, and optionally including only reviewed proteins. The resulting data is returned as a \code{SummarizedExperiment} object with annotations and an intensity matrix.
 }
 \examples{
 # fileTable <- data.table::data.table(fileName = c("file1.tsv", "file2.tsv"), type = "phosphoproteome")

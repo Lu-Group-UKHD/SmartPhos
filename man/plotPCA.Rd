@@ -9,24 +9,24 @@ plotPCA(pca, se, xaxis = "PC1", yaxis = "PC2", color = "none", shape = "none")
 \arguments{
 \item{pca}{A PCA result object, typically obtained from \code{prcomp}.}
 
-\item{se}{A SummarizedExperiment object containing the metadata.}
+\item{se}{A \code{SummarizedExperiment} object containing the metadata.}
 
-\item{xaxis}{A character string specifying which principal component to use for the x-axis. Default is `"PC1"`.}
+\item{xaxis}{A \code{character} string specifying which principal component to use for the x-axis. Default is "PC1".}
 
-\item{yaxis}{A character string specifying which principal component to use for the y-axis. Default is `"PC2"`.}
+\item{yaxis}{A \code{character} string specifying which principal component to use for the y-axis. Default is "PC2".}
 
-\item{color}{A character string specifying the metadata column to use for coloring the points. Default is `"none"`.}
+\item{color}{A \code{character} string specifying the metadata column to use for coloring the points. Default is "none".}
 
-\item{shape}{A character string specifying the metadata column to use for shaping the points. Default is `"none"`.}
+\item{shape}{A \code{character} string specifying the metadata column to use for shaping the points. Default is "none".}
 }
 \value{
-A ggplot object showing the PCA plot.
+A \code{ggplot} object showing the PCA plot.
 }
 \description{
-`plotPCA` generates a PCA plot using the results from a PCA analysis and a SummarizedExperiment object. The points on the plot can be colored and shaped based on metadata.
+\code{plotPCA} generates a PCA plot using the results from a PCA analysis and a \code{SummarizedExperiment} object. The points on the plot can be colored and shaped based on metadata.
 }
 \details{
-This function creates a PCA plot using the scores from a PCA result object and metadata from a SummarizedExperiment object. The x-axis and y-axis can be customized to display different principal components, and the points can be optionally colored and shaped based on specified metadata columns.
+This function creates a PCA plot using the scores from a PCA result object and metadata from a \code{SummarizedExperiment} object. The x-axis and y-axis can be customized to display different principal components, and the points can be optionally colored and shaped based on specified metadata columns.
 }
 \examples{
 # Load multiAssayExperiment object
