@@ -3,22 +3,22 @@
 #' @title Load Kinase-Substrate Interaction Network
 #'
 #' @description
-#' `getDecouplerNetwork` loads the kinase-substrate interaction network for a specified species from pre-defined files.
+#' \code{getDecouplerNetwork} loads the kinase-substrate interaction network for a specified species from pre-defined files.
 #'
-#' @param speciesRef A character string specifying the species. Supported values are "Homo sapiens" and "Mus musculus".
+#' @param speciesRef A \code{character} string specifying the species. Supported values are "Homo sapiens" and "Mus musculus". Default is "Homo_sapiens".
 #'
 #' @return A data frame containing the kinase-substrate interaction network for the specified species.
 #' 
 #' @examples
 #' # Load the human kinase-substrate interaction network
-#' # human_network <- getDecouplerNetwork("Homo sapiens")
+#' human_network <- getDecouplerNetwork("Homo sapiens")
 #'
 #' # Load the mouse kinase-substrate interaction network
-#' # mouse_network <- getDecouplerNetwork("Mus musculus")
+#' mouse_network <- getDecouplerNetwork("Mus musculus")
 #'
 #' @importFrom utils read.table data
 #' @export
-getDecouplerNetwork <- function(speciesRef) {
+getDecouplerNetwork <- function(speciesRef = "Homo_sapiens") {
   
   # load network of kinase-substrate interaction from omnipathR_kinase_network folder
   if (speciesRef == "Homo sapiens") {
@@ -32,29 +32,29 @@ getDecouplerNetwork <- function(speciesRef) {
 
 #' @name calcKinaseScore
 #' 
-#' @title Calculate Kinase Activity Scores using `decoupleR`
+#' @title Calculate Kinase Activity Scores using \code{decoupleR}
 #'
 #' @description
-#' `calcKinaseScore` calculates kinase activity scores based on input data and a specified network of regulatory relationships (decoupler network).
+#' \code{calcKinaseScore} calculates kinase activity scores based on input data and a specified network of regulatory relationships (decoupler network).
 #'
-#' @param resTab A data frame containing the input data with columns `site`, `stat`, and `log2FC`.
-#' @param decoupler_network A data frame representing the decoupleR network with columns `source` and `target`.
-#' @param corrThreshold A numeric value specifying the correlation threshold for filtering correlated regulons. Default is `0.9.
-#' @param statType A character string specifying the type of statistic to use. Options are `"stat"` or `"log2FC"`. Default is `"stat"`.
-#' @param nPerm Number of permutations for the null distribution. Default is `100`.
+#' @param resTab A data frame containing the input data with columns site, stat, and log2FC.
+#' @param decoupler_network A data frame representing the decoupleR network with columns source and target.
+#' @param corrThreshold A numeric value specifying the correlation threshold for filtering correlated regulons. Default is 0.9.
+#' @param statType A character string specifying the type of statistic to use. Options are "stat" or "log2FC". Default is "stat".
+#' @param nPerm A numeric value specifying the number of permutations for the null distribution. Default is 100.
 #'
 #' @return A data frame with kinase activity scores, including columns for `source`, `score`, and `p_value`.
 #'
 #' @details
 #' The function performs the following steps:
 #' \enumerate{
-#'   \item Removes duplicate rows based on the `site` column.
-#'   \item Filters the data to include only those sites present in the `target` column of the `decoupler_network`.
-#'   \item Prepares the input table based on the specified `statType`.
+#'   \item Removes duplicate rows based on the site column.
+#'   \item Filters the data to include only those sites present in the target column of the decoupler_network.
+#'   \item Prepares the input table based on the specified statType.
 #'   \item Intersects the input table with the decoupler network to find common regulons.
 #'   \item Checks for correlated regulons and filters out those exceeding the correlation threshold.
 #'   \item Calculates kinase activity using a weighted mean approach.
-#'   \item Processes the results to handle `NA` values and formats the output.
+#'   \item Processes the results to handle NA values and formats the output.
 #' }
 #'
 #' @importFrom dplyr distinct filter select rename mutate

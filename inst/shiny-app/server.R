@@ -2124,7 +2124,7 @@ shinyServer(function(input, output, session) {
                 footer = NULL
               ))})
           })
-        } else output$errMsgKinase <- renderText("Please do a hypothesis testing first")
+        } else output$errMsgKinase <- renderText("Please perform Differential expression analysis first")
       } else {
         
         # Perform the analysis for time-series cluster
