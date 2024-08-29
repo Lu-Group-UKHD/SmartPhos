@@ -7,7 +7,7 @@
 #'
 #' @param se A \code{SummarizedExperiment} object containing the assay data.
 #'
-#' @return A \code{ggplot} object showing the percentage of completeness for each sample.
+#' @return A \code{ggplot2} object showing the percentage of completeness for each sample.
 #'
 #' @details
 #' This function calculates the percentage of non-missing values for each sample in the provided \code{SummarizedExperiment} object. It then generates a bar plot where each bar represents a sample, and the height of the bar corresponds to the completeness (percentage of non-missing values) of that sample.
@@ -58,7 +58,7 @@ plotMissing <- function(se) {
 #' @param se A \code{SummarizedExperiment} object containing the assay data and metadata.
 #' @param color A \code{character} string specifying the metadata column to use for coloring the boxplots. Default is "none".
 #'
-#' @return A \code{ggplot} object showing boxplots of intensities for each sample.
+#' @return A \code{ggplot2} object showing boxplots of intensities for each sample.
 #'
 #' @importFrom SummarizedExperiment assay colData
 #' @importFrom ggplot2 ggplot aes geom_boxplot ggtitle theme element_text
@@ -125,7 +125,7 @@ plotIntensity <- function(se, color = "none") {
 #' @param color A \code{character} string specifying the metadata column to use for coloring the points. Default is "none".
 #' @param shape A \code{character} string specifying the metadata column to use for shaping the points. Default is "none".
 #'
-#' @return A \code{ggplot} object showing the PCA plot.
+#' @return A \code{ggplot2} object showing the PCA plot.
 #'
 #' @details
 #' This function creates a PCA plot using the scores from a PCA result object and metadata from a \code{SummarizedExperiment} object. The x-axis and y-axis can be customized to display different principal components, and the points can be optionally colored and shaped based on specified metadata columns.
@@ -209,7 +209,7 @@ plotPCA <- function(pca, se, xaxis = "PC1", yaxis = "PC2", color = "none", shape
 #' @param annotationCol A \code{character} vector specifying the columns in the metadata to use for annotation. Default is \code{NULL}.
 #' @param title A \code{character} string specifying the title of the heatmap. Default is \code{NULL}.
 #'
-#' @return A pheatmap object showing the heatmap of Intensity data.
+#' @return A \code{pheatmap} object showing the heatmap of Intensity data.
 #'
 #' @details
 #' This function creates a heatmap using the Intensity assay from a \code{SummarizedExperiment} object. The heatmap can show the top variants based on standard deviation, differentially expressed genes, or selected time series clusters. Row normalization is performed, and the heatmap can include annotations based on specified metadata columns.

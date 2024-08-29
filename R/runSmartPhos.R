@@ -3,12 +3,12 @@
 #' @title Launch the SmartPhos Shiny Application
 #'
 #' @description
-#' `runSmartPhos` launches the SmartPhos Shiny application, which provides an interactive interface for analyzing phosphoproteomic data.
+#' \code{runSmartPhos} launches the SmartPhos \code{Shiny} application, which provides an interactive interface for analyzing phosphoproteomic data.
 #'
-#' @return The function does not return a value; it starts the Shiny application for SmartPhos.
+#' @return The function does not return a value; it starts the Shiny application for \code{SmartPhos}.
 #' @details
-#' The `runSmartPhos` function locates the Shiny app directory within the `SmartPhos` package and launches the application. 
-#' If the app directory cannot be found, the function will stop and prompt the user to reinstall the `SmartPhos` package.
+#' The \code{runSmartPhos} function locates the \code{Shiny} app directory within the \code{SmartPhos} package and launches the application. 
+#' If the app directory cannot be found, the function will stop and prompt the user to re-install the \code{SmartPhos} package.
 #' @export
 #' @examples
 #' # To run the SmartPhos Shiny application, simply call:

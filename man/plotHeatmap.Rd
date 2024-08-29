@@ -39,7 +39,7 @@ plotHeatmap(
 \item{title}{A \code{character} string specifying the title of the heatmap. Default is \code{NULL}.}
 }
 \value{
-A pheatmap object showing the heatmap of Intensity data.
+A \code{pheatmap} object showing the heatmap of Intensity data.
 }
 \description{
 \code{plotHeatmap} generates a heatmap for intensity assay for different conditions, including top variants, differentially expressed genes, and selected time series clusters.

@@ -13,29 +13,29 @@ calcKinaseScore(
 )
 }
 \arguments{
-\item{resTab}{A data frame containing the input data with columns site, stat, and log2FC.}
+\item{resTab}{A \code{data frame} containing the input data with columns site, stat, and log2FC.}
 
-\item{decoupler_network}{A data frame representing the decoupleR network with columns source and target.}
+\item{decoupler_network}{A \code{data frame} representing the decoupleR network with columns source and target.}
 
-\item{corrThreshold}{A numeric value specifying the correlation threshold for filtering correlated regulons. Default is 0.9.}
+\item{corrThreshold}{A \code{numeric} value specifying the correlation threshold for filtering correlated regulons. Default is 0.9.}
 
-\item{statType}{A character string specifying the type of statistic to use. Options are "stat" or "log2FC". Default is "stat".}
+\item{statType}{A \code{character} string specifying the type of statistic to use. Options are "stat" or "log2FC". Default is "stat".}
 
-\item{nPerm}{A numeric value specifying the number of permutations for the null distribution. Default is 100.}
+\item{nPerm}{A \code{numeric} value specifying the number of permutations for the null distribution. Default is 100.}
 }
 \value{
-A data frame with kinase activity scores, including columns for `source`, `score`, and `p_value`.
+A \code{data frame} with kinase activity scores, including columns for `source`, `score`, and `p_value`.
 }
 \description{
-\code{calcKinaseScore} calculates kinase activity scores based on input data and a specified network of regulatory relationships (decoupler network).
+\code{calcKinaseScore} calculates kinase activity scores based on input data and a specified network of regulatory relationships (\code{decoupler network}).
 }
 \details{
 The function performs the following steps:
 \enumerate{
   \item Removes duplicate rows based on the site column.
-  \item Filters the data to include only those sites present in the target column of the decoupler_network.
+  \item Filters the data to include only those sites present in the target column of the \code{decoupler network}.
   \item Prepares the input table based on the specified statType.
-  \item Intersects the input table with the decoupler network to find common regulons.
+  \item Intersects the input table with the \code{decoupler network} to find common regulons.
   \item Checks for correlated regulons and filters out those exceeding the correlation threshold.
   \item Calculates kinase activity using a weighted mean approach.
   \item Processes the results to handle NA values and formats the output.

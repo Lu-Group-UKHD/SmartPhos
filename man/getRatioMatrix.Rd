@@ -7,17 +7,17 @@
 getRatioMatrix(maeData, normalization = FALSE, getAdjustedPP = FALSE)
 }
 \arguments{
-\item{maeData}{A MultiAssayExperiment object containing phosphoproteome and full proteome data.}
+\item{maeData}{A \code{MultiAssayExperiment} object containing phosphoproteome and full proteome data.}
 
-\item{normalization}{A logical value indicating whether to perform normalization. Default is `FALSE`.}
+\item{normalization}{A \code{logical} value indicating whether to perform normalization. Default is \code{FALSE}.}
 
-\item{getAdjustedPP}{A logical value indicating whether to use adjusted phosphoproteome data. Default is `FALSE`.}
+\item{getAdjustedPP}{A \code{logical} value indicating whether to use adjusted phosphoproteome data. Default is \code{FALSE}.}
 }
 \value{
-A numeric matrix representing the ratio of intensity of PP (phosphoproteome) data to FP (full proteome) data.
+A numeric \code{matrix} representing the ratio of intensity of PP (phosphoproteome) data to FP (full proteome) data.
 }
 \description{
-`getRatioMatrix` calculates the ratio matrix of phosphoproteome data from a MultiAssayExperiment object.
+\code{getRatioMatrix} calculates the ratio matrix of phosphoproteome data from a \code{MultiAssayExperiment} object.
 }
 \examples{
 # Example usage:

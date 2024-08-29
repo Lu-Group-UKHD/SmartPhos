@@ -3,18 +3,18 @@
 #' @title Normalize a Matrix Using Median or Mean
 #'
 #' @description
-#' `medianNorm` normalizes the columns of a matrix by either the median or the mean.
+#' \code{medianNorm} normalizes the columns of a matrix by either the median or the mean.
 #'
-#' @param x A numeric matrix to be normalized.
-#' @param method A character string specifying the normalization method. Options are `"median"` or `"mean"`. Default is `"median"`.
+#' @param x A \code{numeric} matrix to be normalized.
+#' @param method A \code{character} string specifying the normalization method. Options are "median" or "mean". Default is "median".
 #'
-#' @return A numeric matrix with normalized columns.
+#' @return A \code{numeric} \code{matrix} with normalized columns.
 #'
 #' @details
 #' The function performs the following steps:
 #' \enumerate{
-#'   \item If the `method` is `"median"`, it calculates the median of each column and adjusts by the overall median of these medians.
-#'   \item If the `method` is `"mean"`, it calculates the mean of each column and adjusts by the overall mean of these means.
+#'   \item If the \code{method} is "median", it calculates the median of each column and adjusts by the overall median of these medians.
+#'   \item If the \code{method} is "mean", it calculates the mean of each column and adjusts by the overall mean of these means.
 #'   \item It constructs a matrix of these adjusted values and subtracts it from the original matrix to normalize the columns.
 #' }
 #'
@@ -49,11 +49,11 @@ medianNorm <- function(x, method = "median") {
 #' @title Perform Combined Normalization on MultiAssayExperiment Data
 #'
 #' @description
-#' `performCombinedNormalization` performs combined normalization on proteome and phosphoproteome data from a MultiAssayExperiment object.
+#' \code{performCombinedNormalization} performs combined normalization on proteome and phosphoproteome data from a \code{MultiAssayExperiment} object.
 #'
-#' @param maeData A MultiAssayExperiment object containing proteome and phosphoproteome data.
+#' @param maeData A \code{MultiAssayExperiment} object containing proteome and phosphoproteome data.
 #'
-#' @return A numeric matrix with normalized and log2-transformed data.
+#' @return A numeric \code{matrix} with normalized and log2-transformed data.
 #'
 #' @details
 #' The function performs the following steps:
@@ -94,13 +94,13 @@ performCombinedNormalization <- function(maeData) {
 #' @title Get Ratio Matrix of Phosphoproteome Data
 #'
 #' @description
-#' `getRatioMatrix` calculates the ratio matrix of phosphoproteome data from a MultiAssayExperiment object.
+#' \code{getRatioMatrix} calculates the ratio matrix of phosphoproteome data from a \code{MultiAssayExperiment} object.
 #'
-#' @param maeData A MultiAssayExperiment object containing phosphoproteome and full proteome data.
-#' @param normalization A logical value indicating whether to perform normalization. Default is `FALSE`.
-#' @param getAdjustedPP A logical value indicating whether to use adjusted phosphoproteome data. Default is `FALSE`.
+#' @param maeData A \code{MultiAssayExperiment} object containing phosphoproteome and full proteome data.
+#' @param normalization A \code{logical} value indicating whether to perform normalization. Default is \code{FALSE}.
+#' @param getAdjustedPP A \code{logical} value indicating whether to use adjusted phosphoproteome data. Default is \code{FALSE}.
 #'
-#' @return A numeric matrix representing the ratio of intensity of PP (phosphoproteome) data to FP (full proteome) data.
+#' @return A numeric \code{matrix} representing the ratio of intensity of PP (phosphoproteome) data to FP (full proteome) data.
 #'
 #' @examples
 #' # Example usage:
@@ -152,12 +152,12 @@ getRatioMatrix <- function(maeData, normalization = FALSE, getAdjustedPP = FALSE
 #' @title Plot Log Ratio of PP/FP (Phosphoproteome to Full Proteome) intensities
 #'
 #' @description
-#' `plotLogRatio` generates a boxplot of the log2 ratio of intensities of phosphoproteome to full proteome data from a MultiAssayExperiment object.
+#' \code{plotLogRatio} generates a boxplot of the log2 ratio of intensities of phosphoproteome to full proteome data from a \code{MultiAssayExperiment} object.
 #'
-#' @param maeData A MultiAssayExperiment object containing phosphoproteome and full proteome data.
-#' @param normalization A logical value indicating whether to perform normalization. Default is `FALSE`.
+#' @param maeData A \code{MultiAssayExperiment} object containing phosphoproteome and full proteome data.
+#' @param normalization A \code{logical} value indicating whether to perform normalization. Default is \code{FALSE}.
 #'
-#' @return A ggplot object representing the boxplot of the log2 ratios.
+#' @return A \code{ggplot2} object representing the boxplot of the log2 ratios.
 #'
 #' @examples
 #' # Example usage:
@@ -205,12 +205,12 @@ plotLogRatio <- function(maeData, normalization = FALSE) {
 #' @title Check the PP/FP ratio matrix and remove feature that do not meet requirements
 #'
 #' @description
-#' `checkRatioMat` checks the ratio matrix for samples that do not have sufficient overlap of phospho-peptides between enriched (PP) and unenriched (FP) samples.
+#' \code{checkRatioMat} checks the ratio \code{matrix} for samples that do not have sufficient overlap of phospho-peptides between enriched (PP) and unenriched (FP) samples.
 #'
-#' @param ratioMat A numeric matrix representing the ratio of phosphoproteome data to full proteome data.
-#' @param minOverlap An integer specifying the minimum number of overlapping peptides required between samples. Default is `3`.
+#' @param ratioMat A numeric \code{matrix} representing the ratio of phosphoproteome data to full proteome data.
+#' @param minOverlap A \code{numeric} specifying the minimum number of overlapping peptides required between samples. Default is 3.
 #'
-#' @return A character vector of sample names that do not meet the overlap criteria.
+#' @return A \code{character} vector of sample names that do not meet the overlap criteria.
 #'
 #' @examples
 #' # Example usage:
@@ -258,15 +258,15 @@ checkRatioMat <- function(ratioMat, minOverlap = 3) {
 #' @title Run Phospho Adjustment
 #'
 #' @description
-#' `runPhosphoAdjustment` performs phospho adjustment on a MultiAssayExperiment object to normalize the phosphoproteome data.
+#' \code{runPhosphoAdjustment} performs phospho adjustment on a \code{MultiAssayExperiment} object to normalize the phosphoproteome data.
 #'
-#' @param maeData A MultiAssayExperiment object containing phosphoproteome and full proteome data.
-#' @param normalization A logical value indicating whether to perform normalization. Default is `FALSE`.
-#' @param minOverlap An integer specifying the minimum number of overlapping peptides required between samples. Default is `3`.
-#' @param completeness A numeric value indicating the required completeness of data for features to be included. Default is `0`.
-#' @param ncore An integer specifying the number of cores to use for parallel processing. Default is `1`.
+#' @param maeData A \code{MultiAssayExperiment} object containing phosphoproteome and full proteome data.
+#' @param normalization A \code{logical} value indicating whether to perform normalization. Default is \code{FALSE}.
+#' @param minOverlap A \code{numeric} value specifying the minimum number of overlapping peptides required between samples. Default is 3.
+#' @param completeness A \code{numeric} value indicating the required completeness of data for features to be included. Default is 0.
+#' @param ncore A \code{numeric} value specifying the number of cores to use for parallel processing. Default is 1.
 #'
-#' @return A MultiAssayExperiment object with adjusted phosphoproteome data.
+#' @return A \code{MultiAssayExperiment} object with adjusted phosphoproteome data.
 #'
 #' @details
 #' The function performs the following steps:
@@ -341,15 +341,15 @@ runPhosphoAdjustment <- function(maeData, normalization = FALSE, minOverlap = 3,
 #' @title Plot Adjustment Results
 #'
 #' @description
-#' `plotAdjustmentResults` generates plots to visualize the results of phosphoproteome adjustment.
+#' \code{plotAdjustmentResults} generates plots to visualize the results of phosphoproteome adjustment.
 #'
-#' @param maeData A MultiAssayExperiment object containing phosphoproteome and full proteome data.
-#' @param normalization A logical value indicating whether normalization was performed. Default is `FALSE`.
+#' @param maeData A \code{MultiAssayExperiment} object containing phosphoproteome and full proteome data.
+#' @param normalization A \code{logical} value indicating whether normalization was performed. Default is \code{FALSE}.
 #'
 #' @return A list containing:
-#' \item{ratioTrendPlot}{A ggplot object showing the line plot of PP/FP ratios for features present in all samples.}
-#' \item{ratioBoxplot}{A ggplot object showing the box plot of PP/FP ratios before and after adjustment.}
-#' \item{ppBoxplot}{A ggplot object showing the box plot of phosphorylation intensities in PP samples before and after adjustment.}
+#' \item{ratioTrendPlot}{A \code{ggplot2} object showing the line plot of PP/FP ratios for features present in all samples.}
+#' \item{ratioBoxplot}{A \code{ggplot2} object showing the box plot of PP/FP ratios before and after adjustment.}
+#' \item{ppBoxplot}{A \code{ggplot2} object showing the box plot of phosphorylation intensities in PP samples before and after adjustment.}
 #'
 #' @details
 #' The function performs the following steps:

@@ -7,17 +7,17 @@
 plotKinaseTimeSeries(scoreTab, pCut = 0.05, clusterName = "cluster1")
 }
 \arguments{
-\item{scoreTab}{A data frame containing kinase activity scores, p-values, and time points.}
+\item{scoreTab}{A \code{data frame} containing kinase activity scores, p-values, and time points.}
 
-\item{pCut}{A numeric value specifying the p-value threshold for significance. Default is `0.05`.}
+\item{pCut}{A \code{numeric} value specifying the p-value threshold for significance. Default is 0.05.}
 
-\item{clusterName}{A character string specifying the name of the cluster for the plot title. Default is `"cluster1"`.}
+\item{clusterName}{A \code{character} string specifying the name of the cluster for the plot title. Default is "cluster1".}
 }
 \value{
-A ggplot2 object representing the heatmap of kinase activity score.
+A \code{ggplot2} object representing the heatmap of kinase activity score.
 }
 \description{
-`plotKinaseTimeSeries` creates a heatmap to visualize the result of kinase activity inference for time-series clustering, with significant activity changes marked.
+\code{plotKinaseTimeSeries} creates a heatmap to visualize the result of kinase activity inference for time-series clustering, with significant activity changes marked.
 }
 \details{
 The heatmap shows kinase activity scores over different time points. Significant activities (based on the specified p-value threshold) are marked with an asterisk (*). The color gradient represents the activity score, with blue indicating low activity, red indicating high activity, and white as the midpoint.

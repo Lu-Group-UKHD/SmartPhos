@@ -13,21 +13,21 @@ runPhosphoAdjustment(
 )
 }
 \arguments{
-\item{maeData}{A MultiAssayExperiment object containing phosphoproteome and full proteome data.}
+\item{maeData}{A \code{MultiAssayExperiment} object containing phosphoproteome and full proteome data.}
 
-\item{normalization}{A logical value indicating whether to perform normalization. Default is `FALSE`.}
+\item{normalization}{A \code{logical} value indicating whether to perform normalization. Default is \code{FALSE}.}
 
-\item{minOverlap}{An integer specifying the minimum number of overlapping peptides required between samples. Default is `3`.}
+\item{minOverlap}{A \code{numeric} value specifying the minimum number of overlapping peptides required between samples. Default is 3.}
 
-\item{completeness}{A numeric value indicating the required completeness of data for features to be included. Default is `0`.}
+\item{completeness}{A \code{numeric} value indicating the required completeness of data for features to be included. Default is 0.}
 
-\item{ncore}{An integer specifying the number of cores to use for parallel processing. Default is `1`.}
+\item{ncore}{A \code{numeric} value specifying the number of cores to use for parallel processing. Default is 1.}
 }
 \value{
-A MultiAssayExperiment object with adjusted phosphoproteome data.
+A \code{MultiAssayExperiment} object with adjusted phosphoproteome data.
 }
 \description{
-`runPhosphoAdjustment` performs phospho adjustment on a MultiAssayExperiment object to normalize the phosphoproteome data.
+\code{runPhosphoAdjustment} performs phospho adjustment on a \code{MultiAssayExperiment} object to normalize the phosphoproteome data.
 }
 \details{
 The function performs the following steps:

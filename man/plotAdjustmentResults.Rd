@@ -7,18 +7,18 @@
 plotAdjustmentResults(maeData, normalization = FALSE)
 }
 \arguments{
-\item{maeData}{A MultiAssayExperiment object containing phosphoproteome and full proteome data.}
+\item{maeData}{A \code{MultiAssayExperiment} object containing phosphoproteome and full proteome data.}
 
-\item{normalization}{A logical value indicating whether normalization was performed. Default is `FALSE`.}
+\item{normalization}{A \code{logical} value indicating whether normalization was performed. Default is \code{FALSE}.}
 }
 \value{
 A list containing:
-\item{ratioTrendPlot}{A ggplot object showing the line plot of PP/FP ratios for features present in all samples.}
-\item{ratioBoxplot}{A ggplot object showing the box plot of PP/FP ratios before and after adjustment.}
-\item{ppBoxplot}{A ggplot object showing the box plot of phosphorylation intensities in PP samples before and after adjustment.}
+\item{ratioTrendPlot}{A \code{ggplot2} object showing the line plot of PP/FP ratios for features present in all samples.}
+\item{ratioBoxplot}{A \code{ggplot2} object showing the box plot of PP/FP ratios before and after adjustment.}
+\item{ppBoxplot}{A \code{ggplot2} object showing the box plot of phosphorylation intensities in PP samples before and after adjustment.}
 }
 \description{
-`plotAdjustmentResults` generates plots to visualize the results of phosphoproteome adjustment.
+\code{plotAdjustmentResults} generates plots to visualize the results of phosphoproteome adjustment.
 }
 \details{
 The function performs the following steps:

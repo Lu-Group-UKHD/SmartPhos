@@ -7,7 +7,7 @@
 #'
 #' @param speciesRef A \code{character} string specifying the species. Supported values are "Homo sapiens" and "Mus musculus". Default is "Homo_sapiens".
 #'
-#' @return A data frame containing the kinase-substrate interaction network for the specified species.
+#' @return A \code{data frame} containing the kinase-substrate interaction network for the specified species.
 #' 
 #' @examples
 #' # Load the human kinase-substrate interaction network
@@ -35,23 +35,23 @@ getDecouplerNetwork <- function(speciesRef = "Homo_sapiens") {
 #' @title Calculate Kinase Activity Scores using \code{decoupleR}
 #'
 #' @description
-#' \code{calcKinaseScore} calculates kinase activity scores based on input data and a specified network of regulatory relationships (decoupler network).
+#' \code{calcKinaseScore} calculates kinase activity scores based on input data and a specified network of regulatory relationships (\code{decoupler network}).
 #'
-#' @param resTab A data frame containing the input data with columns site, stat, and log2FC.
-#' @param decoupler_network A data frame representing the decoupleR network with columns source and target.
-#' @param corrThreshold A numeric value specifying the correlation threshold for filtering correlated regulons. Default is 0.9.
-#' @param statType A character string specifying the type of statistic to use. Options are "stat" or "log2FC". Default is "stat".
-#' @param nPerm A numeric value specifying the number of permutations for the null distribution. Default is 100.
+#' @param resTab A \code{data frame} containing the input data with columns site, stat, and log2FC.
+#' @param decoupler_network A \code{data frame} representing the decoupleR network with columns source and target.
+#' @param corrThreshold A \code{numeric} value specifying the correlation threshold for filtering correlated regulons. Default is 0.9.
+#' @param statType A \code{character} string specifying the type of statistic to use. Options are "stat" or "log2FC". Default is "stat".
+#' @param nPerm A \code{numeric} value specifying the number of permutations for the null distribution. Default is 100.
 #'
-#' @return A data frame with kinase activity scores, including columns for `source`, `score`, and `p_value`.
+#' @return A \code{data frame} with kinase activity scores, including columns for `source`, `score`, and `p_value`.
 #'
 #' @details
 #' The function performs the following steps:
 #' \enumerate{
 #'   \item Removes duplicate rows based on the site column.
-#'   \item Filters the data to include only those sites present in the target column of the decoupler_network.
+#'   \item Filters the data to include only those sites present in the target column of the \code{decoupler network}.
 #'   \item Prepares the input table based on the specified statType.
-#'   \item Intersects the input table with the decoupler network to find common regulons.
+#'   \item Intersects the input table with the \code{decoupler network} to find common regulons.
 #'   \item Checks for correlated regulons and filters out those exceeding the correlation threshold.
 #'   \item Calculates kinase activity using a weighted mean approach.
 #'   \item Processes the results to handle NA values and formats the output.
@@ -112,13 +112,13 @@ calcKinaseScore <- function(resTab, decoupler_network, corrThreshold = 0.9, stat
 #' @title Plot Kinase score for Differential Expression data
 #'
 #' @description 
-#' `plotKinaseDE` generates a bar plot of the top kinases associated with the differentially expressed genes based on their scores.
+#' `plotKinaseDE` generates a \code{bar plot} of the top kinases associated with the differentially expressed genes based on their scores.
 #'
-#' @param scoreTab A data frame containing kinase scores with columns `source`, `score`, and `p_value`.
-#' @param nTop An integer specifying the number of top kinases to plot for each direction. Default is `10`.
-#' @param pCut A numeric value specifying the p-value cutoff for significance. Default is `0.05`.
+#' @param scoreTab A \code{data frame} containing kinase scores with columns source, score, and p_value.
+#' @param nTop A \code{numeric} value specifying the number of top kinases to plot for each direction. Default is 10.
+#' @param pCut A \code{numeric} value specifying the p-value cutoff for significance. Default is 0.05.
 #'
-#' @return A ggplot object representing the bar plot of kinase score.
+#' @return A \code{ggplot2} object representing the bar plot of kinase score.
 #'
 #' @details
 #' The function performs the following steps:
@@ -126,7 +126,7 @@ calcKinaseScore <- function(resTab, decoupler_network, corrThreshold = 0.9, stat
 #'   \item Adds a column for significance based on the p-value cutoff.
 #'   \item Adds a column for the sign of the score.
 #'   \item Filters out kinases with a score of 0.
-#'   \item Selects the top `nTop` kinases by absolute score for each sign of the score.
+#'   \item Selects the top \code{nTop} kinases by absolute score for each sign of the score.
 #'   \item Creates a bar plot with the selected kinases.
 #' }
 #'
@@ -186,13 +186,13 @@ plotKinaseDE <- function(scoreTab, nTop = 10, pCut = 0.05) {
 #' @title Plot Kinase Activity Time Series
 #'
 #' @description
-#' `plotKinaseTimeSeries` creates a heatmap to visualize the result of kinase activity inference for time-series clustering, with significant activity changes marked.
+#' \code{plotKinaseTimeSeries} creates a heatmap to visualize the result of kinase activity inference for time-series clustering, with significant activity changes marked.
 #'
-#' @param scoreTab A data frame containing kinase activity scores, p-values, and time points.
-#' @param pCut A numeric value specifying the p-value threshold for significance. Default is `0.05`.
-#' @param clusterName A character string specifying the name of the cluster for the plot title. Default is `"cluster1"`.
+#' @param scoreTab A \code{data frame} containing kinase activity scores, p-values, and time points.
+#' @param pCut A \code{numeric} value specifying the p-value threshold for significance. Default is 0.05.
+#' @param clusterName A \code{character} string specifying the name of the cluster for the plot title. Default is "cluster1".
 #'
-#' @return A ggplot2 object representing the heatmap of kinase activity score.
+#' @return A \code{ggplot2} object representing the heatmap of kinase activity score.
 #'
 #' @details
 #' The heatmap shows kinase activity scores over different time points. Significant activities (based on the specified p-value threshold) are marked with an asterisk (*). The color gradient represents the activity score, with blue indicating low activity, red indicating high activity, and white as the midpoint.

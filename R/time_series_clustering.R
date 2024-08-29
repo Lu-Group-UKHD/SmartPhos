@@ -3,27 +3,27 @@
 #' @title Scale and Center a Matrix
 #'
 #' @description
-#' `mscale` scales and centers each row of a matrix, with options for using mean or median, standard deviation or mean absolute deviation, and censoring extreme values.
+#' \code{mscale} scales and centers each row of a matrix, with options for using mean or median, standard deviation or mean absolute deviation, and censoring extreme values.
 #'
-#' @param x A numeric matrix where rows are features and columns are samples.
-#' @param center Logical. If TRUE, the rows are centered by subtracting the mean or median. Default is `TRUE`.
-#' @param scale Logical. If TRUE, the rows are scaled by dividing by the standard deviation or mean absolute deviation. Default is `TRUE`.
-#' @param censor A numeric vector of length one or two for censoring the scaled values. 
+#' @param x A \code{numeric} matrix where rows are features and columns are samples.
+#' @param center \code{Logical}. If \code{TRUE}, the rows are centered by subtracting the mean or median. Default is \code{TRUE}.
+#' @param scale \code{Logical}. If \code{TRUE}, the rows are scaled by dividing by the standard deviation or mean absolute deviation. Default is \code{TRUE}.
+#' @param censor A \code{numeric} vector of length one or two for censoring the scaled values. 
 #' If length one, values are censored symmetrically at positive and negative values. 
-#' If length two, the first value is the lower limit and the second value is the upper limit. Default is `NULL`.
-#' @param useMad Logical. If TRUE, the mean absolute deviation is used for scaling instead of the standard deviation. Default is `FALSE`.
+#' If length two, the first value is the lower limit and the second value is the upper limit. Default is \code{NULL}.
+#' @param useMad \code{Logical}. If \code{TRUE}, the mean absolute deviation is used for scaling instead of the standard deviation. Default is \code{FALSE}.
 #'
-#' @return A scaled and centered numeric matrix with the same dimensions as the input matrix `x`.
+#' @return A scaled and centered numeric \code{matrix} with the same dimensions as the input \code{matrix} `x`.
 #'
 #' @details
-#' The function allows for flexible scaling and centering of the rows of a matrix:
+#' The function allows for flexible scaling and centering of the rows of a \code{matrix}:
 #' \itemize{
-#'   \item If both `center` and `scale` are TRUE, rows are centered and scaled.
-#'   \item If only `center` is TRUE, rows are centered but not scaled.
-#'   \item If only `scale` is TRUE, rows are scaled but not centered.
-#'   \item If neither `center` nor `scale` is TRUE, the original matrix is returned.
+#'   \item If both \code{center} and \code{scale} are \code{TRUE}, rows are centered and scaled.
+#'   \item If only \code{center} is \code{TRUE}, rows are centered but not scaled.
+#'   \item If only \code{scale} is \code{TRUE}, rows are scaled but not centered.
+#'   \item If neither \code{center} nor \code{scale} is \code{TRUE}, the original \code{matrix} is returned.
 #' }
-#' The function can also censor extreme values, either symmetrically or asymmetrically, based on the `censor` parameter.
+#' The function can also censor extreme values, either symmetrically or asymmetrically, based on the \code{censor} parameter.
 #'
 #' @examples
 #' # Example usage:
@@ -83,15 +83,15 @@ mscale <- function(x, center = TRUE, scale = TRUE, censor = NULL, useMad = FALSE
 #' @title Add Zero Timepoint Data to Treatment Subset
 #'
 #' @description
-#' `addZeroTime` adds a zero timepoint to a specific treatment's data subset.
+#' \code{addZeroTime} adds a zero timepoint to a specific treatment's data subset.
 #'
-#' @param data A SummarizedExperiment object containing the experimental data.
-#' @param condition The condition corresponds to one of the columns from the colData of SE object.
-#' @param treat Character string specifying the treatment to which zero timepoint should be added.
-#' @param zeroTreat Character string specifying the treatment representing the zero timepoint.
-#' @param timeRange Character vector specifying the timepoints to include for the treatment.
+#' @param data A \code{SummarizedExperiment} object containing the experimental data.
+#' @param condition \code{Character} string corresponds to one of the columns from the colData of SE object.
+#' @param treat \code{Character} string specifying the treatment to which zero timepoint should be added.
+#' @param zeroTreat \code{Character} string specifying the treatment representing the zero timepoint.
+#' @param timeRange \code{Character} vector specifying the timepoints to include for the treatment.
 #'
-#' @return A SummarizedExperiment object with the zero timepoint added to the specified treatment's data.
+#' @return A \code{SummarizedExperiment} object with the zero timepoint added to the specified treatment's data.
 #'
 #' @details
 #' The function performs the following steps:
@@ -100,7 +100,7 @@ mscale <- function(x, center = TRUE, scale = TRUE, censor = NULL, useMad = FALSE
 #'   \item Subsets the data for the zero timepoint of the specified zero treatment.
 #'   \item Combines the assays from the treatment and zero timepoint subsets.
 #'   \item Updates the column data to reflect the combined treatment.
-#'   \item Returns a SummarizedExperiment object with the combined data.
+#'   \item Returns a \code{SummarizedExperiment} object with the combined data.
 #' }
 #'
 #' @examples
@@ -137,16 +137,16 @@ addZeroTime <- function(data, condition, treat, zeroTreat, timeRange) {
 #' @title Perform Clustering on Time-Series Data
 #'
 #' @description
-#' `clusterTS` performs clustering on time-series data and generates plots for visualization.
+#' \code{clusterTS} performs clustering on time-series data and generates plots for visualization.
 #'
-#' @param x A numeric matrix with rows as features and columns as time points.
-#' @param k An integer specifying the number of clusters. Default is 5.
-#' @param pCut A numeric value specifying the probability cutoff for cluster membership. Default is `NULL`.
-#' @param twoCondition A logical value indicating if the data contains two conditions. Default is `FALSE`.
+#' @param x A numeric \code{matrix} with rows as features and columns as time points.
+#' @param k A \code{numeric} value specifying the number of clusters. Default is 5.
+#' @param pCut A \code{numeric} value specifying the probability cutoff for cluster membership. Default is \code{NULL}.
+#' @param twoCondition A \code{logical} value indicating if the data contains two conditions. Default is \code{FALSE}.
 #'
 #' @return A list containing:
-#' \item{cluster}{A tibble with clustering information for each feature.}
-#' \item{plot}{A ggplot object for visualizing the clustering results.}
+#' \item{cluster}{A \code{tibble} with clustering information for each feature.}
+#' \item{plot}{A \code{ggplot2} object for visualizing the clustering results.}
 #'
 #' @details
 #' The function performs the following steps:
@@ -301,24 +301,24 @@ clusterTS <- function(x, k = 5, pCut = NULL, twoCondition = FALSE) {
 #' @title Filter Expression Matrix Using Spline Models
 #'
 #' @description
-#' `splineFilter` filters an expression matrix based on spline models fitted to time-series data, optionally considering treatment and subject ID.
+#' \code{splineFilter} filters an expression \code{matrix} based on spline models fitted to time-series data, optionally considering treatment and subject ID.
 #'
-#' @param exprMat A numeric matrix of expression data, where rows are features and columns are samples.
-#' @param subjectID An optional vector of subject IDs corresponding to columns in `exprMat`. Default is `NULL`.
-#' @param time A numeric vector representing the time points corresponding to columns in `exprMat`.
-#' @param df An integer specifying the degrees of freedom for the spline basis.
-#' @param pCut A numeric value for the p-value cutoff to filter significant features. Default is `0.05`.
-#' @param ifFDR A logical value indicating if the false discovery rate (FDR) should be used for filtering. If FALSE, raw p-values are used. Default is `FALSE`.
-#' @param treatment An optional vector of treatment labels corresponding to columns in `exprMat`. Default is `NULL`.
-#' @param refTreatment An optional reference treatment label for the `treatment` vector. Default is `NULL`.
+#' @param exprMat A \code{numeric} matrix of expression data, where rows are features and columns are samples.
+#' @param subjectID \code{Character}. An optional vector of subject IDs corresponding to columns in exprMat. Default is \code{NULL}.
+#' @param time A \code{numeric} vector representing the time points corresponding to columns in exprMat.
+#' @param df A \code{numeric} value specifying the degrees of freedom for the spline basis.
+#' @param pCut A \code{numeric} value for the p-value cutoff to filter significant features. Default is 0.05.
+#' @param ifFDR A \code{logical} value indicating if the false discovery rate (FDR) should be used for filtering. If \code{FALSE}, raw p-values are used. Default is \code{FALSE}.
+#' @param treatment \code{Character}. An optional vector of treatment labels corresponding to columns in exprMat. Default is \code{NULL}.
+#' @param refTreatment \code{Character}. An optional reference treatment label for the treatment vector. Default is \code{NULL}.
 #'
-#' @return A filtered expression matrix containing only the features that meet the significance criteria.
+#' @return A filtered expression \code{matrix} containing only the features that meet the significance criteria.
 #'
 #' @details
 #' The function performs the following steps:
 #' \enumerate{
 #'   \item Converts time points from minutes to hours if both units are present.
-#'   \item Removes rows with missing values from the expression matrix.
+#'   \item Removes rows with missing values from the expression \code{matrix}.
 #'   \item Constructs a design matrix for the spline model, optionally including subject IDs and treatments.
 #'   \item Fits a linear model using the design matrix and performs empirical Bayes moderation.
 #'   \item Extracts significant features based on the specified p-value or FDR cutoff.
@@ -421,23 +421,23 @@ splineFilter <- function(exprMat, subjectID = NULL, time, df, pCut = 0.5, ifFDR 
 #' @title Plot Time Series Data for a gene or phospho site from SummarizedExperiment object
 #'
 #' @description
-#' `plotTimeSeries` plots time series data for a given gene or phospho site from a given SummarizedExperiment object, allowing different types of plots such as expression, log fold change, or two-condition expression.
+#' \code{plotTimeSeries} plots time series data for a given gene or phospho site from a given \code{SummarizedExperiment} object, allowing different types of plots such as expression, log fold change, or two-condition expression.
 #'
-#' @param se A SummarizedExperiment object containing the data.
-#' @param type The type of plot to generate. Options are `"expression"`, `"logFC"`, or `"two-condition expression"`.
-#' @param geneID The identifier of the gene or feature to plot.
-#' @param symbol The symbol or name of the gene or feature to use as the plot title.
-#' @param condition The condition corresponds to one of the columns from the colData of SE object.
-#' @param treatment The treatment to use for filtering the data.
-#' @param refTreat The reference treatment to compare against.
-#' @param addZero Logical, whether to add a zero time point to the data. Default is `FALSE`.
-#' @param zeroTreat The treatment to use for adding the zero time point. Default is `NULL`.
-#' @param timerange The range of time points to include in the plot.
+#' @param se A \code{SummarizedExperiment} object containing the data.
+#' @param type \code{Character}. The type of plot to generate. Options are "expression", "logFC", or "two-condition expression".
+#' @param geneID \code{Character}. The identifier of the gene or feature to plot.
+#' @param symbol \code{Character}. The symbol or name of the gene or feature to use as the plot title.
+#' @param condition \code{Character}. The condition corresponds to one of the columns from the colData of SE object.
+#' @param treatment \code{Character}. The treatment to use for filtering the data.
+#' @param refTreat \code{Character}. The reference treatment to compare against.
+#' @param addZero \code{Logical}, whether to add a zero time point to the data. Default is \code{FALSE}.
+#' @param zeroTreat \code{Character}. The treatment to use for adding the zero time point. Default is \code{NULL}.
+#' @param timerange \code{Character} vector.The range of time points to include in the plot.
 #'
-#' @return A ggplot object representing the time series plot.
+#' @return A \code{ggplot2} object representing the time series plot.
 #'
 #' @details
-#' This function generates time series plots for a specified gene or feature from a SummarizedExperiment (SE) object. The type of plot can be one of the following:
+#' This function generates time series plots for a specified gene or feature from a \code{SummarizedExperiment} (SE) object. The type of plot can be one of the following:
 #' - "expression": Plots normalized expression levels over time.
 #' - "logFC": Plots log fold change (logFC) over time, comparing a treatment to a reference treatment.
 #' - "two-condition expression": Plots normalized expression levels over time for two conditions.

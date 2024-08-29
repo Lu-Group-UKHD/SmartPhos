@@ -12,7 +12,7 @@ plotIntensity(se, color = "none")
 \item{color}{A \code{character} string specifying the metadata column to use for coloring the boxplots. Default is "none".}
 }
 \value{
-A \code{ggplot} object showing boxplots of intensities for each sample.
+A \code{ggplot2} object showing boxplots of intensities for each sample.
 }
 \description{
 \code{plotIntensity} generates boxplots of assay intensities for each sample in a \code{SummarizedExperiment} object. Optionally, the boxplots can be colored based on a specified metadata column. The function handles missing values by filtering them out before plotting.

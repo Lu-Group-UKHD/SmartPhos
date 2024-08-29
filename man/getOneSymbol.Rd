@@ -7,13 +7,13 @@
 getOneSymbol(Gene)
 }
 \arguments{
-\item{Gene}{A character vector where each element is a semicolon-separated list of gene symbols.}
+\item{Gene}{A \code{character} vector where each element is a semicolon-separated list of gene symbols.}
 }
 \value{
-A character vector containing the last gene symbol from each element of the input vector.
+A \code{character} vector containing the last gene symbol from each element of the input vector.
 }
 \description{
-`getOneSymbol` extracts the last gene symbol from a semicolon-separated list of gene symbols.
+\code{getOneSymbol} extracts the last gene symbol from a semicolon-separated list of gene symbols.
 }
 \details{
 This function processes a character vector where each element consists of gene symbols separated by semicolons. It splits each element by semicolons and extracts the last gene symbol from the resulting list. The output is a character vector of these last gene symbols.

@@ -18,34 +18,34 @@ plotTimeSeries(
 )
 }
 \arguments{
-\item{se}{A SummarizedExperiment object containing the data.}
+\item{se}{A \code{SummarizedExperiment} object containing the data.}
 
-\item{type}{The type of plot to generate. Options are `"expression"`, `"logFC"`, or `"two-condition expression"`.}
+\item{type}{\code{Character}. The type of plot to generate. Options are "expression", "logFC", or "two-condition expression".}
 
-\item{geneID}{The identifier of the gene or feature to plot.}
+\item{geneID}{\code{Character}. The identifier of the gene or feature to plot.}
 
-\item{symbol}{The symbol or name of the gene or feature to use as the plot title.}
+\item{symbol}{\code{Character}. The symbol or name of the gene or feature to use as the plot title.}
 
-\item{condition}{The condition corresponds to one of the columns from the colData of SE object.}
+\item{condition}{\code{Character}. The condition corresponds to one of the columns from the colData of SE object.}
 
-\item{treatment}{The treatment to use for filtering the data.}
+\item{treatment}{\code{Character}. The treatment to use for filtering the data.}
 
-\item{refTreat}{The reference treatment to compare against.}
+\item{refTreat}{\code{Character}. The reference treatment to compare against.}
 
-\item{addZero}{Logical, whether to add a zero time point to the data. Default is `FALSE`.}
+\item{addZero}{\code{Logical}, whether to add a zero time point to the data. Default is \code{FALSE}.}
 
-\item{zeroTreat}{The treatment to use for adding the zero time point. Default is `NULL`.}
+\item{zeroTreat}{\code{Character}. The treatment to use for adding the zero time point. Default is \code{NULL}.}
 
-\item{timerange}{The range of time points to include in the plot.}
+\item{timerange}{\code{Character} vector.The range of time points to include in the plot.}
 }
 \value{
-A ggplot object representing the time series plot.
+A \code{ggplot2} object representing the time series plot.
 }
 \description{
-`plotTimeSeries` plots time series data for a given gene or phospho site from a given SummarizedExperiment object, allowing different types of plots such as expression, log fold change, or two-condition expression.
+\code{plotTimeSeries} plots time series data for a given gene or phospho site from a given \code{SummarizedExperiment} object, allowing different types of plots such as expression, log fold change, or two-condition expression.
 }
 \details{
-This function generates time series plots for a specified gene or feature from a SummarizedExperiment (SE) object. The type of plot can be one of the following:
+This function generates time series plots for a specified gene or feature from a \code{SummarizedExperiment} (SE) object. The type of plot can be one of the following:
 - "expression": Plots normalized expression levels over time.
 - "logFC": Plots log fold change (logFC) over time, comparing a treatment to a reference treatment.
 - "two-condition expression": Plots normalized expression levels over time for two conditions.

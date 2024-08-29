@@ -7,17 +7,17 @@
 plotVolcano(tableDE, pFilter = 0.05, fcFilter = 0.5)
 }
 \arguments{
-\item{tableDE}{A data frame containing differential expression results with columns 'ID', 'log2FC', 'pvalue', and 'Gene'.}
+\item{tableDE}{A \code{data frame} containing differential expression results with columns 'ID', 'log2FC', 'pvalue', and 'Gene'.}
 
-\item{pFilter}{A numeric value specifying the p-value threshold for significance. Default is `0.05`.}
+\item{pFilter}{A \code{numeric} value specifying the p-value threshold for significance. Default is 0.05.}
 
-\item{fcFilter}{A numeric value specifying the log2 fold-change threshold for significance. Default is `0.5`.}
+\item{fcFilter}{A \code{numeric} value specifying the log2 fold-change threshold for significance. Default is 0.5.}
 }
 \value{
-A ggplot object representing the volcano plot.
+A \code{ggplot2} object representing the volcano plot.
 }
 \description{
-`plotVolcano` generates a volcano plot to visualize differential expression results.
+\code{plotVolcano} generates a volcano plot to visualize differential expression results.
 }
 \details{
 This function creates a volcano plot where differentially expressed genes are categorized as 'Up', 'Down', or 'Not Sig' based on the provided p-value and log2 fold-change thresholds. Points on the plot are color-coded to indicate their expression status.

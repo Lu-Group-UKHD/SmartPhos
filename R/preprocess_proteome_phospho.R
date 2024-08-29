@@ -3,11 +3,11 @@
 #' @title Extract the Last Gene Symbol from a Semicolon-Separated List
 #'
 #' @description
-#' `getOneSymbol` extracts the last gene symbol from a semicolon-separated list of gene symbols.
+#' \code{getOneSymbol} extracts the last gene symbol from a semicolon-separated list of gene symbols.
 #'
-#' @param Gene A character vector where each element is a semicolon-separated list of gene symbols.
+#' @param Gene A \code{character} vector where each element is a semicolon-separated list of gene symbols.
 #'
-#' @return A character vector containing the last gene symbol from each element of the input vector.
+#' @return A \code{character} vector containing the last gene symbol from each element of the input vector.
 #'
 #' @details
 #' This function processes a character vector where each element consists of gene symbols separated by semicolons. It splits each element by semicolons and extracts the last gene symbol from the resulting list. The output is a character vector of these last gene symbols.
@@ -32,21 +32,21 @@ getOneSymbol <- function(Gene) {
 #' @title Preprocess Proteome Data
 #'
 #' @description
-#' `preprocessProteome` preprocesses proteome data stored in a SummarizedExperiment object by performing filtering, transformation, normalization, imputation, and batch effect removal.
+#' \code{preprocessProteome} preprocesses proteome data stored in a \code{SummarizedExperiment} object by performing filtering, transformation, normalization, imputation, and batch effect removal.
 #'
-#' @param seData A SummarizedExperiment object containing proteome data.
-#' @param filterList A list of filters to apply on the samples. Default is `NULL`.
-#' @param missCut Numeric value specifying the missing value cutoff percentage for filtering features. Default is `50`.
-#' @param transform Character string specifying the transformation method ("log2", "vst", "none"). Default is `"log2"`.
-#' @param normalize Logical value indicating whether to normalize the data. Default is `FALSE`.
-#' @param getPP Logical value indicating whether to retrieve PP samples. Default is `FALSE`.
-#' @param removeOutlier Character vector of samples to be removed as outliers. Default is `NULL`.
-#' @param impute Character string specifying the imputation method ("QRILC", "MLE", "bpca", "missForest", "MinDet", "none"). Default is `"none"`.
-#' @param batch Character vector specifying batch effects to remove. Default is `NULL`.
-#' @param verbose Logical value indicating whether to print detailed information. Default is `FALSE`.
-#' @param scaleFactorTab Data frame containing scale factors for normalization. Default is `NULL`.
+#' @param seData A \code{SummarizedExperiment} object containing proteome data.
+#' @param filterList A \code{list} of filters to apply on the samples. Default is \code{NULL}.
+#' @param missCut \code{Numeric} value specifying the missing value cutoff percentage for filtering features. Default is 50.
+#' @param transform \code{Character} string specifying the transformation method ("log2", "vst", "none"). Default is "log2".
+#' @param normalize \code{Logical} value indicating whether to normalize the data. Default is \code{FALSE}.
+#' @param getPP \code{Logical} value indicating whether to retrieve PP samples. Default is \code{FALSE}.
+#' @param removeOutlier \code{Character} vector of samples to be removed as outliers. Default is \code{NULL}.
+#' @param impute \code{Character} string specifying the imputation method ("QRILC", "MLE", "bpca", "missForest", "MinDet", "none"). Default is "none".
+#' @param batch \code{Character} vector specifying batch effects to remove. Default is \code{NULL}.
+#' @param verbose \code{Logical} value indicating whether to print detailed information. Default is \code{FALSE}.
+#' @param scaleFactorTab \code{Data frame} containing scale factors for normalization. Default is \code{NULL}.
 #'
-#' @return A SummarizedExperiment object with preprocessed proteome data.
+#' @return A \code{SummarizedExperiment} object with preprocessed proteome data.
 #'
 #' @examples
 #' # Load multiAssayExperiment object
@@ -208,22 +208,22 @@ preprocessProteome <- function(seData, filterList = NULL, missCut = 50,
 #' @title Preprocess Phosphoproteome Data
 #'
 #' @description
-#' `preprocessPhos` preprocesses phosphoproteome data stored in a SummarizedExperiment object by performing filtering, transformation, normalization, imputation, and batch effect removal.
+#' \code{preprocessPhos} preprocesses phosphoproteome data stored in a \code{SummarizedExperiment} object by performing filtering, transformation, normalization, imputation, and batch effect removal.
 #'
-#' @param seData A SummarizedExperiment object containing phosphoproteome data.
-#' @param filterList A list of filters to apply on the samples. Default is `NULL`.
-#' @param missCut Numeric value specifying the missing value cutoff percentage for filtering features. Default is `50`.
-#' @param transform Character string specifying the transformation method ("log2", "vst", "none"). Default is `"log2"`.
-#' @param normalize Logical value indicating whether to normalize the data. Default is `FALSE`.
-#' @param getFP Logical value indicating whether to retrieve FP samples. Default is `FALSE`.
-#' @param removeOutlier Character vector of samples to be removed as outliers. Default is `NULL`.
-#' @param assayName Character string specifying the assay name in the SummarizedExperiment object. Default is `NULL`.
-#' @param batch Character vector specifying batch effects to remove. Default is `NULL`.
-#' @param scaleFactorTab Data frame containing scale factors for normalization. Default is `NULL`.
-#' @param impute Character string specifying the imputation method ("QRILC", "MLE", "bpca", "missForest", "MinDet", "none"). Default is `"none"`.
-#' @param verbose Logical value indicating whether to print detailed information. Default is `FALSE`.
+#' @param seData A \code{SummarizedExperiment} object containing phosphoproteome data.
+#' @param filterList A \code{list} of filters to apply on the samples. Default is \code{NULL}.
+#' @param missCut \code{Numeric} value specifying the missing value cutoff percentage for filtering features. Default is 50.
+#' @param transform \code{Character} string specifying the transformation method ("log2", "vst", "none"). Default is "log2".
+#' @param normalize \code{Logical} value indicating whether to normalize the data. Default is \code{FALSE}.
+#' @param getFP \code{Logical} value indicating whether to retrieve FP samples. Default is \code{FALSE}.
+#' @param removeOutlier \code{Character} vector of samples to be removed as outliers. Default is \code{NULL}.
+#' @param assayName \code{Character} string specifying the assay name in the SummarizedExperiment object. Default is \code{NULL}.
+#' @param batch \code{Character} vector specifying batch effects to remove. Default is \code{NULL}.
+#' @param scaleFactorTab \code{Data frame} containing scale factors for normalization. Default is \code{NULL}.
+#' @param impute \code{Character} string specifying the imputation method ("QRILC", "MLE", "bpca", "missForest", "MinDet", "none"). Default is "none".
+#' @param verbose \code{Logical} value indicating whether to print detailed information. Default is \code{FALSE}.
 #'
-#' @return A SummarizedExperiment object with preprocessed phosphoproteome data.
+#' @return A \code{SummarizedExperiment} object with preprocessed phosphoproteome data.
 #'
 #' @examples
 #' # Load multiAssayExperiment object

@@ -20,7 +20,7 @@ plotPCA(pca, se, xaxis = "PC1", yaxis = "PC2", color = "none", shape = "none")
 \item{shape}{A \code{character} string specifying the metadata column to use for shaping the points. Default is "none".}
 }
 \value{
-A \code{ggplot} object showing the PCA plot.
+A \code{ggplot2} object showing the PCA plot.
 }
 \description{
 \code{plotPCA} generates a PCA plot using the results from a PCA analysis and a \code{SummarizedExperiment} object. The points on the plot can be colored and shaped based on metadata.

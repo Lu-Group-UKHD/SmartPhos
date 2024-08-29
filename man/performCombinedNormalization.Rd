@@ -7,13 +7,13 @@
 performCombinedNormalization(maeData)
 }
 \arguments{
-\item{maeData}{A MultiAssayExperiment object containing proteome and phosphoproteome data.}
+\item{maeData}{A \code{MultiAssayExperiment} object containing proteome and phosphoproteome data.}
 }
 \value{
-A numeric matrix with normalized and log2-transformed data.
+A numeric \code{matrix} with normalized and log2-transformed data.
 }
 \description{
-`performCombinedNormalization` performs combined normalization on proteome and phosphoproteome data from a MultiAssayExperiment object.
+\code{performCombinedNormalization} performs combined normalization on proteome and phosphoproteome data from a \code{MultiAssayExperiment} object.
 }
 \details{
 The function performs the following steps:

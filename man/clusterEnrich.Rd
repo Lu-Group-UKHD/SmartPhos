@@ -16,35 +16,35 @@ clusterEnrich(
 )
 }
 \arguments{
-\item{clusterTab}{A data frame containing cluster information, where each row corresponds to a gene and its assigned cluster.}
+\item{clusterTab}{A \code{data frame} containing cluster information, where each row corresponds to a gene and its assigned cluster.}
 
-\item{se}{A SummarizedExperiment object containing gene expression data and metadata.}
+\item{se}{A \code{SummarizedExperiment} object containing gene expression data and metadata.}
 
-\item{inputSet}{A list or data frame of gene sets to be used for enrichment analysis.}
+\item{inputSet}{A \code{list} or \code{data frame} of gene sets to be used for enrichment analysis.}
 
-\item{reference}{A character vector of reference genes. If NULL, it will be extracted from `se`. Default is `NULL`.}
+\item{reference}{A \code{character} vector of reference genes. If NULL, it will be extracted from se object. Default is \code{NULL}.}
 
-\item{ptm}{Logical. If TRUE, the function will perform enrichment analysis on post-translational modification (PTM) gene sets. Default is `FALSE`.}
+\item{ptm}{\code{Logical}. If \code{TRUE}, the function will perform enrichment analysis on post-translational modification (PTM) gene sets. Default is \code{FALSE}.}
 
-\item{adj}{Character. The method for adjusting p-values. Default is `"BH"`.}
+\item{adj}{\code{Character}. The method for adjusting p-values. Default is "BH".}
 
-\item{filterP}{Numeric. The p-value threshold for filtering significant results. Default is `0.05`.}
+\item{filterP}{\code{Numeric}. The p-value threshold for filtering significant results. Default is 0.05.}
 
-\item{ifFDR}{Logical. If TRUE, the function will use FDR-adjusted p-values for significance filtering. Default is `FALSE`.}
+\item{ifFDR}{\code{Logical}. If \code{TRUE}, the function will use FDR-adjusted p-values for significance filtering. Default is \code{FALSE}.}
 }
 \value{
-A list containing two elements:
+A \code{list} containing two elements:
 \itemize{
-  \item `table`: A data frame with enrichment results for each cluster and pathway.
-  \item `plot`: A ggplot object showing the significance of enrichment for each pathway across clusters.
+  \item `table`: A \code{data frame} with enrichment results for each cluster and pathway.
+  \item `plot`: A \code{ggplot2} object showing the significance of enrichment for each pathway across clusters.
 }
 }
 \description{
-`clusterEnrich` performs enrichment analysis on gene clusters, using Fisher's Exact Test to determine the significance of enrichment for each cluster.
+\code{clusterEnrich} performs enrichment analysis on gene clusters, using Fisher's Exact Test to determine the significance of enrichment for each cluster.
 }
 \details{
-The function first retrieves or computes the reference set of genes or PTM sites. It then performs enrichment analysis for each cluster using the `runFisher` function.
-The results are filtered based on the p-value threshold and adjusted for multiple testing if `ifFDR` is `TRUE`. The function generates a dot plot where the size and color of the points represent the significance of enrichment.
+The function first retrieves or computes the reference set of genes or PTM sites. It then performs enrichment analysis for each cluster using the \code{runFisher} function.
+The results are filtered based on the p-value threshold and adjusted for multiple testing if \code{ifFDR} is \code{TRUE}. The function generates a dot plot where the size and color of the points represent the significance of enrichment.
 }
 \examples{
 # Example usage:

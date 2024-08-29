@@ -3,14 +3,14 @@
 #' @title Perform Fisher's Exact Test on Gene Sets
 #'
 #' @description
-#' `runFisher` performs Fisher's Exact Test to determine the enrichment of a set of genes within reference gene sets.
+#' \code{runFisher} performs Fisher's Exact Test to determine the enrichment of a set of genes within reference gene sets.
 #'
-#' @param genes A character vector of genes of interest.
-#' @param reference A character vector of reference genes.
-#' @param inputSet A list containing gene set collections. If `ptm` is TRUE, this should be a data frame with specific columns.
-#' @param ptm Logical. If TRUE, perform the test on post-translational modification (PTM) gene sets. Default is `FALSE`.
+#' @param genes A \code{character} vector of genes of interest.
+#' @param reference A \code{character} vector of reference genes.
+#' @param inputSet A \code{list} containing gene set collections. If ptm is \code{TRUE}, this should be a data frame with specific columns.
+#' @param ptm \code{Logical}. If \code{TRUE}, perform the test on post-translational modification (PTM) gene sets. Default is \code{FALSE}.
 #'
-#' @return A data frame with the results of the Fisher's Exact Test, including the gene set name, the number of genes in the set, set size, p-value, adjusted p-value, and the genes in the set.
+#' @return A \code{data frame} with the results of the Fisher's Exact Test, including the gene set name, the number of genes in the set, set size, p-value, adjusted p-value, and the genes in the set.
 #'
 #' @details
 #' The function can operate in two modes: standard gene sets and PTM-specific gene sets. For PTM-specific gene sets, additional filtering and processing are performed.
@@ -96,26 +96,26 @@ runFisher <- function (genes, reference, inputSet, ptm = FALSE) {
 #' @title Perform Cluster Enrichment Analysis
 #'
 #' @description
-#' `clusterEnrich` performs enrichment analysis on gene clusters, using Fisher's Exact Test to determine the significance of enrichment for each cluster.
+#' \code{clusterEnrich} performs enrichment analysis on gene clusters, using Fisher's Exact Test to determine the significance of enrichment for each cluster.
 #'
-#' @param clusterTab A data frame containing cluster information, where each row corresponds to a gene and its assigned cluster.
-#' @param se A SummarizedExperiment object containing gene expression data and metadata.
-#' @param inputSet A list or data frame of gene sets to be used for enrichment analysis.
-#' @param reference A character vector of reference genes. If NULL, it will be extracted from `se`. Default is `NULL`.
-#' @param ptm Logical. If TRUE, the function will perform enrichment analysis on post-translational modification (PTM) gene sets. Default is `FALSE`.
-#' @param adj Character. The method for adjusting p-values. Default is `"BH"`.
-#' @param filterP Numeric. The p-value threshold for filtering significant results. Default is `0.05`.
-#' @param ifFDR Logical. If TRUE, the function will use FDR-adjusted p-values for significance filtering. Default is `FALSE`.
+#' @param clusterTab A \code{data frame} containing cluster information, where each row corresponds to a gene and its assigned cluster.
+#' @param se A \code{SummarizedExperiment} object containing gene expression data and metadata.
+#' @param inputSet A \code{list} or \code{data frame} of gene sets to be used for enrichment analysis.
+#' @param reference A \code{character} vector of reference genes. If NULL, it will be extracted from se object. Default is \code{NULL}.
+#' @param ptm \code{Logical}. If \code{TRUE}, the function will perform enrichment analysis on post-translational modification (PTM) gene sets. Default is \code{FALSE}.
+#' @param adj \code{Character}. The method for adjusting p-values. Default is "BH".
+#' @param filterP \code{Numeric}. The p-value threshold for filtering significant results. Default is 0.05.
+#' @param ifFDR \code{Logical}. If \code{TRUE}, the function will use FDR-adjusted p-values for significance filtering. Default is \code{FALSE}.
 #'
-#' @return A list containing two elements:
+#' @return A \code{list} containing two elements:
 #' \itemize{
-#'   \item `table`: A data frame with enrichment results for each cluster and pathway.
-#'   \item `plot`: A ggplot object showing the significance of enrichment for each pathway across clusters.
+#'   \item `table`: A \code{data frame} with enrichment results for each cluster and pathway.
+#'   \item `plot`: A \code{ggplot2} object showing the significance of enrichment for each pathway across clusters.
 #' }
 #'
 #' @details
-#' The function first retrieves or computes the reference set of genes or PTM sites. It then performs enrichment analysis for each cluster using the `runFisher` function.
-#' The results are filtered based on the p-value threshold and adjusted for multiple testing if `ifFDR` is `TRUE`. The function generates a dot plot where the size and color of the points represent the significance of enrichment.
+#' The function first retrieves or computes the reference set of genes or PTM sites. It then performs enrichment analysis for each cluster using the \code{runFisher} function.
+#' The results are filtered based on the p-value threshold and adjusted for multiple testing if \code{ifFDR} is \code{TRUE}. The function generates a dot plot where the size and color of the points represent the significance of enrichment.
 #'
 #' @examples
 #' # Example usage:
@@ -190,17 +190,17 @@ clusterEnrich <- function(clusterTab, se, inputSet, reference = NULL, ptm = FALS
 #' @title Run GSEA for Phosphorylation Data
 #'
 #' @description 
-#' `runGSEAforPhospho` performs Gene Set Enrichment Analysis (GSEA) for phosphorylation data.
+#' \code{runGSEAforPhospho} performs Gene Set Enrichment Analysis (GSEA) for phosphorylation data.
 #'
-#' @param geneStat A data frame containing gene statistics, with gene names as row names and a column named 'stat' for the statistics.
-#' @param ptmSetDb A data frame of post-translational modification (PTM) signature sets.
-#' @param nPerm An integer specifying the number of permutations for the null distribution.
-#' @param weight A numeric value for the weight parameter in the GSEA algorithm. If weight == 0 then the test statistics do not matter. Default is `1`.
-#' @param correl.type A character string specifying the correlation type. Options are "rank", "symm.rank", and "z.score". Default is `"rank"`.
-#' @param statistic A character string specifying the statistic to be used. Options are "Kolmogorov-Smirnov" and "area.under.RES". Default is `"Kolmogorov-Smirnov"`.
-#' @param min.overlap An integer specifying the minimum overlap required between gene sets and the input data. Default is `5`.
+#' @param geneStat A \code{data frame} containing gene statistics, with gene names as row names and a column named 'stat' for the statistics.
+#' @param ptmSetDb A \code{data frame} of post-translational modification (PTM) signature sets.
+#' @param nPerm A \code{numeric} value specifying the number of permutations for the null distribution.
+#' @param weight A \code{numeric} value for the weight parameter in the GSEA algorithm. If weight == 0 then the test statistics do not matter. Default is 1.
+#' @param correl.type A \code{character} string specifying the correlation type. Options are "rank", "symm.rank", and "z.score". Default is "rank".
+#' @param statistic A \code{character} string specifying the statistic to be used. Options are "Kolmogorov-Smirnov" and "area.under.RES". Default is "Kolmogorov-Smirnov".
+#' @param min.overlap A \code{numeric} specifying the minimum overlap required between gene sets and the input data. Default is 5.
 #'
-#' @return A tibble with enrichment scores and associated statistics for each PTM set.
+#' @return A \code{tibble} with enrichment scores and associated statistics for each PTM set.
 #'
 #' @details
 #' This function runs GSEA on phosphorylation data to identify enriched PTM sets. It calculates enrichment scores and p-values for each set, normalizes the scores, and adjusts p-values for multiple testing.

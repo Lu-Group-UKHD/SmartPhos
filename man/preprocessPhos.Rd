@@ -20,35 +20,35 @@ preprocessPhos(
 )
 }
 \arguments{
-\item{seData}{A SummarizedExperiment object containing phosphoproteome data.}
+\item{seData}{A \code{SummarizedExperiment} object containing phosphoproteome data.}
 
-\item{filterList}{A list of filters to apply on the samples. Default is `NULL`.}
+\item{filterList}{A \code{list} of filters to apply on the samples. Default is \code{NULL}.}
 
-\item{missCut}{Numeric value specifying the missing value cutoff percentage for filtering features. Default is `50`.}
+\item{missCut}{\code{Numeric} value specifying the missing value cutoff percentage for filtering features. Default is 50.}
 
-\item{transform}{Character string specifying the transformation method ("log2", "vst", "none"). Default is `"log2"`.}
+\item{transform}{\code{Character} string specifying the transformation method ("log2", "vst", "none"). Default is "log2".}
 
-\item{normalize}{Logical value indicating whether to normalize the data. Default is `FALSE`.}
+\item{normalize}{\code{Logical} value indicating whether to normalize the data. Default is \code{FALSE}.}
 
-\item{getFP}{Logical value indicating whether to retrieve FP samples. Default is `FALSE`.}
+\item{getFP}{\code{Logical} value indicating whether to retrieve FP samples. Default is \code{FALSE}.}
 
-\item{removeOutlier}{Character vector of samples to be removed as outliers. Default is `NULL`.}
+\item{removeOutlier}{\code{Character} vector of samples to be removed as outliers. Default is \code{NULL}.}
 
-\item{assayName}{Character string specifying the assay name in the SummarizedExperiment object. Default is `NULL`.}
+\item{assayName}{\code{Character} string specifying the assay name in the SummarizedExperiment object. Default is \code{NULL}.}
 
-\item{batch}{Character vector specifying batch effects to remove. Default is `NULL`.}
+\item{batch}{\code{Character} vector specifying batch effects to remove. Default is \code{NULL}.}
 
-\item{scaleFactorTab}{Data frame containing scale factors for normalization. Default is `NULL`.}
+\item{scaleFactorTab}{\code{Data frame} containing scale factors for normalization. Default is \code{NULL}.}
 
-\item{impute}{Character string specifying the imputation method ("QRILC", "MLE", "bpca", "missForest", "MinDet", "none"). Default is `"none"`.}
+\item{impute}{\code{Character} string specifying the imputation method ("QRILC", "MLE", "bpca", "missForest", "MinDet", "none"). Default is "none".}
 
-\item{verbose}{Logical value indicating whether to print detailed information. Default is `FALSE`.}
+\item{verbose}{\code{Logical} value indicating whether to print detailed information. Default is \code{FALSE}.}
 }
 \value{
-A SummarizedExperiment object with preprocessed phosphoproteome data.
+A \code{SummarizedExperiment} object with preprocessed phosphoproteome data.
 }
 \description{
-`preprocessPhos` preprocesses phosphoproteome data stored in a SummarizedExperiment object by performing filtering, transformation, normalization, imputation, and batch effect removal.
+\code{preprocessPhos} preprocesses phosphoproteome data stored in a \code{SummarizedExperiment} object by performing filtering, transformation, normalization, imputation, and batch effect removal.
 }
 \examples{
 # Load multiAssayExperiment object

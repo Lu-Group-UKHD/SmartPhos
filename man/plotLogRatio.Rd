@@ -7,15 +7,15 @@
 plotLogRatio(maeData, normalization = FALSE)
 }
 \arguments{
-\item{maeData}{A MultiAssayExperiment object containing phosphoproteome and full proteome data.}
+\item{maeData}{A \code{MultiAssayExperiment} object containing phosphoproteome and full proteome data.}
 
-\item{normalization}{A logical value indicating whether to perform normalization. Default is `FALSE`.}
+\item{normalization}{A \code{logical} value indicating whether to perform normalization. Default is \code{FALSE}.}
 }
 \value{
-A ggplot object representing the boxplot of the log2 ratios.
+A \code{ggplot2} object representing the boxplot of the log2 ratios.
 }
 \description{
-`plotLogRatio` generates a boxplot of the log2 ratio of intensities of phosphoproteome to full proteome data from a MultiAssayExperiment object.
+\code{plotLogRatio} generates a boxplot of the log2 ratio of intensities of phosphoproteome to full proteome data from a \code{MultiAssayExperiment} object.
 }
 \examples{
 # Example usage:

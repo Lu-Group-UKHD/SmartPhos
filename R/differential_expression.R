@@ -3,39 +3,39 @@
 #' @title Perform Differential Expression Analysis
 #'
 #' @description
-#' `performDifferentialExp` performs differential expression analysis on a given SummarizedExperiment object using either the 'limma' or 'ProDA' method.
+#' \code{performDifferentialExp} performs differential expression analysis on a given \code{SummarizedExperiment} object using either the \code{limma} or \code{ProDA} method.
 #'
-#' @param se A SummarizedExperiment object containing the data.
-#' @param assay A character string specifying the assay to use for the analysis.
-#' @param method A character string specifying the method to use for differential expression analysis ('limma' or 'ProDA'). Default is "limma".
-#' @param condition A character string specifying the condition column in colData(se). Default is `NULL`.
-#' @param reference A character string or vector specifying the reference group.
-#' @param target A character string or vector specifying the target group.
-#' @param refTime A character string or vector specifying the reference time points. Default is `NULL`.
-#' @param targetTime A character string or vector specifying the target time points. Default is `NULL`.
+#' @param se A \code{SummarizedExperiment} object containing the data.
+#' @param assay A \code{character} string specifying the assay to use for the analysis.
+#' @param method A \code{character} string specifying the method to use for differential expression analysis ("limma" or "ProDA"). Default is "limma".
+#' @param condition A \code{character} string specifying the condition column in colData(se). Default is \code{NULL}.
+#' @param reference A \code{character} string or vector specifying the reference group.
+#' @param target A \code{character} string or vector specifying the target group.
+#' @param refTime A \code{character} string or vector specifying the reference time points. Default is \code{NULL}.
+#' @param targetTime A \code{character} string or vector specifying the target time points. Default is \code{NULL}.
 #'
 #' @return A list containing:
-#' \item{resDE}{A tibble with the differential expression results.}
-#' \item{seSub}{A SummarizedExperiment object subset to the samples used in the analysis.}
+#' \item{resDE}{A \code{tibble} with the differential expression results.}
+#' \item{seSub}{A \code{SummarizedExperiment} object subset to the samples used in the analysis.}
 #'
 #' @details
-#' This function is designed to facilitate differential expression analysis on a SummarizedExperiment (SE) object. The function allows users to specify various parameters to tailor the analysis to their specific experimental setup.
+#' This function is designed to facilitate differential expression analysis on a \code{SummarizedExperiment} (SE) object. The function allows users to specify various parameters to tailor the analysis to their specific experimental setup.
 #'
 #' The main steps of the function are as follows:
 #'
-#' 1. **Sample Selection:** Based on the provided `condition`, `reference`, and `target` arguments, the function identifies the relevant samples for the analysis. If time points (`refTime` and `targetTime`) are provided, it further refines the sample selection.
+#' 1. Sample Selection: Based on the provided \code{condition}, \code{reference}, and \code{target} arguments, the function identifies the relevant samples for the analysis. If time points (\code{refTime} and \code{targetTime}) are provided, it further refines the sample selection.
 #'
-#' 2. **Subsetting the SE Object:** The SE object is subsetted to include only the selected samples. A new column `comparison` is added to the colData, indicating whether each sample belongs to the reference or target group.
+#' 2. Subsetting the SE Object: The SE object is subsetted to include only the selected samples. A new column \code{comparison} is added to the \code{colData}, indicating whether each sample belongs to the reference or target group.
 #'
-#' 3. **Design Matrix Construction:** The function constructs a design matrix for the differential expression analysis. If the SE object contains a `subjectID` column, this is included in the design to account for repeated measures or paired samples.
+#' 3. Design Matrix Construction: The function constructs a design matrix for the differential expression analysis. If the SE object contains a \code{subjectID} column, this is included in the design to account for repeated measures or paired samples.
 #'
-#' 4. **Differential Expression Analysis:** Depending on the specified `method`, the function performs the differential expression analysis using either the 'limma' or 'ProDA' package:
-#'     - **Limma:** The function fits a linear model to the expression data and applies empirical Bayes moderation to the standard errors. The results are then extracted and formatted.
-#'     - **ProDA:** The function fits a probabilistic dropout model to the expression data and tests for differential expression. The results are then extracted and formatted.
+#' 4. Differential Expression Analysis: Depending on the specified \code{method}, the function performs the differential expression analysis using either the \code{limma} or \code{ProDA} package:
+#'     - \code{Limma}: The function fits a linear model to the expression data and applies empirical Bayes moderation to the standard errors. The results are then extracted and formatted.
+#'     - \code{ProDA}: The function fits a probabilistic dropout model to the expression data and tests for differential expression. The results are then extracted and formatted.
 #'
-#' 5. **Result Formatting:** The differential expression results are merged with the metadata from the SE object, and the resulting table is formatted into a tibble. The table includes columns for log2 fold change (`log2FC`), test statistic (`stat`), p-value (`pvalue`), adjusted p-value (`padj`), and gene/feature ID (`ID`).
+#' 5. Result Formatting: The differential expression results are merged with the metadata from the SE object, and the resulting table is formatted into a tibble. The table includes columns for log2 fold change (log2FC), test statistic (stat), p-value (pvalue), adjusted p-value (padj), and gene/feature ID (ID).
 #'
-#' The function returns a list containing the formatted differential expression results and the subsetted SE object. This allows users to further explore or visualize the results as needed.
+#' The function returns a \code{list} containing the formatted differential expression results and the subsetted SE object. This allows users to further explore or visualize the results as needed.
 #'
 #' @importFrom limma lmFit eBayes topTable
 #' @importFrom proDA proDA test_diff
@@ -145,13 +145,13 @@ performDifferentialExp <- function(se, assay, method = "limma", condition = NULL
 #' @title Plot Volcano Plot for Differential Expression Analysis
 #'
 #' @description
-#' `plotVolcano` generates a volcano plot to visualize differential expression results.
+#' \code{plotVolcano} generates a volcano plot to visualize differential expression results.
 #'
-#' @param tableDE A data frame containing differential expression results with columns 'ID', 'log2FC', 'pvalue', and 'Gene'.
-#' @param pFilter A numeric value specifying the p-value threshold for significance. Default is `0.05`.
-#' @param fcFilter A numeric value specifying the log2 fold-change threshold for significance. Default is `0.5`.
+#' @param tableDE A \code{data frame} containing differential expression results with columns 'ID', 'log2FC', 'pvalue', and 'Gene'.
+#' @param pFilter A \code{numeric} value specifying the p-value threshold for significance. Default is 0.05.
+#' @param fcFilter A \code{numeric} value specifying the log2 fold-change threshold for significance. Default is 0.5.
 #'
-#' @return A ggplot object representing the volcano plot.
+#' @return A \code{ggplot2} object representing the volcano plot.
 #'
 #' @details
 #' This function creates a volcano plot where differentially expressed genes are categorized as 'Up', 'Down', or 'Not Sig' based on the provided p-value and log2 fold-change thresholds. Points on the plot are color-coded to indicate their expression status.
@@ -218,22 +218,22 @@ plotVolcano <- function(tableDE, pFilter = 0.05, fcFilter = 0.5) {
 #' @title Plot Boxplot of Intensity Data
 #'
 #' @description
-#' `plotBox` creates a boxplot for the Intensity data of a given gene or feature, with optional subject-specific lines.
+#' \code{plotBox} creates a boxplot for the Intensity data of a given gene or feature, with optional subject-specific lines.
 #'
-#' @param se A SummarizedExperiment object containing the data.
-#' @param id The identifier of the gene or feature to plot.
-#' @param symbol The symbol or name of the gene or feature to use as the plot title.
+#' @param se A \code{SummarizedExperiment} object containing the data.
+#' @param id \code{Character}. The identifier of the gene or feature to plot.
+#' @param symbol \code{Character}. The symbol or name of the gene or feature to use as the plot title.
 #'
-#' @return A ggplot object representing the boxplot of the intensity data.
+#' @return A \code{ggplot2} object representing the boxplot of the intensity data.
 #'
 #' @details
-#' This function generates a boxplot for the intensity data of a specified gene or feature from a SummarizedExperiment (SE) object. The plot shows the distribution of normalized intensities across different groups specified in the `comparison` column of the SE object.
+#' This function generates a boxplot for the intensity data of a specified gene or feature from a \code{SummarizedExperiment} (SE) object. The plot shows the distribution of normalized intensities across different groups specified in the \code{comparison} column of the SE object.
 #'
 #' The function can handle both grouped data and repeated measures:
-#' - If the SE object does not contain a `subjectID` column, the function plots a standard boxplot grouped by the `comparison` column.
-#' - If the SE object contains a `subjectID` column, the function adds lines connecting the points for each subject across the groups, providing a visual indication of subject-specific changes.
+#' - If the SE object does not contain a \code{subjectID} column, the function plots a standard boxplot grouped by the \code{comparison} column.
+#' - If the SE object contains a \code{subjectID} column, the function adds lines connecting the points for each subject across the groups, providing a visual indication of subject-specific changes.
 #'
-#' The boxplot is customized with various aesthetic elements, such as box width, transparency, point size, axis labels, and title formatting.
+#' The \code{boxplot} is customized with various aesthetic elements, such as box width, transparency, point size, axis labels, and title formatting.
 #'
 #' @importFrom ggplot2 ggplot aes geom_boxplot geom_point geom_line ylab xlab ggtitle theme_bw theme element_text
 #' @importFrom SummarizedExperiment assays

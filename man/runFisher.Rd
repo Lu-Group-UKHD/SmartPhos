@@ -7,19 +7,19 @@
 runFisher(genes, reference, inputSet, ptm = FALSE)
 }
 \arguments{
-\item{genes}{A character vector of genes of interest.}
+\item{genes}{A \code{character} vector of genes of interest.}
 
-\item{reference}{A character vector of reference genes.}
+\item{reference}{A \code{character} vector of reference genes.}
 
-\item{inputSet}{A list containing gene set collections. If `ptm` is TRUE, this should be a data frame with specific columns.}
+\item{inputSet}{A \code{list} containing gene set collections. If ptm is \code{TRUE}, this should be a data frame with specific columns.}
 
-\item{ptm}{Logical. If TRUE, perform the test on post-translational modification (PTM) gene sets. Default is `FALSE`.}
+\item{ptm}{\code{Logical}. If \code{TRUE}, perform the test on post-translational modification (PTM) gene sets. Default is \code{FALSE}.}
 }
 \value{
-A data frame with the results of the Fisher's Exact Test, including the gene set name, the number of genes in the set, set size, p-value, adjusted p-value, and the genes in the set.
+A \code{data frame} with the results of the Fisher's Exact Test, including the gene set name, the number of genes in the set, set size, p-value, adjusted p-value, and the genes in the set.
 }
 \description{
-`runFisher` performs Fisher's Exact Test to determine the enrichment of a set of genes within reference gene sets.
+\code{runFisher} performs Fisher's Exact Test to determine the enrichment of a set of genes within reference gene sets.
 }
 \details{
 The function can operate in two modes: standard gene sets and PTM-specific gene sets. For PTM-specific gene sets, additional filtering and processing are performed.
