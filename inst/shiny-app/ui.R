@@ -9,6 +9,7 @@ library(shinythemes)
 library(shinyjs)
 library(shinyBS)
 library(shinyWidgets)
+library(plotly)
 
 # The top level navigation UI for the app
 navbarPage("SmartPhos explorer",
