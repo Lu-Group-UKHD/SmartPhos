@@ -1,5 +1,5 @@
 #' @name medianNorm
-#' 
+#'
 #' @title Normalize a Matrix Using Median or Mean
 #'
 #' @description
@@ -21,7 +21,7 @@
 #' @examples
 #' # Example usage:
 #' x <- matrix(rnorm(20), nrow=5, ncol=4)
-#' normalized_x <- medianNorm(x, method = "median") 
+#' normalized_x <- medianNorm(x, method = "median")
 #' print(normalized_x)
 #'
 #' @importFrom matrixStats colMedians
@@ -45,7 +45,7 @@ medianNorm <- function(x, method = "median") {
 # function for performing normalization of FP and PP samples
 
 #' @name performCombinedNormalization
-#' 
+#'
 #' @title Perform Combined Normalization on MultiAssayExperiment Data
 #'
 #' @description
@@ -73,7 +73,7 @@ medianNorm <- function(x, method = "median") {
 #' @importFrom MultiAssayExperiment assay
 #' @export
 performCombinedNormalization <- function(maeData) {
-  
+
   # get count matrix from FP (Full Proteome) samples
   setFP <- maeData[,maeData$sampleType %in% c("FullProteome", "FP")]
   protFP <- assay(setFP[["Proteome"]])
@@ -81,16 +81,16 @@ performCombinedNormalization <- function(maeData) {
   # Combine proteome and phosphoproteome data into a single matrix
   comFP <- rbind(protFP, phosFP)
   comFP <- comFP[rowSums(!is.na(comFP))>0,]
-  
+
   # perform median normalization and log2 transformation
   comFP.norm <- medianNorm(log2(comFP))
-  
+
   return(comFP.norm)
 }
 
 
 #' @name getRatioMatrix
-#' 
+#'
 #' @title Get Ratio Matrix of Phosphoproteome Data
 #'
 #' @description
@@ -111,44 +111,48 @@ performCombinedNormalization <- function(maeData) {
 #' @importFrom MultiAssayExperiment assay assays
 #' @export
 getRatioMatrix <- function(maeData, normalization = FALSE, getAdjustedPP = FALSE) {
-  
+
   # Ensure the normalization parameter is logical
   stopifnot(is.logical(normalization))
-  
+
   # Extract and log-transform phosphoproteome data based on getAdjustedPP flag
   if (!getAdjustedPP) {
     phosPP <- log2(assay(maeData[,maeData$sampleType %in% c("Phospho", "PP")][["Phosphoproteome"]]))
   } else {
     phosPP <- log2(assays(maeData[,maeData$sampleType %in% c("Phospho", "PP")][["Phosphoproteome"]])[["Intensity_adjusted"]])
   }
-  
+
   # Extract and log-transform full proteome data, with optional normalization
   if (!normalization) {
     phosFP <- log2(assay(maeData[,maeData$sampleType %in% c("FullProteome", "FP")][["Phosphoproteome"]]))
-  } 
+  }
   else  {
     phosFP <- performCombinedNormalization(maeData)
   }
-  
+
+
   # Use the sample name without prefix as column name
-  colnames(phosFP) <- maeData[,maeData$sampleType %in% c("Phospho", "PP")]$sampleName
-  colnames(phosPP) <- maeData[,maeData$sampleType %in% c("FullProteome", "FP")]$sampleName
-  
+  colnames(phosPP) <- maeData[,colnames(phosPP)]$sampleName
+  colnames(phosFP) <- maeData[,colnames(phosFP)]$sampleName
+
   # Calculate the ratio matrix
   allSmp <- intersect(colnames(phosFP), colnames(phosPP))
   allRow <- intersect(rownames(phosFP), rownames(phosPP))
   ratioMat <- phosPP[allRow, allSmp] - phosFP[allRow, allSmp]
   ratioMat <- ratioMat[rowSums(!is.na(ratioMat)) >0,]
-  
+
+  #change ratioMat colnames to ppMat colnames
+  ppTab <- colData(maeData[,maeData$sampleType %in% c("Phospho", "PP")])
+  colnames(ratioMat) <- rownames(ppTab[match(colnames(ratioMat),ppTab$sampleName),])
   return(ratioMat)
-  
+
 }
 
 
 # plot the log ration of PP/FP intensities
 
 #' @name plotLogRatio
-#' 
+#'
 #' @title Plot Log Ratio of PP/FP (Phosphoproteome to Full Proteome) intensities
 #'
 #' @description
@@ -171,14 +175,17 @@ getRatioMatrix <- function(maeData, normalization = FALSE, getAdjustedPP = FALSE
 #' @importFrom tidyr pivot_longer
 #' @importFrom dplyr filter mutate
 #' @importFrom ggplot2 ggplot aes geom_boxplot ggtitle xlab ylab geom_hline theme element_text
-#' @export 
+#' @export
 plotLogRatio <- function(maeData, normalization = FALSE) {
-  # Calculate the ratio matrix of phosphoproteome to full proteome data
+  
+  
+  # Calculate the ratio matrix of phosphoproteome to full proteome data, if adjustment already performed, use the adjusted ratio for plotting.
   ratioMat <- getRatioMatrix(maeData, normalization)
+  
   # Extract and log-transform phosphoproteome data
-  phosPP <- log2(assay(maeData[,maeData$sampleType %in% c("Phospho", "PP")][["Phosphoproteome"]]))
+  phosPP <- log2(assay(maeData[,colnames(ratioMat)][["Phosphoproteome"]]))
   medianPP <- colMedians(phosPP,na.rm = TRUE)
-  names(medianPP) <- maeData[,maeData$sampleType %in% c("Phospho", "PP")]$sampleName
+  names(medianPP) <- colnames(ratioMat)
   
   # Create a table for plotting
   plotTab <- as_tibble(ratioMat, rownames = "feature") %>%
@@ -186,22 +193,25 @@ plotLogRatio <- function(maeData, normalization = FALSE) {
     filter(!is.na(value)) %>%
     mutate(medianPP = medianPP[name])
   
+  #decide if adjustment already performed. 
+  ifAlreadyAjusted <- "adjustFactorPP" %in% colnames(colData(maeData))
+  
   # Generate a ggplot boxplot of the log2 ratios
   ggplot(plotTab, aes(x=name, y=value)) +
     geom_boxplot(aes(fill = medianPP)) +
-    ggtitle("Boxplot of Phospho/FullProteome Ratio") +
+    ggtitle(paste0("Boxplot of Phospho/FullProteome Ratio", ifelse(ifAlreadyAjusted,"(adjusted)","(un-adjusted)"))) +
     xlab("sample") +
     ylab("log2(ratio)") +
     geom_hline(yintercept = median(median(plotTab$value, na.rm=TRUE)), linetype = "dashed", color = "red") +
     theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5),
           plot.title = element_text(hjust = 0.5, face = "bold"))
-  
+
 }
 
 # check the PP/FP ratio matrix and remove feature that do not meet requirements
 
 #' @name checkRatioMat
-#' 
+#'
 #' @title Check the PP/FP ratio matrix and remove feature that do not meet requirements
 #'
 #' @description
@@ -222,7 +232,7 @@ plotLogRatio <- function(maeData, normalization = FALSE) {
 checkRatioMat <- function(ratioMat, minOverlap = 3) {
   # Initialize a list to keep track of excluded samples
   excludeSampleList <- c()
-  
+
   # Identify samples that don't have any phospho sites detect in both FP and PP samples
   noOverSmp <- colnames(ratioMat)[colSums(!is.na(ratioMat))==0]
   if (length(noOverSmp) >0) {
@@ -230,31 +240,31 @@ checkRatioMat <- function(ratioMat, minOverlap = 3) {
                    paste0(noOverSmp, collapse = ", ")))
     excludeSampleList <- c(excludeSampleList, noOverSmp)
   }
-  
+
   # Remove the identified samples from the ratio matrix
   ratioMat <- ratioMat[, !colnames(ratioMat) %in% noOverSmp]
-  
+
   # Check for samples that do not have enough peptide overlap with other samples
   pairOverlap <- sapply(colnames(ratioMat), function(n) {
     subMat <- ratioMat[!is.na(ratioMat[,n]),]
     minOver <- min(colSums(!is.na(subMat)))
   })
-  
+
   tooFewOverlap <- colnames(ratioMat)[pairOverlap < minOverlap]
-  
+
   if (length(tooFewOverlap) >0) {
     warning(paste0("Below samples don't enough number of overlapped phopho-peptides with other samples and therefore adjusting factor will set to 0 (no adjustment) for them:\n",
                    paste0(tooFewOverlap, collapse = ", ")))
     excludeSampleList <- c(excludeSampleList, tooFewOverlap)
   }
-  
+
   return(excludeSampleList)
 }
 
 
 
 #' @name runPhosphoAdjustment
-#' 
+#'
 #' @title Run Phospho Adjustment
 #'
 #' @description
@@ -293,51 +303,51 @@ checkRatioMat <- function(ratioMat, minOverlap = 3) {
 #' @importFrom utils combn
 #' @export
 runPhosphoAdjustment <- function(maeData, normalization = FALSE, minOverlap = 3, completeness = 0, ncore = 1 ) {
-  
+
   # Function to opitmize
   esFun <- function(par, data) {
     comPair <- utils::combn(seq(length(par)), 2)
     sum(((data[comPair[1, ],] + par[comPair[1, ]]) - (data[comPair[2, ],] + par[comPair[2, ]]))^2/rowSums(!is.na(data[comPair[1,],] + data[comPair[2,],])), na.rm = TRUE)
   }
-  
+
   # Get PP/FP ratio matrix
   ratioMat <- getRatioMatrix(maeData, normalization = normalization)
   adjFac <- structure(rep(0, length.out = ncol(ratioMat)), names = colnames(ratioMat))
-  
+
   # Subset features according to completeness in the ratio matrix
   ratioMat <- ratioMat[rowSums(!is.na(ratioMat))/ncol(ratioMat) >= completeness,]
-  
+
   # Sanity check to see if any samples need to be excluded
   excList <- checkRatioMat(ratioMat)
   ratioMat <- ratioMat[, !colnames(ratioMat) %in% excList]
-  
+
   # Set an initial value for B based on col medians of ratioMat, may increase search speed
   colMed <- apply(ratioMat,2, median, na.rm = TRUE)
   iniPar <- median(colMed) - colMed
-  
+
   # Estimating adjusting factor
   #cl <- makeCluster(ncore)
   #setDefaultCluster(cl = cl)
   optRes <- optim(par=iniPar, fn=esFun, data=t(ratioMat))
   #stopCluster(cl)
-  
-  # Add adjusting factor to sample annotation  
+
+  # Add adjusting factor to sample annotation
   adjFac[names(optRes$par)] <- optRes$par
-  ppName <- colnames(maeData[,maeData$sampleType %in% c("Phospho", "PP")][["Phosphoproteome"]])
-  adjFac <- structure(adjFac[maeData[,ppName]$sampleName], names = ppName)
+
+  
   maeData$adjustFactorPP <- unname(adjFac[match(rownames(colData(maeData)),names(adjFac))])
   # Adjust phospho measurement on PP samples
-  phosMat <- assay(maeData[,maeData$sampleType %in% c("Phospho", "PP")][["Phosphoproteome"]])
+  phosMat <- assay(maeData[,names(adjFac)][["Phosphoproteome"]])
   phosMat <- t(t(phosMat)*(2^adjFac))
   assays(maeData[["Phosphoproteome"]])[["Intensity_adjusted"]] <- assays(maeData[["Phosphoproteome"]])[["Intensity"]]
   assays(maeData[["Phosphoproteome"]])[["Intensity_adjusted"]][,colnames(phosMat)] <- phosMat
-  
+
   return(maeData)
 }
 
 
 #' @name plotAdjustmentResults
-#' 
+#'
 #' @title Plot Adjustment Results
 #'
 #' @description
@@ -378,7 +388,7 @@ plotAdjustmentResults <- function(maeData, normalization = FALSE) {
   if (!"adjustFactorPP" %in% colnames(colData(maeData))) {
     stop("Phosphorylation measurments have not been adjusted yet. Please perform normalization adjustment using calcAdjustFacotr function first")
   }
-  
+
   # Visualize precursors before and after adjustment
   ratioMat.ori <- getRatioMatrix(maeData, normalization = normalization, getAdjustedPP = FALSE)
   ratioMat.adj <- getRatioMatrix(maeData, normalization = normalization, getAdjustedPP = TRUE)
@@ -386,24 +396,24 @@ plotAdjustmentResults <- function(maeData, normalization = FALSE) {
                             pivot_longer(as_tibble(ratioMat.adj, rownames = "id"), -id, names_to = "sample", values_to = "ratio") %>% mutate(adjustment = "after adjustment")) %>%
     mutate(adjustment = factor(adjustment, levels = c("before adjustment","after adjustment"))) %>%
     filter(!is.na(ratio))
-  
+
   # For precursors present in all samples
   featureComplete <- rownames(ratioMat.ori)[complete.cases(ratioMat.ori)]
   if (!length(featureComplete) >0) {
     warning("No feature (PP/FP ratio) has been detected in all samples. Ratio trend line will not be generated")
-    ratioTrendPlot <- NULL 
+    ratioTrendPlot <- NULL
   } else {
     ratioPlotTab.complete <- filter(ratioPlotTab, id %in% featureComplete)
     ratioTrendPlot <- ggplot(ratioPlotTab.complete, aes(x=sample, y=ratio, color = adjustment)) +
       geom_line(aes(group =id), linetype = "dashed") +
       geom_point() +
       facet_wrap(~adjustment, ncol=1) +
-      ggtitle("Line plot of PP/FP ratios available for all samples") + 
+      ggtitle("Line plot of PP/FP ratios available for all samples") +
       theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5),
             legend.position = "none") +
-      xlab("") + ylab("log2(PP/FP) ratio") 
+      xlab("") + ylab("log2(PP/FP) ratio")
   }
-  
+
   # For ratio box plots
   medTab <- group_by(ratioPlotTab, adjustment) %>%
     summarise(medVal = median(ratio, na.rm=TRUE))
@@ -414,18 +424,18 @@ plotAdjustmentResults <- function(maeData, normalization = FALSE) {
     theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0.5),
           legend.position = "none") +
     xlab("") + ylab("log2(PP/FP) ratio") +
-    ggtitle("Box plot of all PP/FP ratios")  
-  
-  
+    ggtitle("Box plot of all PP/FP ratios")
+
+
   # For phosphorylation measurements of PP samples before and after adjustment
-  ppMat.adj <- assays(maeData[,maeData$sampleType %in% c("Phospho", "PP")][["Phosphoproteome"]])[["Intensity_adjusted"]] 
-  ppMat.ori <- assays(maeData[,maeData$sampleType %in% c("Phospho", "PP")][["Phosphoproteome"]])[["Intensity"]] 
+  ppMat.adj <- assays(maeData[,maeData$sampleType %in% c("Phospho", "PP")][["Phosphoproteome"]])[["Intensity_adjusted"]]
+  ppMat.ori <- assays(maeData[,maeData$sampleType %in% c("Phospho", "PP")][["Phosphoproteome"]])[["Intensity"]]
   ppPlotTab <- bind_rows(pivot_longer(as_tibble(ppMat.ori, rownames = "id"), -id, names_to = "sample", values_to = "count") %>% mutate(adjustment = "before adjustment"),
                          pivot_longer(as_tibble(ppMat.adj, rownames = "id"), -id, names_to = "sample", values_to = "count") %>% mutate(adjustment = "after adjustment")) %>%
     mutate(adjustment = factor(adjustment, levels = c("before adjustment","after adjustment")),
            count = log2(count)) %>%
     filter(!is.na(count))
-  
+
   # For phosphorylation intensity box plots
   medTab <- group_by(ppPlotTab, adjustment) %>%
     summarise(medVal = median(count, na.rm=TRUE))
@@ -437,7 +447,7 @@ plotAdjustmentResults <- function(maeData, normalization = FALSE) {
           legend.position = "none") +
     xlab("") + ylab("log2(intensity)") +
     ggtitle("Box plot of phosphorylation in PP samples")
-  
+
   return(list(ratioTrendPlot = ratioTrendPlot,
               ratioBoxplot = ratioBoxplot,
               ppBoxplot = ppBoxplot))

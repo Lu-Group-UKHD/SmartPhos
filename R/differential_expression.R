@@ -49,7 +49,7 @@
 #' data("dda_example")
 #' # Get SummarizedExperiment object
 #' se <- dda_example[["Proteome"]]
-#' colData(se) <- colData(dda_example)
+#' SummarizedExperiment::colData(se) <- SummarizedExperiment::colData(dda_example)
 #' # Preprocess the proteome assay
 #' result <- preprocessProteome(se, normalize = TRUE)
 #' # Call the function to perform differential expression analyis
@@ -164,7 +164,7 @@ performDifferentialExp <- function(se, assay, method = "limma", condition = NULL
 #' data("dda_example")
 #' # Get SummarizedExperiment object
 #' se <- dda_example[["Proteome"]]
-#' colData(se) <- colData(dda_example)
+#' SummarizedExperiment::colData(se) <- SummarizedExperiment::colData(dda_example)
 #' # Preprocess the proteome assay
 #' result <- preprocessProteome(se, normalize = TRUE)
 #' # Call the function to perform differential expression analyis
@@ -243,7 +243,7 @@ plotVolcano <- function(tableDE, pFilter = 0.05, fcFilter = 0.5) {
 #' data("dda_example")
 #' # Get SummarizedExperiment object
 #' se <- dda_example[["Proteome"]]
-#' colData(se) <- colData(dda_example)
+#' SummarizedExperiment::colData(se) <- SummarizedExperiment::colData(dda_example)
 #' # Preprocess the proteome assay
 #' result <- preprocessProteome(se, normalize = TRUE)
 #' # Call the function to perform differential expression analyis

@@ -33,7 +33,7 @@ The \code{boxplot} is customized with various aesthetic elements, such as box wi
 data("dda_example")
 # Get SummarizedExperiment object
 se <- dda_example[["Proteome"]]
-colData(se) <- colData(dda_example)
+SummarizedExperiment::colData(se) <- SummarizedExperiment::colData(dda_example)
 # Preprocess the proteome assay
 result <- preprocessProteome(se, normalize = TRUE)
 # Call the function to perform differential expression analyis

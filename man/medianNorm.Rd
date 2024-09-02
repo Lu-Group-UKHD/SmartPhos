@@ -28,7 +28,7 @@ The function performs the following steps:
 \examples{
 # Example usage:
 x <- matrix(rnorm(20), nrow=5, ncol=4)
-normalized_x <- medianNorm(x, method = "median") 
+normalized_x <- medianNorm(x, method = "median")
 print(normalized_x)
 
 }

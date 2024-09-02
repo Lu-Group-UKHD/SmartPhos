@@ -21,7 +21,7 @@
 #' data("dda_example")
 #' # Get SummarizedExperiment object
 #' se <- dda_example[["Phosphoproteome"]]
-#' colData(se) <- colData(dda_example)
+#' SummarizedExperiment::colData(se) <- SummarizedExperiment::colData(dda_example)
 #' # Call the function
 #' plot <- plotMissing(se)
 #' plot
@@ -71,7 +71,7 @@ plotMissing <- function(se) {
 #' data("dia_example")
 #' # Get SummarizedExperiment object
 #' se <- dia_example[["Phosphoproteome"]]
-#' colData(se) <- colData(dia_example)
+#' SummarizedExperiment::colData(se) <- SummarizedExperiment::colData(dia_example)
 #' # Preprocess the phosphoproteome assay
 #' result <- preprocessPhos(seData = se, normalize = TRUE, impute = "QRILC")
 #' # Call the plotting function
@@ -141,11 +141,11 @@ plotIntensity <- function(se, color = "none") {
 #' data("dia_example")
 #' # Get SummarizedExperiment object
 #' se <- dia_example[["Phosphoproteome"]]
-#' colData(se) <- colData(dia_example)
+#' SummarizedExperiment::colData(se) <- SummarizedExperiment::colData(dia_example)
 #' # Generate the imputed assay
 #' result <- preprocessPhos(seData = se, normalize = TRUE, impute = "QRILC")
 #' # Perform PCA
-#' pca <- prcomp(t(assays(result)[["imputed"]]), center = TRUE, scale.=TRUE)
+#' pca <- stats::prcomp(t(SummarizedExperiment::assays(result)[["imputed"]]), center = TRUE, scale.=TRUE)
 #' # Plot PCA results
 #' plot <- plotPCA(pca = pca, se = result, color = "treatment")
 #' plot
@@ -227,7 +227,7 @@ plotPCA <- function(pca, se, xaxis = "PC1", yaxis = "PC2", color = "none", shape
 #' data("dia_example")
 #' # Get SummarizedExperiment object
 #' se <- dia_example[["Phosphoproteome"]]
-#' colData(se) <- colData(dia_example)
+#' SummarizedExperiment::colData(se) <- SummarizedExperiment::colData(dia_example)
 #' # Generate the imputed assay
 #' result <- preprocessPhos(seData = se, normalize = TRUE, impute = "QRILC")
 #' # Plot heatmap for top variant

@@ -23,7 +23,7 @@ This function calculates the percentage of non-missing values for each sample in
 data("dda_example")
 # Get SummarizedExperiment object
 se <- dda_example[["Phosphoproteome"]]
-colData(se) <- colData(dda_example)
+SummarizedExperiment::colData(se) <- SummarizedExperiment::colData(dda_example)
 # Call the function
 plot <- plotMissing(se)
 plot

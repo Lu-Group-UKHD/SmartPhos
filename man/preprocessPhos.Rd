@@ -55,7 +55,7 @@ A \code{SummarizedExperiment} object with preprocessed phosphoproteome data.
 data("dia_example")
 # Get SummarizedExperiment object
 se <- dia_example[["Phosphoproteome"]]
-colData(se) <- colData(dia_example)
+SummarizedExperiment::colData(se) <- SummarizedExperiment::colData(dia_example)
 # Call the function
 result <- preprocessPhos(seData = se, normalize = TRUE, impute = "QRILC")
 

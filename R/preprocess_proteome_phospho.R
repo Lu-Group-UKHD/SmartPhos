@@ -53,7 +53,7 @@ getOneSymbol <- function(Gene) {
 #' data("dia_example")
 #' # Get SummarizedExperiment object
 #' se <- dia_example[["Proteome"]]
-#' colData(se) <- colData(dia_example)
+#' SummarizedExperiment::colData(se) <- SummarizedExperiment::colData(dia_example)
 #' # Call the function
 #' result <- preprocessProteome(seData = se, normalize = TRUE, impute = "QRILC")
 #' 
@@ -230,7 +230,7 @@ preprocessProteome <- function(seData, filterList = NULL, missCut = 50,
 #' data("dia_example")
 #' # Get SummarizedExperiment object
 #' se <- dia_example[["Phosphoproteome"]]
-#' colData(se) <- colData(dia_example)
+#' SummarizedExperiment::colData(se) <- SummarizedExperiment::colData(dia_example)
 #' # Call the function
 #' result <- preprocessPhos(seData = se, normalize = TRUE, impute = "QRILC")
 #'

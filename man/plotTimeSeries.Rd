@@ -59,10 +59,11 @@ The x-axis represents time, and the y-axis represents the selected metric (norma
 data("dda_example")
 # Get SummarizedExperiment object
 se <- dda_example[["Proteome"]]
-colData(se) <- colData(dda_example)
+SummarizedExperiment::colData(se) <- SummarizedExperiment::colData(dda_example)
 # Preprocess the proteome assay
 result <- preprocessProteome(se, normalize = TRUE)
 # Plot a specific gene experssion over time
+timerange <- unique(se$timepoint)
 plot <- plotTimeSeries(result, type = "expression", geneID = "p18", symbol = "TMEM238", condition = "treatment", treatment = "EGF", timerange = timerange)
 plot
 

@@ -41,8 +41,8 @@ The \code{readPhosphoExperimentDIA} and \code{readProteomeExperimentDIA} functio
 }
 \examples{
 # Example usage:
-fileTable <- data.frame(type = c("phosphoproteome", "proteome"), 
-                        fileName = c("phos_file.txt", "prot_file.txt"), 
+fileTable <- data.frame(type = c("phosphoproteome", "proteome"),
+                        fileName = c("phos_file.txt", "prot_file.txt"),
                         id = c("sample1", "sample2"),
                         outputID = c("s1", "s2"))
 result <- readExperimentDIA(fileTable, localProbCut = 0.75, annotation_col = c("id"), normalizeByProtein = FALSE)

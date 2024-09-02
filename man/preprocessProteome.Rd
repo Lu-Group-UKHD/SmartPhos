@@ -52,7 +52,7 @@ A \code{SummarizedExperiment} object with preprocessed proteome data.
 data("dia_example")
 # Get SummarizedExperiment object
 se <- dia_example[["Proteome"]]
-colData(se) <- colData(dia_example)
+SummarizedExperiment::colData(se) <- SummarizedExperiment::colData(dia_example)
 # Call the function
 result <- preprocessProteome(seData = se, normalize = TRUE, impute = "QRILC")
 

@@ -1,5 +1,5 @@
 #' @name generateInputTable
-#' 
+#'
 #' @title Generate Input Table for Proteomic and Phosphoproteomic Analysis
 #'
 #' @description
@@ -17,11 +17,11 @@
 #'   \item Processes file paths for full proteome and phosphoproteome data.
 #'   \item Creates a combined input table with file names, sample names, types, batches, and IDs.
 #' }
-#' 
+#'
 #' @examples
 #' # inputTable <- generateInputTable(folder, batchAsFolder = FALSE)
-#' 
-#' 
+#'
+#'
 #' @importFrom utils read.delim
 #' @export
 generateInputTable <- function(rawFolder, batchAsFolder = FALSE) {
@@ -46,17 +46,17 @@ generateInputTable <- function(rawFolder, batchAsFolder = FALSE) {
         sampleName <- gsub("[+]", ".", sampleName)
         # Remove any empty or NA sample names
         sampleName <- sampleName[!sampleName %in% c(NA,"")]
-        
+
         # Create a data frame for full proteome files
         fullTab <- data.frame(fileName = rep(file.path(folderPath,"proteinGroups.txt"),length(sampleName)))
         fullTab$sample <- sampleName
         fullTab$type <- "proteome"
-        
+
         # Create a data frame for phosphoproteome files
         phosphoTab <- data.frame(fileName = rep(file.path(folderPath,"Phospho(STY)Sites.txt"),length(sampleName)))
         phosphoTab$sample <- sampleName
         phosphoTab$type <- "phosphoproteome"
-        
+
         # Combine the full proteome and phosphoproteome tables
         inputTab <- rbind(fullTab, phosphoTab)
         inputTab$batch <- eachFolder
@@ -66,13 +66,13 @@ generateInputTable <- function(rawFolder, batchAsFolder = FALSE) {
     })
     # Combine all the input tables from each folder into one
     inputTab <- do.call(rbind, inputTab)
-    
+
     return(inputTab)
 }
 
 
 #' @name generateInputTable_DIA
-#' 
+#'
 #' @title Generate Input Table for DIA Analysis
 #'
 #' @description
@@ -88,7 +88,7 @@ generateInputTable <- function(rawFolder, batchAsFolder = FALSE) {
 #'   \item Processes file paths for full proteome and phosphoproteome data.
 #'   \item Creates a combined input table with file names, types, and IDs.
 #' }
-#' 
+#'
 #' @examples
 #' # inputTable <- generateInputTable_DIA(folder)
 #' @importFrom utils read.delim
@@ -96,43 +96,43 @@ generateInputTable <- function(rawFolder, batchAsFolder = FALSE) {
 generateInputTable_DIA <- function(rawFolder) {
     # List all files in the rawFolder with pattern "*Labels.txt"
     getFile <- list.files(rawFolder, pattern = "*Labels.txt")
-    
+
     # Read the summary file containing information about the experiments
     sumFile <- read.delim(file.path(rawFolder, getFile))
-    
+
     # Create a unique experimental ID
     id <- c()
     for (i in 1: length(sumFile$Sample.Type)) {
         id <- c(id, paste(sumFile$Sample.Type[i], sumFile$treatment[i],
                           sumFile$timepoint[i], sumFile$replicate[i], sep = "_"))
     }
-    
+
     # Replace special characters in IDs
     id <- gsub("[+]", ".", id)
-    
+
     # List all files in the rawFolder with pattern "*Protein Report.xls"
     getFileFP <- list.files(rawFolder, pattern = "*Protein Report.xls")
     # Create a data frame for full proteome files
     fullTab <- data.frame(fileName = rep(file.path(rawFolder, getFileFP), length(id)))
     fullTab$type <- "proteome"
     fullTab$id <- id
-    
+
     # List all files in the rawFolder with pattern "*PTM Report2.xls"
     getFilePhospho <- list.files(rawFolder, pattern = "*PTM Report2.xls")
     # Create a data frame for phosphoproteome files
     phosphoTab <- data.frame(fileName = rep(file.path(rawFolder, getFilePhospho), length(id)))
     phosphoTab$type <- "phosphoproteome"
     phosphoTab$id <- id
-    
+
     # Combine the full proteome and phosphoproteome tables into a single input table
     inputTab <- rbind(fullTab, phosphoTab)
-    
+
     return(inputTab)
 }
 
 
 #' @name readExperiment
-#' 
+#'
 #' @title Read and Process the DDA experiment.
 #'
 #' @description
@@ -146,9 +146,9 @@ generateInputTable_DIA <- function(rawFolder) {
 #' @param pepNumCut \code{Numeric}, peptide number cutoff for filtering proteomic data. Default is 1.
 #' @param ifLFQ \code{Logical}, whether to use LFQ quantification for proteomic data. Default is \code{TRUE}.
 #' @param annotation_col A \code{character} vector specifying additional columns to be included in the sample annotation. Default is an empty vector.
-#' 
+#'
 #' @return A \code{MultiAssayExperiment} object containing the processed phosphoproteomic and proteomic data from a DDA experiment.
-#' 
+#'
 #' @details
 #' The function performs the following steps:
 #' \itemize{
@@ -157,23 +157,23 @@ generateInputTable_DIA <- function(rawFolder) {
 #'   \item Prepares the sample annotation table.
 #'   \item Constructs and returns a \code{MultiAssayExperiment} object containing the processed data.
 #' }
-#' 
+#'
 #' @examples
 #' # Example usage:
 #' fileTable <- data.frame(id = c("sample1", "sample2"), sample = c("A", "B"), type = c("proteome", "proteome"))
 #' mae <- readExperiment(fileTable)
-#' 
+#'
 #' @import MultiAssayExperiment
 #' @export
 readExperiment <- function(fileTable, localProbCut = 0.75, scoreDiffCut = 5, fdrCut =0.1, scoreCut = 10, pepNumCut = 1, ifLFQ = TRUE, annotation_col = c()) {
     # Read phosphoproteomic data
     print("Processing phosphoproteomic data")
     ppe <- readPhosphoExperiment(fileTable, localProbCut, scoreDiffCut)
-    
+
     # Read full proteome data
     print("Processing proteomic data")
     fpe <- readProteomeExperiment(fileTable, fdrCut, scoreCut, pepNumCut, ifLFQ)
-    
+
     # Prepare sample annotation
     if ("batch" %in% colnames(fileTable)) annotation_col <- c(annotation_col,"batch")
     sampleTab <- fileTable[,c("id","sample", annotation_col)]
@@ -197,7 +197,7 @@ readExperiment <- function(fileTable, localProbCut = 0.75, scoreDiffCut = 5, fdr
 
 
 #' @name readExperimentDIA
-#' 
+#'
 #' @title Read and Process a DIA Experiment
 #'
 #' @description
@@ -218,24 +218,24 @@ readExperiment <- function(fileTable, localProbCut = 0.75, scoreDiffCut = 5, fdr
 #'   \item Constructs a \code{MultiAssayExperiment} object with the processed data and sample annotations.
 #' }
 #' The \code{readPhosphoExperimentDIA} and \code{readProteomeExperimentDIA} functions are used to read and filter the data for phosphoproteome and proteome experiments, respectively, and they must be available in the environment.
-#' 
+#'
 #' @examples
 #' # Example usage:
-#' fileTable <- data.frame(type = c("phosphoproteome", "proteome"), 
-#'                         fileName = c("phos_file.txt", "prot_file.txt"), 
+#' fileTable <- data.frame(type = c("phosphoproteome", "proteome"),
+#'                         fileName = c("phos_file.txt", "prot_file.txt"),
 #'                         id = c("sample1", "sample2"),
 #'                         outputID = c("s1", "s2"))
 #' result <- readExperimentDIA(fileTable, localProbCut = 0.75, annotation_col = c("id"), normalizeByProtein = FALSE)
-#' 
+#'
 #' @import MultiAssayExperiment
 #' @export
 readExperimentDIA <- function(fileTable, localProbCut = 0.75, annotation_col = c(), onlyReviewed = TRUE, normalizeByProtein=FALSE) {
-    
+
     # Read phospho data
     print("Processing phosphoproteomic data")
     ppe <- readPhosphoExperimentDIA(fileTable, localProbCut, onlyReviewed)
     print("Successful!!")
-    
+
     # Read full proteome data
     print("Processing proteomic data")
     fpe <- readProteomeExperimentDIA(fileTable)
@@ -258,7 +258,7 @@ readExperimentDIA <- function(fileTable, localProbCut = 0.75, annotation_col = c
 
     # Get sample name without prefix or suffix
     sampleTab$sampleName <- removePreSuffix(sampleTab$sample)
-    
+
     # Construct MultiAssayExperiment object
     if (!is.null(ppe) & !is.null(fpe)) {
       mae <- MultiAssayExperiment(list(Phosphoproteome = ppe, Proteome = fpe), sampleTab)
@@ -273,7 +273,7 @@ readExperimentDIA <- function(fileTable, localProbCut = 0.75, annotation_col = c
 
 
 #' @name normByFullProteome
-#' 
+#'
 #' @title Normalize Phosphoproteome by Full Proteome
 #'
 #' @description
@@ -292,12 +292,8 @@ readExperimentDIA <- function(fileTable, localProbCut = 0.75, annotation_col = c
 #'   \item Normalizes the phosphoproteome data by dividing it by the corresponding proteome data.
 #'   \item Replaces the phosphoproteome assay in the \code{MultiAssayExperiment} object or adds the normalized data as a new assay, depending on the \code{replace} parameter.
 #' }
-#' 
-#' @examples
-#' # Example usage:
-#' mae <- readExperimentDIA(fileTable)
-#' mae <- normByFullProteome(mae, replace = TRUE)
-#' 
+#'
+#'
 #' @import MultiAssayExperiment
 #' @export
 normByFullProteome <- function(mae, replace = TRUE) {
@@ -311,8 +307,8 @@ normByFullProteome <- function(mae, replace = TRUE) {
     ppe <- mae[["Phosphoproteome"]]
     fpe <- mae[["Proteome"]]
     sampleTab <- colData(mae)
-    sampleTab.pp <- sampleTab
-    sampleTab.fp <- sampleTab[sampleTab$sampleType == "FullProteome",]
+    sampleTab.pp <- sampleTab[sampleTab$sampleType %in% c("Phospho","PP"),]
+    sampleTab.fp <- sampleTab[sampleTab$sampleType %in% c("FullProteome","FP"),]
 
     # Check if proteome assay for the unenriched samples is present
     if (nrow(sampleTab.fp) ==0 ) {
@@ -335,14 +331,14 @@ normByFullProteome <- function(mae, replace = TRUE) {
     fpMat <- fpMat[match(rowData(ppe)$UniprotID, rowData(fpe)$UniprotID),fpSampleID]
 
     # Ensure the samples match
-    stopifnot(all((colnames(fpMat)) == removePreSuffix(colnames(ppMat))))
+    stopifnot(all(sampleTab[(colnames(fpMat)),]$sampleName == sampleTab[(colnames(ppMat)),]$sampleName))
 
     # Normalize phosphoproteome data by the full proteome data
     ppMat.norm <- ppMat/fpMat
     ppMat.norm <- ppMat.norm[rowSums(!is.na(ppMat.norm))>0,]
     ppe.norm <- ppe[rownames(ppMat.norm),colnames(ppMat.norm)]
     assay(ppe.norm) <- ppMat.norm
-    
+
     # Replace or add the normalized phosphoproteome data to the MultiAssayExperiment object
     if (replace) {
         mae[["Phosphoproteome"]] <- ppe.norm

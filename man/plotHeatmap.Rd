@@ -52,7 +52,7 @@ This function creates a heatmap using the Intensity assay from a \code{Summarize
 data("dia_example")
 # Get SummarizedExperiment object
 se <- dia_example[["Phosphoproteome"]]
-colData(se) <- colData(dia_example)
+SummarizedExperiment::colData(se) <- SummarizedExperiment::colData(dia_example)
 # Generate the imputed assay
 result <- preprocessPhos(seData = se, normalize = TRUE, impute = "QRILC")
 # Plot heatmap for top variant

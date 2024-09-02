@@ -22,7 +22,7 @@ A \code{ggplot2} object showing boxplots of intensities for each sample.
 data("dia_example")
 # Get SummarizedExperiment object
 se <- dia_example[["Phosphoproteome"]]
-colData(se) <- colData(dia_example)
+SummarizedExperiment::colData(se) <- SummarizedExperiment::colData(dia_example)
 # Preprocess the phosphoproteome assay
 result <- preprocessPhos(seData = se, normalize = TRUE, impute = "QRILC")
 # Call the plotting function

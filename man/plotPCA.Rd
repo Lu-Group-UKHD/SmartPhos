@@ -33,11 +33,11 @@ This function creates a PCA plot using the scores from a PCA result object and m
 data("dia_example")
 # Get SummarizedExperiment object
 se <- dia_example[["Phosphoproteome"]]
-colData(se) <- colData(dia_example)
+SummarizedExperiment::colData(se) <- SummarizedExperiment::colData(dia_example)
 # Generate the imputed assay
 result <- preprocessPhos(seData = se, normalize = TRUE, impute = "QRILC")
 # Perform PCA
-pca <- prcomp(t(assays(result)[["imputed"]]), center = TRUE, scale.=TRUE)
+pca <- stats::prcomp(t(SummarizedExperiment::assays(result)[["imputed"]]), center = TRUE, scale.=TRUE)
 # Plot PCA results
 plot <- plotPCA(pca = pca, se = result, color = "treatment")
 plot
