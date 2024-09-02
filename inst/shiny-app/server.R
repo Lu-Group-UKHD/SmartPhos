@@ -277,22 +277,38 @@ shinyServer(function(input, output, session) {
       if (input$assay == "Phosphoproteome") {
         
         if (!is.null(input$ifNormCorrect) && input$ifNormCorrect) {
-          inputsValue$ifNormCorrect <- input$ifNormCorrect
-          maeData <- runPhosphoAdjustment(mae(), 
-                                          normalization = ifelse(input$ifAlreadyNorm == "Yes", FALSE, TRUE), #depends on whether the data were already normalized
-                                          minOverlap = 3, #at least three overlapped feature between sample pair
-                                          completeness = 0.5 #use feature present in at least 50% of the samples
-                                          )
-          assays(maeData[["Phosphoproteome"]])[["Intensity"]] <- assays(maeData[["Phosphoproteome"]])[["Intensity_adjusted"]]
-          assays(maeData[["Phosphoproteome"]])[["Intensity_adjusted"]] <- NULL
-          #maeData <- maeData[, !is.na(maeData$adjustFactorPP)]
-          maeAdj(maeData)
+          if (!is.null(colData(mae())$sampleName)) {
+            inputsValue$ifNormCorrect <- input$ifNormCorrect
+            maeData <- runPhosphoAdjustment(mae(), 
+                                            normalization = ifelse(input$ifAlreadyNorm == "Yes", FALSE, TRUE), # depends on whether the data were already normalized
+                                            minOverlap = 3, # at least three overlapped feature between sample pair
+                                            completeness = 0.5 # use feature present in at least 50% of the samples
+            )
+            assays(maeData[["Phosphoproteome"]])[["Intensity"]] <- assays(maeData[["Phosphoproteome"]])[["Intensity_adjusted"]]
+            assays(maeData[["Phosphoproteome"]])[["Intensity_adjusted"]] <- NULL
+            #maeData <- maeData[, !is.na(maeData$adjustFactorPP)]
+            maeAdj(maeData)
+          } else {
+            showModal(modalDialog(
+              title = "Normalization correction not possible!",
+              "Please make sure that the uploaded R object or the fileTable.txt file contains the sampleName column with appropriate entry. Add sampleName column and upload the object or zip file again or uncheck this option to continue.",
+              easyClose = TRUE,
+              footer = NULL
+            ))}
         }
         # whether normalize the phospho intensity by protein expression, 
         # if normalization adjustment is performed, this will be performed after normalization adjustment
         if (!is.null(input$ifNormByProtein) && input$ifNormByProtein) {
-          inputsValue$ifNormByProtein <- input$ifNormByProtein
-          maeData <- SmartPhos::normByFullProteome(maeData)
+          if (!is.null(colData(mae())$sampleName)) {
+            inputsValue$ifNormByProtein <- input$ifNormByProtein
+            maeData <- SmartPhos::normByFullProteome(maeData)
+          } else {
+            showModal(modalDialog(
+              title = "Normalize phosphorylation by protein expression!",
+              "Please make sure that the uploaded R object or the fileTable.txt file contains the sampleName column with appropriate entry. Add sampleName column and upload the object or zip file again or uncheck this option to continue.",
+              easyClose = TRUE,
+              footer = NULL
+            ))}
         }
       }
       # summarizedAssayExperiment object of the selected assay
