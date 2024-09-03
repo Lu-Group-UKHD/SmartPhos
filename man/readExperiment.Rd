@@ -49,7 +49,16 @@ The function performs the following steps:
 }
 \examples{
 # Example usage:
-fileTable <- data.frame(id = c("sample1", "sample2"), sample = c("A", "B"), type = c("proteome", "proteome"))
-mae <- readExperiment(fileTable)
+file1 <- system.file("extdata", "phosDDA_1.xls", package = "SmartPhos")
+file2 <- system.file("extdata", "proteomeDDA_1.xls", package = "SmartPhos")
+# Create fileTable
+fileTable <- data.frame(
+    type = c("phosphoproteome", "proteome"),
+    fileName = c(file1, file2),
+    sample = c("Sample1", "sample1"),
+    id = c("s1", "s2")
+)
+# Call the function
+mae <- readExperiment(fileTable, localProbCut = 0.75, scoreDiffCut = 5, fdrCut = 0.1, scoreCut = 10, pepNumCut = 1, ifLFQ = TRUE, annotation_col = c("id"))
 
 }

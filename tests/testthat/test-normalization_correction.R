@@ -227,7 +227,7 @@ test_that("plotLogRatio works without normalization", {
   plot <- plotLogRatio(mae, normalization = FALSE)
 
   # Check if plot has the correct title
-  expect_equal(plot$labels$title, "Boxplot of Phospho/FullProteome Ratio")
+  expect_equal(plot$labels$title, "Boxplot of Phospho/FullProteome Ratio(un-adjusted)")
 
   # Check if the x and y labels are correct
   expect_equal(plot$labels$x, "sample")
@@ -252,7 +252,7 @@ test_that("plotLogRatio works with normalization", {
   expect_s3_class(plot, "ggplot")
 
   # Check if plot has the correct title
-  expect_equal(plot$labels$title, "Boxplot of Phospho/FullProteome Ratio")
+  expect_equal(plot$labels$title, "Boxplot of Phospho/FullProteome Ratio(un-adjusted)")
 })
 
 # Test if plotLogRatio handles missing data correctly

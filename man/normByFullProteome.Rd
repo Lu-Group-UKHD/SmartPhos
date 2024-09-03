@@ -28,9 +28,3 @@ The function performs the following steps:
   \item Replaces the phosphoproteome assay in the \code{MultiAssayExperiment} object or adds the normalized data as a new assay, depending on the \code{replace} parameter.
 }
 }
-\examples{
-# Example usage:
-mae <- readExperimentDIA(fileTable)
-mae <- normByFullProteome(mae, replace = TRUE)
-
-}

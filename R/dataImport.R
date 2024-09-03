@@ -160,8 +160,17 @@ generateInputTable_DIA <- function(rawFolder) {
 #'
 #' @examples
 #' # Example usage:
-#' fileTable <- data.frame(id = c("sample1", "sample2"), sample = c("A", "B"), type = c("proteome", "proteome"))
-#' mae <- readExperiment(fileTable)
+#' file1 <- system.file("extdata", "phosDDA_1.xls", package = "SmartPhos")
+#' file2 <- system.file("extdata", "proteomeDDA_1.xls", package = "SmartPhos")
+#' # Create fileTable
+#' fileTable <- data.frame(
+#'     type = c("phosphoproteome", "proteome"),
+#'     fileName = c(file1, file2),
+#'     sample = c("Sample1", "sample1"),
+#'     id = c("s1", "s2")
+#' )
+#' # Call the function
+#' mae <- readExperiment(fileTable, localProbCut = 0.75, scoreDiffCut = 5, fdrCut = 0.1, scoreCut = 10, pepNumCut = 1, ifLFQ = TRUE, annotation_col = c("id"))
 #'
 #' @import MultiAssayExperiment
 #' @export
@@ -221,12 +230,18 @@ readExperiment <- function(fileTable, localProbCut = 0.75, scoreDiffCut = 5, fdr
 #'
 #' @examples
 #' # Example usage:
-#' fileTable <- data.frame(type = c("phosphoproteome", "proteome"),
-#'                         fileName = c("phos_file.txt", "prot_file.txt"),
-#'                         id = c("sample1", "sample2"),
-#'                         outputID = c("s1", "s2"))
-#' result <- readExperimentDIA(fileTable, localProbCut = 0.75, annotation_col = c("id"), normalizeByProtein = FALSE)
-#'
+#' file1 <- system.file("extdata", "phosDIA_1.xls", package = "SmartPhos")
+#' file2 <- system.file("extdata", "proteomeDIA_1.xls", package = "SmartPhos")
+#' # Create fileTable
+#' fileTable <- data.frame(
+#'     type = c("phosphoproteome", "proteome", "proteome"),
+#'     fileName = c(file1, file2, file2),
+#'     id = c("Sample_1", "sample1", "sample2"),
+#'     outputID = c("s1", "s2", "s3")
+#' )
+#' # Call the function
+#' mae <- readExperimentDIA(fileTable, localProbCut = 0.75, annotation_col = c("id"), onlyReviewed = FALSE, normalizeByProtein = FALSE)
+#' 
 #' @import MultiAssayExperiment
 #' @export
 readExperimentDIA <- function(fileTable, localProbCut = 0.75, annotation_col = c(), onlyReviewed = TRUE, normalizeByProtein=FALSE) {
