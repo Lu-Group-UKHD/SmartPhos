@@ -491,7 +491,7 @@ shinyServer(function(input, output, session) {
           inputsValue$colorPCA <- input$colorPCA
           inputsValue$shapePCA <- input$shapePCA
           
-          plotPCA(pca, processedData(), xaxis = input$xaxisPCA,
+          SmartPhos::plotPCA(pca, processedData(), xaxis = input$xaxisPCA,
                   yaxis = input$yaxisPCA, color = input$colorPCA,
                   shape = input$shapePCA)
           

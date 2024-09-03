@@ -32,6 +32,7 @@
 #'
 #' @importFrom stats median sd
 #' @importFrom matrixStats rowMads
+#' @export
 mscale <- function(x, center = TRUE, scale = TRUE, censor = NULL, useMad = FALSE){
   
   # Check if both scaling and centering are requested
@@ -109,6 +110,7 @@ mscale <- function(x, center = TRUE, scale = TRUE, censor = NULL, useMad = FALSE
 #' # result <- addZeroTime(data, treat = "TreatmentA", zeroTreat = "Control", timeRange = c("10min", "20min"))
 #'
 #' @importFrom SummarizedExperiment colData rowData assay assays elementMetadata SummarizedExperiment
+#' @export
 addZeroTime <- function(data, condition, treat, zeroTreat, timeRange) {
   # Subset the data for the specified treatment and time range
   subset1 <- data[, data[[condition]] == treat & data$timepoint %in% timeRange]
