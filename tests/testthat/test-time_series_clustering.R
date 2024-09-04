@@ -1,3 +1,96 @@
+# Sample data for testing
+set.seed(123)
+test_matrix <- matrix(rnorm(20), nrow = 5, ncol = 4)
+
+############################ Tests for mscale() ################################
+
+test_that("mscale returns the same matrix when center and scale are FALSE", {
+  result <- mscale(test_matrix, center = FALSE, scale = FALSE)
+  expect_equal(result, test_matrix)
+})
+
+test_that("mscale correctly centers the matrix when center is TRUE and scale is FALSE", {
+  result <- mscale(test_matrix, center = TRUE, scale = FALSE)
+  expected <- t(apply(test_matrix, 1, function(y) y - mean(y)))
+  expect_equal(result, expected)
+})
+
+test_that("mscale correctly scales the matrix when scale is TRUE and center is FALSE", {
+  result <- mscale(test_matrix, center = FALSE, scale = TRUE)
+  expected <- t(apply(test_matrix, 1, function(y) y / sd(y)))
+  expect_equal(result, expected)
+})
+
+test_that("mscale correctly centers and scales the matrix using standard deviation", {
+  result <- mscale(test_matrix, center = TRUE, scale = TRUE, useMad = FALSE)
+  expected <- t(apply(test_matrix, 1, function(y) (y - mean(y)) / sd(y)))
+  expect_equal(result, expected)
+})
+
+test_that("mscale correctly censors values symmetrically", {
+  result <- mscale(test_matrix, center = TRUE, scale = TRUE, censor = 1)
+  expected <- t(apply(test_matrix, 1, function(y) pmin(pmax((y - mean(y)) / sd(y), -1), 1)))
+  expect_equal(result, expected)
+})
+
+test_that("mscale correctly censors values asymmetrically", {
+  result <- mscale(test_matrix, center = TRUE, scale = TRUE, censor = c(-1, 1))
+  expected <- t(apply(test_matrix, 1, function(y) pmin(pmax((y - mean(y)) / sd(y), -1), 1)))
+  expect_equal(result, expected)
+})
+
+test_that("mscale works correctly when input matrix contains NA values", {
+  matrix_with_na <- test_matrix
+  matrix_with_na[1, 1] <- NA
+  
+  result <- mscale(matrix_with_na, center = TRUE, scale = TRUE, useMad = FALSE)
+  expected <- t(apply(matrix_with_na, 1, function(y) (y - mean(y, na.rm = TRUE)) / sd(y, na.rm = TRUE)))
+  expect_equal(result, expected)
+})
+
+test_that("mscale handles matrices with a single row correctly", {
+  single_row_matrix <- matrix(rnorm(4), nrow = 1)
+  result <- mscale(single_row_matrix, center = TRUE, scale = TRUE)
+  expected <- (single_row_matrix - mean(single_row_matrix)) / sd(single_row_matrix)
+  expect_equal(result, expected)
+})
+
+
+# Helper function to create a dummy SummarizedExperiment object
+create_dummy_SE <- function() {
+  data <- matrix(rnorm(20), nrow = 5, ncol = 4)
+  colData <- DataFrame(treatment = c("TreatmentA", "TreatmentA", "Control", "Control"),
+                       timepoint = c("10min", "20min", "0min", "10min"))
+  colnames(data) <- paste0("Sample", 1:4)
+  rownames(data) <- paste0("Gene", 1:5)
+  rowData <- rownames(data)
+  se <- SummarizedExperiment(assays = list(intensity = data), colData = colData, rowData = rowData)
+  return(se)
+}
+
+########################### Tests for addZeroTime() ############################
+
+test_that("addZeroTime correctly adds the zero timepoint to the specified treatment", {
+  # Create a dummy SummarizedExperiment object
+  data <- create_dummy_SE()
+  
+  # Apply addZeroTime function
+  result <- addZeroTime(data, condition = "treatment", treat = "TreatmentA", zeroTreat = "Control", timeRange = c("10min", "20min"))
+  
+  # Expected data
+  expected_assay <- assay(data)[,1:3]
+  expected_colData <- DataFrame(treatment = c("TreatmentA", "TreatmentA", "TreatmentA"),
+                                timepoint = c("10min", "20min", "0min"))
+  rownames(expected_colData) <- paste0("Sample", 1:3)
+  
+  
+  # Tests
+  expect_equal(assay(result), expected_assay)
+  expect_equal(colData(result), expected_colData)
+})
+
+
+
 # Helper function to create mock time-series data
 create_mock_data <- function(rows = 10, cols = 5) {
   set.seed(123)
@@ -6,7 +99,6 @@ create_mock_data <- function(rows = 10, cols = 5) {
   rownames(mat) <- paste0("Gene", 1:rows)
   return(mat)
 }
-
 
 
 ########################### Tests for clusterTS() ##############################
