@@ -1,5 +1,5 @@
 #' @name mscale
-#' 
+#'
 #' @title Scale and Center a Matrix
 #'
 #' @description
@@ -8,8 +8,8 @@
 #' @param x A \code{numeric} matrix where rows are features and columns are samples.
 #' @param center \code{Logical}. If \code{TRUE}, the rows are centered by subtracting the mean or median. Default is \code{TRUE}.
 #' @param scale \code{Logical}. If \code{TRUE}, the rows are scaled by dividing by the standard deviation or mean absolute deviation. Default is \code{TRUE}.
-#' @param censor A \code{numeric} vector of length one or two for censoring the scaled values. 
-#' If length one, values are censored symmetrically at positive and negative values. 
+#' @param censor A \code{numeric} vector of length one or two for censoring the scaled values.
+#' If length one, values are censored symmetrically at positive and negative values.
 #' If length two, the first value is the lower limit and the second value is the upper limit. Default is \code{NULL}.
 #' @param useMad \code{Logical}. If \code{TRUE}, the mean absolute deviation is used for scaling instead of the standard deviation. Default is \code{FALSE}.
 #'
@@ -34,35 +34,35 @@
 #' @importFrom matrixStats rowMads
 #' @export
 mscale <- function(x, center = TRUE, scale = TRUE, censor = NULL, useMad = FALSE){
-  
+
   # Check if both scaling and centering are requested
   if (scale & center) {
     # Scale using Mean Absolute Deviation (MAD)
     if (useMad) {
-      x.scaled <- apply(x, 1, function(y) (y-median(y,na.rm = T))/meanAD(y))
+      x.scaled <- apply(x, 1, function(y) (y-median(y,na.rm = TRUE))/meanAD(y))
     } else {
       # Scale using Standard Deviation (SD)
-      x.scaled <- apply(x, 1, function(y) (y-mean(y,na.rm=T))/sd(y,na.rm = T))
+      x.scaled <- apply(x, 1, function(y) (y-mean(y,na.rm=TRUE))/sd(y,na.rm = TRUE))
     }
   } else if (center & !scale) {
     # Only center the data
     if (useMad) {
-      x.scaled <- apply(x, 1, function(y) (y-median(y,na.rm=T)))
+      x.scaled <- apply(x, 1, function(y) (y-median(y,na.rm=TRUE)))
     } else {
-      x.scaled <- apply(x, 1, function(y) (y-mean(y,na.rm=T)))
+      x.scaled <- apply(x, 1, function(y) (y-mean(y,na.rm=TRUE)))
     }
   } else if (!center & scale) {
     # Only scale the data
     if (useMad) {
       x.scaled <- apply(x, 1, function(y) y/meanAD(y))
     } else {
-      x.scaled <- apply(x, 1, function(y) y/sd(y,na.rm = T))
+      x.scaled <- apply(x, 1, function(y) y/sd(y,na.rm = TRUE))
     }
   } else {
     # Neither center nor scale
     x.scaled <- t(x)
   }
-  
+
   # Apply censoring if requested
   if (!is.null(censor)) {
     if (length(censor) == 1) {
@@ -80,7 +80,7 @@ mscale <- function(x, center = TRUE, scale = TRUE, censor = NULL, useMad = FALSE
 
 
 #' @name addZeroTime
-#' 
+#'
 #' @title Add Zero Timepoint Data to Treatment Subset
 #'
 #' @description
@@ -119,23 +119,23 @@ addZeroTime <- function(data, condition, treat, zeroTreat, timeRange) {
   # Combine the assays from the treatment and zero timepoint subsets
   assay <- cbind(assay(subset1), assay(subset2))
   colnames(assay) <- gsub(zeroTreat, treat, colnames(assay))
-  
+
   # Combine the column data from both subsets
   cd1 <- colData(subset1)
   cd2 <- colData(subset2)
   cd <- rbind(cd1, cd2)
   cd[[condition]][cd[[condition]] == zeroTreat] = treat
   rownames(cd) <- gsub(zeroTreat, treat, rownames(cd))
-  
+
   # Retrieve the element metadata from the original data
   emeta <- elementMetadata(data)
-  
+
   return(SummarizedExperiment(assays = list(intensity=assay), colData = cd, rowData = emeta))
 }
 
 
 #' @name clusterTS
-#' 
+#'
 #' @title Perform Clustering on Time-Series Data
 #'
 #' @description
@@ -175,34 +175,34 @@ addZeroTime <- function(data, condition, treat, zeroTreat, timeRange) {
 #' @importFrom Biobase rowMax
 #' @export
 clusterTS <- function(x, k = 5, pCut = NULL, twoCondition = FALSE) {
-  
+
   options(warn=-1)
-  
+
   # Set seed for reproducible clustering results
   set.seed(12345)
-  
+
   # Remove rows with NA values
   x.center <- x[complete.cases(x),]
-  
+
   # Perform fuzzy C-means clustering
   res <- e1071::cmeans(x.center, k)
-  
+
   # Create a tibble with clustering results
   resCluster <- tibble(feature = names(res$cluster),
                        cluster = res$cluster,
                        prob = Biobase::rowMax(res$membership))
-  
+
   # Filter clusters based on probability cutoff if provided
   if (!is.null(pCut)) resCluster <- filter(resCluster, prob >= pCut)
-  
+
   if (!twoCondition) {
     # Handle single condition data
-    
+
     # Extract unique time points and determine time unit
     timeVector <- unique(colnames(x.center))
     timeUnit <- str_extract(timeVector, "h|min")
     timeUnit <- ifelse(is.na(timeUnit), "", timeUnit)
-    
+
     # Adjust time values if both hours and minutes are present
     if ((any(timeUnit == "h")) & (any(timeUnit == "min"))) {
       timeValue <- timeVector
@@ -211,10 +211,10 @@ clusterTS <- function(x, k = 5, pCut = NULL, twoCondition = FALSE) {
     } else {
       timeRank <- rank(as.numeric(gsub("h|min", "", timeVector)))
     }
-    
+
     # Determine the order of time points for plotting
-    timeOrder <- timeVector[order(match(timeRank, sort(timeRank)))]  
-    
+    timeOrder <- timeVector[order(match(timeRank, sort(timeRank)))]
+
     # Prepare data for plotting
     clusterTab <- x.center %>% as_tibble(rownames = "feature") %>%
       pivot_longer(-feature, names_to = "time", values_to = "value") %>%
@@ -228,7 +228,7 @@ clusterTS <- function(x, k = 5, pCut = NULL, twoCondition = FALSE) {
       ungroup() %>%
       mutate(time = factor(time, levels = timeOrder)) %>%
       mutate(time = droplevels(time))
-    
+
     # Generate the plot
     p <- ggplot(clusterTab, aes( x = time, y = value, group = feature)) +
       geom_line( aes(col = prob), alpha=0.8) +
@@ -245,13 +245,13 @@ clusterTS <- function(x, k = 5, pCut = NULL, twoCondition = FALSE) {
             strip.text = element_text(size=15, face = "bold"))
   } else {
     # Handle data with two conditions
-    
+
     # Extract unique time points and determine time unit
     timeVector <- sapply(colnames(x.center), function(X) unlist(str_split(X, "_"))[1])
     timeVector <- unique(timeVector)
     timeUnit <- str_extract(timeVector, "h|min")
     timeUnit <- ifelse(is.na(timeUnit), "", timeUnit)
-    
+
     # Adjust time values if both hours and minutes are present
     if ((any(timeUnit == "h")) & (any(timeUnit == "min"))) {
       timeValue <- timeVector
@@ -260,10 +260,10 @@ clusterTS <- function(x, k = 5, pCut = NULL, twoCondition = FALSE) {
     } else {
       timeRank <- rank(as.numeric(gsub("h|min", "", timeVector)))
     }
-    
+
     # Determine the order of time points for plotting
     timeOrder <- timeVector[order(match(timeRank, sort(timeRank)))]
-    
+
     # Prepare data for plotting
     clusterTab <- x.center %>% as_tibble(rownames = "feature") %>%
       pivot_longer(-feature, names_to = "timeTreat", values_to = "value") %>%
@@ -279,7 +279,7 @@ clusterTS <- function(x, k = 5, pCut = NULL, twoCondition = FALSE) {
       mutate(time = factor(time, levels = timeOrder)) %>%
       mutate(time = droplevels(time)) %>%
       mutate(geneGroup = paste0(feature,treatment))
-    
+
     # Generate the plot
     p <- ggplot(clusterTab, aes( x=time, y= value, group = geneGroup)) +
       geom_line( aes(alpha = prob, color= treatment)) +
@@ -293,13 +293,13 @@ clusterTS <- function(x, k = 5, pCut = NULL, twoCondition = FALSE) {
             legend.text = element_text(size = 15),
             strip.text = element_text(size=15, face = "bold"))
   }
-  
+
   return(list(cluster = clusterTab, plot = p))
 }
 
 
 #' @name splineFilter
-#' 
+#'
 #' @title Filter Expression Matrix Using Spline Models
 #'
 #' @description
@@ -350,7 +350,7 @@ splineFilter <- function(exprMat, subjectID = NULL, time, df, pCut = 0.5, ifFDR 
     time[str_ends(time, "min")] <- 1/60 * as.numeric(gsub("min","", time[str_ends(time, "min")]))
   }
   time <- as.numeric(gsub("h|min", "", time))
-  
+
   # Remove rows with NA values from the expression matrix
   exprMat <- exprMat[complete.cases(exprMat), ]
   if (is.null(treatment)) {
@@ -360,25 +360,25 @@ splineFilter <- function(exprMat, subjectID = NULL, time, df, pCut = 0.5, ifFDR 
       designTab <- data.frame(row.names = colnames(exprMat))
       designTab$X <- splines::ns(time, df)
       design <- model.matrix(~ 0 + X, data = designTab)
-    } else { 
+    } else {
       # Create design matrix with subject IDs
       designTab <- data.frame(row.names = colnames(exprMat), subjectID = subjectID)
       designTab$X <- splines::ns(time, df)
       design <- model.matrix(~ 0 + X + subjectID, data = designTab)
     }
-    
+
     # Fit linear model and perform empirical Bayes moderation
     fit <- lmFit(exprMat, design = design)
     fit2 <- eBayes(fit)
     # Extract results table and filter by p-value or FDR
     resTab <- topTable(fit2, coef = seq(df), number = Inf) %>%
-      as_tibble(rownames = "ID") 
-    
+      as_tibble(rownames = "ID")
+
     if (ifFDR) resTab$p <- resTab$adj.P.Val else resTab$p <- resTab$P.Value
-    
+
     resTab <- filter(resTab, p <= pCut)
     # Return filtered expression matrix
-    
+
     return(exprMat[resTab$ID,])
   } else {
     # Handle case with two conditions
@@ -399,19 +399,19 @@ splineFilter <- function(exprMat, subjectID = NULL, time, df, pCut = 0.5, ifFDR 
       designTab$X <- splines::ns(time, df)
       design <- model.matrix(~ 0 + subjectID + X*treatment, data = designTab)
     }
-    
+
     # Fit linear model and perform empirical Bayes moderation
     fit <- lmFit(exprMat, design = design)
     fit2 <- eBayes(fit)
-    
+
     # Extract results table and filter by p-value or FDR
     resTab <- topTable(fit2, coef = (ncol(design)-df+1):ncol(design), number = Inf) %>%
       as_tibble(rownames = "ID")
-    
+
     if (ifFDR) resTab$p <- resTab$adj.P.Val else resTab$p <- resTab$P.Value
-    
+
     resTab <- filter(resTab, p <= pCut)
-    
+
     # Return filtered expression matrix
     return(exprMat[resTab$ID,])
   }
@@ -419,7 +419,7 @@ splineFilter <- function(exprMat, subjectID = NULL, time, df, pCut = 0.5, ifFDR 
 
 
 #' @name plotTimeSeries
-#' 
+#'
 #' @title Plot Time Series Data for a gene or phospho site from SummarizedExperiment object
 #'
 #' @description
@@ -452,7 +452,7 @@ splineFilter <- function(exprMat, subjectID = NULL, time, df, pCut = 0.5, ifFDR 
 #' @importFrom SummarizedExperiment assays
 #' @importFrom dplyr %>% bind_cols filter
 #' @importFrom stringr str_extract
-#' 
+#'
 #' @examples
 #' # Load multiAssayExperiment object
 #' data("dda_example")
@@ -468,7 +468,7 @@ splineFilter <- function(exprMat, subjectID = NULL, time, df, pCut = 0.5, ifFDR 
 #'
 #' @export
 plotTimeSeries <- function(se, type, geneID, symbol, condition, treatment, refTreat, addZero = FALSE, zeroTreat = NULL, timerange) {
-  
+
   if (type == "expression") {
     # Handle zero time point addition if specified
     if (!is.null(zeroTreat) & addZero) {
@@ -478,14 +478,14 @@ plotTimeSeries <- function(se, type, geneID, symbol, condition, treatment, refTr
       seqMat <- se[,se[[condition]] == treatment & se$timepoint %in% timerange]
     }
     yLabText <- "Normalized expression"
-  } 
+  }
   else if (type == "logFC"){
     if (!is.null(zeroTreat) & addZero) {
       seSub <- se[, se[[condition]] == treatment]
       allTimepoint <- unique(seSub$timepoint)
       seRef <- se[, se[[condition]] == refTreat]
       timepointRef <- unique(seRef$timepoint)
-      
+
       # Handle zero time point addition for both treatment and reference
       if (!("0min" %in% allTimepoint) & !("0min" %in% timepointRef)) {
         seqMat <- addZeroTime(se, condition, treatment, zeroTreat, timerange)
@@ -504,14 +504,14 @@ plotTimeSeries <- function(se, type, geneID, symbol, condition, treatment, refTr
       seqMat <- se[,se[[condition]] == treatment & se$timepoint %in% timerange]
       refMat <- se[,se[[condition]] == refTreat & se$timepoint %in% timerange]
     }
-    
+
     # Calculate log fold change
     # Here the mean intensities in refMat are calculated per time point or per time point and subject ID.
     if (!is.null(se$subjectID)) {
       fcMat <- lapply(unique(seqMat$timepoint), function(tp) {
         lapply(unique(seqMat$subjectID), function(id) {
           if (length(colnames(assay(refMat)[,refMat$timepoint == tp & refMat$subjectID == id])) > 1) {
-            refMean = rowMeans(assay(refMat)[,refMat$timepoint == tp & 
+            refMean = rowMeans(assay(refMat)[,refMat$timepoint == tp &
                                                refMat$subjectID == id])
           } else {
             refMean = assay(refMat)[,refMat$timepoint == tp & refMat$subjectID == id]
@@ -522,30 +522,30 @@ plotTimeSeries <- function(se, type, geneID, symbol, condition, treatment, refTr
     } else {
       fcMat <- lapply(unique(seqMat$timepoint), function(tp) {
         if (length(colnames(assay(refMat)[,refMat$timepoint == tp])) > 1) {
-          refMean = rowMeans(assay(refMat)[,refMat$timepoint == tp]) 
+          refMean = rowMeans(assay(refMat)[,refMat$timepoint == tp])
         } else {
           refMean = assay(refMat)[,refMat$timepoint == tp]
         }
-        
+
         assay(seqMat)[,seqMat$timepoint == tp] - refMean
       }) %>% bind_cols() %>% as.matrix()
-    } 
-    
+    }
+
     rownames(fcMat) <- rownames(assay(seqMat))
     colnames(fcMat) <- colnames(assay(seqMat))
     # Rearrange columns in seqMat to match with fcMat to assign the fold change
     seqMat <- seqMat[,colnames(fcMat)]
-    
+
     assay(seqMat) <- fcMat
     yLabText <- "logFC"
-  } 
+  }
   else if (type == "two-condition expression") {
     if (!is.null(zeroTreat) & addZero) {
       seSub <- se[, se[[condition]] == treatment]
       allTimepoint <- unique(seSub$timepoint)
       seRef <- se[, se[[condition]] == refTreat]
       timepointRef <- unique(seRef$timepoint)
-      
+
       # Handle zero time point addition for both conditions
       if (!("0min" %in% allTimepoint) & !("0min" %in% timepointRef)) {
         se1 <- addZeroTime(se, condition, treatment, zeroTreat, timerange)
@@ -553,7 +553,7 @@ plotTimeSeries <- function(se, type, geneID, symbol, condition, treatment, refTr
         assay <- cbind(assay(se1), assay(se2))
         cd <- rbind(colData(se1), colData(se2))
         emeta <- elementMetadata(se)
-        
+
         seqMat <- SummarizedExperiment(assays = list(intensity = assay), colData = cd, rowData = emeta)
       }
       else if (!("0min" %in% allTimepoint) & ("0min" %in% timepointRef)) {
@@ -562,7 +562,7 @@ plotTimeSeries <- function(se, type, geneID, symbol, condition, treatment, refTr
         assay <- cbind(assay(se1), assay(se2))
         cd <- rbind(colData(se1), colData(se2))
         emeta <- elementMetadata(se)
-        
+
         seqMat <- SummarizedExperiment(assays = list(intensity = assay), colData = cd, rowData = emeta)
       }
       else if (("0min" %in% allTimepoint) & !("0min" %in% timepointRef)) {
@@ -571,7 +571,7 @@ plotTimeSeries <- function(se, type, geneID, symbol, condition, treatment, refTr
         assay <- cbind(assay(se1), assay(se2))
         cd <- rbind(colData(se1), colData(se2))
         emeta <- elementMetadata(se)
-        
+
         seqMat <- SummarizedExperiment(assays=list(intensity=assay), colData = cd, rowData = emeta)
       }
     }
@@ -580,38 +580,38 @@ plotTimeSeries <- function(se, type, geneID, symbol, condition, treatment, refTr
     }
     yLabText <- "Normalized expression"
   }
-  
+
   # Create data frame for plotting
   plotTab <- data.frame(time = seqMat$timepoint,
-                        value = assay(seqMat)[geneID,], 
-                        treatment = as.character(seqMat[[condition]])) 
-  
+                        value = assay(seqMat)[geneID,],
+                        treatment = as.character(seqMat[[condition]]))
+
   # Convert time to numerical values
   timeUnit <- str_extract(plotTab$time, "h|min")
   timeUnit <- ifelse(is.na(timeUnit), "", timeUnit)
   if ((any(timeUnit == "h")) & (any(timeUnit == "min"))) {
     plotTab[timeUnit == "min","time"] <- 1/60 * as.numeric(gsub("min", "", plotTab[timeUnit == "min","time"]))
-  } 
+  }
   plotTab$time <- as.numeric(gsub("h|min", "", plotTab$time))
-  
+
   # Create the ggplot object
   p <- ggplot(plotTab, aes(x= time, y = value)) +
-    geom_point(aes(color = treatment), size=3) + 
+    geom_point(aes(color = treatment), size=3) +
     stat_summary(aes(color=paste("mean",treatment)),fun = mean, geom = "line", linewidth = 2)
-  
+
   # Add subject-specific lines if subjectID is present
   if (!is.null(seqMat$subjectID)) {
     plotTab$subjectID <- seqMat$subjectID
     p <- ggplot(plotTab, aes(x= time, y = value,color = paste0(subjectID,"_",treatment))) +
-      geom_point( size=3) + 
+      geom_point( size=3) +
       stat_summary(fun = mean, geom = "line", linewidth = 1,linetype = "dashed")
-    
+
   }
-  
+
   # Finalize plot with labels and theme
   p <- p +
-    ylab(yLabText) + xlab("time") + 
-    ggtitle(symbol) + theme_bw() + 
+    ylab(yLabText) + xlab("time") +
+    ggtitle(symbol) + theme_bw() +
     theme(text=element_text(size=15),plot.title = element_text(hjust = 0.5),
           legend.position = "bottom",
           axis.text.x = element_text(angle = 45, hjust = 1, vjust = 0.5, size=15))

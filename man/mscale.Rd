@@ -13,8 +13,8 @@ mscale(x, center = TRUE, scale = TRUE, censor = NULL, useMad = FALSE)
 
 \item{scale}{\code{Logical}. If \code{TRUE}, the rows are scaled by dividing by the standard deviation or mean absolute deviation. Default is \code{TRUE}.}
 
-\item{censor}{A \code{numeric} vector of length one or two for censoring the scaled values. 
-If length one, values are censored symmetrically at positive and negative values. 
+\item{censor}{A \code{numeric} vector of length one or two for censoring the scaled values.
+If length one, values are censored symmetrically at positive and negative values.
 If length two, the first value is the lower limit and the second value is the upper limit. Default is \code{NULL}.}
 
 \item{useMad}{\code{Logical}. If \code{TRUE}, the mean absolute deviation is used for scaling instead of the standard deviation. Default is \code{FALSE}.}
