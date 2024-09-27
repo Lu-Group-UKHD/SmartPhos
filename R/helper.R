@@ -21,7 +21,6 @@
 #' # inputTab <- data.table::fread("phosphorylation_data.csv")
 #' # filteredData <- readOnePhos(inputTab, sampleName = "Sample1", localProbCut = 0.75, scoreDiffCut = 5, multiMap = FALSE)
 #'
-#' @export
 readOnePhos <- function(inputTab, sampleName, localProbCut = 0.75, scoreDiffCut = 5, multiMap) {
 
   # Define sample specific column names
@@ -81,8 +80,18 @@ readOnePhos <- function(inputTab, sampleName, localProbCut = 0.75, scoreDiffCut 
 #'
 #' @import data.table SummarizedExperiment
 #' @examples
-#' # fileTable <- data.table::fread("file_information.csv")
-#' # ppe <- readPhosphoExperiment(fileTable, localProbCut = 0.75, scoreDiffCut = 5)
+#' file1 <- system.file("extdata", "phosDDA_1.xls", package = "SmartPhos")
+#' file2 <- system.file("extdata", "proteomeDDA_1.xls", package = "SmartPhos")
+#' # Create fileTable
+#' fileTable <- data.frame(
+#'    type = c("phosphoproteome", "proteome"),
+#'    fileName = c(file1, file2),
+#'    sample = c("Sample1", "sample1"),
+#'    id = c("s1", "s2")
+#' )
+#' # Call the function
+#' se <- readPhosphoExperiment(fileTable, localProbCut = 0.75, scoreDiffCut = 5)
+#' print(se)
 #'
 #' @export
 readPhosphoExperiment <- function(fileTable, localProbCut = 0.75, scoreDiffCut = 5) {
@@ -178,11 +187,6 @@ readPhosphoExperiment <- function(fileTable, localProbCut = 0.75, scoreDiffCut =
 #'
 #' @import data.table
 #' @importFrom stats aggregate
-#' @examples
-#' # inputTab <- data.table::fread("phosphorylation_data.tsv")
-#' # result <- readOnePhosDIA(inputTab, "Sample_1", localProbCut = 0.75, removeDup = TRUE)
-#'
-#' @export
 readOnePhosDIA <- function(inputTab, sampleName, localProbCut = 0.75, removeDup = FALSE) {
 
   sampleName <- make.names(sampleName) # Ensure sample name is syntactically valid
@@ -295,8 +299,10 @@ readOnePhosDIA <- function(inputTab, sampleName, localProbCut = 0.75, removeDup 
 #' @import SummarizedExperiment
 #' @importFrom utils data
 #' @examples
-#' # fileTable <- data.table::data.table(fileName = c("file1.tsv", "file2.tsv"), type = "phosphoproteome")
-#' # result <- readPhosphoExperimentDIA(fileTable, localProbCut = 0.75, onlyReviewed = TRUE, showProgressBar = TRUE)
+#' file <- system.file("extdata", "phosDIA_1.xls", package = "SmartPhos")
+#' fileTable <- data.frame(type = "phosphoproteome", fileName = file, id = c("Sample_1"))
+#' result <- readPhosphoExperimentDIA(fileTable, localProbCut = 0.75, onlyReviewed = FALSE, showProgressBar = FALSE)
+#' print(result)
 #'
 #' @export
 readPhosphoExperimentDIA <- function(fileTable, localProbCut = 0.75, onlyReviewed = TRUE,
@@ -430,18 +436,6 @@ readPhosphoExperimentDIA <- function(fileTable, localProbCut = 0.75, onlyReviewe
 #' This function processes proteomics data for a single sample by filtering based on the number of peptides and optionally using LFQ quantification. It ensures that unique identifiers are created for each protein, and removes rows with missing or zero quantification values.
 #'
 #' @import data.table
-#' @examples
-#' inputTab <- data.table::data.table(
-#'      Intensity.sample1 = c(100, 200, NA, 50),
-#'      LFQ.intensity.sample1 = c(90, 180, NA, 45),
-#'      Razor...unique.peptides.sample1 = c(2, 1, 0, 3),
-#'      Protein.IDs = c("P1", "P2", "P3", "P4"),
-#'      Peptide.counts..all. = c(2, 1, 0, 3),
-#'      Gene.names = c("Gene1", "Gene2", "Gene3", "Gene4")
-#' )
-#' result <- readOneProteom(inputTab, sampleName = "sample1", pepNumCut = 1, ifLFQ = TRUE)
-#'
-#' @export
 readOneProteom <- function(inputTab, sampleName, pepNumCut = 1, ifLFQ = TRUE) {
 
   # Define sample specific column names
@@ -506,10 +500,21 @@ readOneProteom <- function(inputTab, sampleName, pepNumCut = 1, ifLFQ = TRUE) {
 #' This function processes proteomics data by filtering based on FDR, score, and peptide count, and optionally using LFQ quantification. It aggregates the data from multiple samples and constructs a \code{SummarizedExperiment} object.
 #'
 #' @examples
-#' # se <- readProteomeExperiment(fileTable)
-#' 
+#' file1 <- system.file("extdata", "phosDDA_1.xls", package = "SmartPhos")
+#' file2 <- system.file("extdata", "proteomeDDA_1.xls", package = "SmartPhos")
+#' # Create fileTable
+#' fileTable <- data.frame(
+#'    type = c("phosphoproteome", "proteome"),
+#'    fileName = c(file1, file2),
+#'    sample = c("Sample1", "sample1"),
+#'    id = c("s1", "s2")
+#' )
+#' # Call the function
+#' se <- readProteomeExperiment(fileTable, fdrCut = 0.1, scoreCut = 10, pepNumCut = 1, ifLFQ = TRUE)
+#' print(se)
+#'
 #' @import data.table SummarizedExperiment
-#' 
+#'
 #' @export
 readProteomeExperiment <- function(fileTable, fdrCut = 0.1, scoreCut = 10, pepNumCut = 1, ifLFQ = TRUE) {
   # Select proteomics entries
@@ -600,9 +605,8 @@ readProteomeExperiment <- function(fileTable, fdrCut = 0.1, scoreCut = 10, pepNu
 #'
 #' @examples
 #' # result <- readOneProteomDIA(inputTab, sampleName)
-#' 
+#'
 #' @import data.table
-#' @export
 readOneProteomDIA <- function(inputTab, sampleName) {
 
   sampleName <- make.names(sampleName)  # Make sample name syntactically valid
@@ -670,8 +674,11 @@ readOneProteomDIA <- function(inputTab, sampleName) {
 #' The \code{readOneProteomDIA} function is used to read and filter the data for each individual sample, and it must be available in the environment.
 #'
 #' @examples
-#' # se <- readProteomeExperimentDIA(fileTable)
-#' 
+#' file <- system.file("extdata", "proteomeDIA_1.xls", package = "SmartPhos")
+#' fileTable <- data.frame(type = "proteome", fileName = file, id = c("sample1", "sample2"))
+#' result <- readProteomeExperimentDIA(fileTable)
+#' print(result)
+#'
 #' @import data.table
 #' @import BiocParallel
 #' @import SummarizedExperiment

@@ -36,8 +36,21 @@ The function allows for flexible scaling and centering of the rows of a \code{ma
 The function can also censor extreme values, either symmetrically or asymmetrically, based on the \code{censor} parameter.
 }
 \examples{
-# Example usage:
-# Assuming `dataMatrix` is a numeric matrix with expression data
-# scaledMatrix <- mscale(dataMatrix, center = TRUE, scale = TRUE, censor = 2)
+# Create a sample matrix (3 rows by 5 columns)
+sample_matrix <- matrix(c(1:15), nrow = 3, byrow = TRUE)
+print(sample_matrix)
+
+# Scale and center the matrix using the default settings
+result1 <- mscale(sample_matrix, center = TRUE, scale = TRUE)
+print(result1)
+
+# Only center the matrix without scaling
+result2 <- mscale(sample_matrix, center = TRUE, scale = FALSE)
+print(result2)
+
+# Only scale the matrix without centering
+result3 <- mscale(sample_matrix, center = FALSE, scale = TRUE)
+print(result3)
+
 
 }

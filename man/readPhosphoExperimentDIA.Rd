@@ -30,7 +30,9 @@ A \code{SummarizedExperiment} object containing the processed phosphorylation da
 This function processes phosphorylation data from DIA experiments by filtering based on localization probability and non-zero intensity, handling multiplicity, and optionally including only reviewed proteins. The resulting data is returned as a \code{SummarizedExperiment} object with annotations and an intensity matrix.
 }
 \examples{
-# fileTable <- data.table::data.table(fileName = c("file1.tsv", "file2.tsv"), type = "phosphoproteome")
-# result <- readPhosphoExperimentDIA(fileTable, localProbCut = 0.75, onlyReviewed = TRUE, showProgressBar = TRUE)
+file <- system.file("extdata", "phosDIA_1.xls", package = "SmartPhos")
+fileTable <- data.frame(type = "phosphoproteome", fileName = file, id = c("Sample_1"))
+result <- readPhosphoExperimentDIA(fileTable, localProbCut = 0.75, onlyReviewed = FALSE, showProgressBar = FALSE)
+print(result)
 
 }

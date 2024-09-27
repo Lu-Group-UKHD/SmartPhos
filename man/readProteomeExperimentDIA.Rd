@@ -30,6 +30,9 @@ The \code{readOneProteomDIA} function is used to read and filter the data for ea
 \code{readProteomeExperimentDIA} reads and processes DIA (Data-Independent Acquisition) proteome data from multiple files and constructs a \code{SummarizedExperiment} object.
 }
 \examples{
-# se <- readProteomeExperimentDIA(fileTable)
+file <- system.file("extdata", "proteomeDIA_1.xls", package = "SmartPhos")
+fileTable <- data.frame(type = "proteome", fileName = file, id = c("sample1", "sample2"))
+result <- readProteomeExperimentDIA(fileTable)
+print(result)
 
 }

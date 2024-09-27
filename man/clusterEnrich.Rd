@@ -47,10 +47,20 @@ The function first retrieves or computes the reference set of genes or PTM sites
 The results are filtered based on the p-value threshold and adjusted for multiple testing if \code{ifFDR} is \code{TRUE}. The function generates a dot plot where the size and color of the points represent the significance of enrichment.
 }
 \examples{
-# Example usage:
-# Assuming `clusterTable` is a data frame with cluster assignments,
-# `summarizedExp` is a SummarizedExperiment object,
-# and `geneSetCollection` is a list or data frame of gene sets
-# results <- clusterEnrich(clusterTable, summarizedExp, geneSetCollection, ptm = FALSE)
+# Load multiAssayExperiment object
+data("dia_example")
+# Get SummarizedExperiment object
+se <- dia_example[["Phosphoproteome"]]
+SummarizedExperiment::colData(se) <- SummarizedExperiment::colData(dia_example)
+seProcess <- preprocessPhos(seData = se, normalize = TRUE, impute = "QRILC")
+result <- addZeroTime(seProcess, condition = "treatment", treat = "EGF", zeroTreat = "1stCrtl", timeRange = c("20min","40min", "6h"))
+# Get the numeric matrix
+exprMat <- SummarizedExperiment::assay(result)
+# Call the clustering function
+clust <- clusterTS(x = exprMat, k = 3)
+genesetPath <- appDir <- system.file("shiny-app/geneset", package = "SmartPhos")
+inGMT <- piano::loadGSC(paste0(genesetPath,"/Cancer_Hallmark.gmt"),type="gmt")
+# Call the function
+clusterEnrich(clust$cluster, seProcess, inGMT)
 
 }

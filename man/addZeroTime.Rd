@@ -34,8 +34,13 @@ The function performs the following steps:
 }
 }
 \examples{
-# Example usage:
-# Assuming data is a SummarizedExperiment object with appropriate data
-# result <- addZeroTime(data, treat = "TreatmentA", zeroTreat = "Control", timeRange = c("10min", "20min"))
+# Load multiAssayExperiment object
+data("dia_example")
+# Get SummarizedExperiment object
+se <- dia_example[["Phosphoproteome"]]
+SummarizedExperiment::colData(se) <- SummarizedExperiment::colData(dia_example)
+# Call the function
+result <- addZeroTime(se, condition = "treatment", treat = "EGF", zeroTreat = "1stCrtl", timeRange = c("20min","40min", "6h"))
+print(result)
 
 }

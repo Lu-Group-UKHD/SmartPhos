@@ -33,6 +33,17 @@ A \code{SummarizedExperiment} object containing the processed proteomics data.
 This function processes proteomics data by filtering based on FDR, score, and peptide count, and optionally using LFQ quantification. It aggregates the data from multiple samples and constructs a \code{SummarizedExperiment} object.
 }
 \examples{
-# se <- readProteomeExperiment(fileTable)
+file1 <- system.file("extdata", "phosDDA_1.xls", package = "SmartPhos")
+file2 <- system.file("extdata", "proteomeDDA_1.xls", package = "SmartPhos")
+# Create fileTable
+fileTable <- data.frame(
+   type = c("phosphoproteome", "proteome"),
+   fileName = c(file1, file2),
+   sample = c("Sample1", "sample1"),
+   id = c("s1", "s2")
+)
+# Call the function
+se <- readProteomeExperiment(fileTable, fdrCut = 0.1, scoreCut = 10, pepNumCut = 1, ifLFQ = TRUE)
+print(se)
 
 }

@@ -31,12 +31,12 @@ The function performs the following steps:
 }
 \examples{
 # Example usage:
-# scoreTab <- data.frame(
-#  source = c("Kinase1", "Kinase2", "Kinase3", "Kinase4"),
-#  score = c(2.3, -1.5, 0, 3.1),
-#  p_value = c(0.01, 0.2, 0.05, 0.03)
-# )
-# plot <- plotKinaseDE(scoreTab, nTop = 3, pCut = 0.05)
-# print(plot)
+scoreTab <- data.frame(
+ source = c("Kinase1", "Kinase2", "Kinase3", "Kinase4"),
+ score = c(2.3, -1.5, 0, 3.1),
+ p_value = c(0.01, 0.2, 0.05, 0.03)
+)
+plot <- plotKinaseDE(scoreTab, nTop = 3, pCut = 0.05)
+print(plot)
 
 }

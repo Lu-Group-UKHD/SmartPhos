@@ -23,7 +23,17 @@ A \code{SummarizedExperiment} object containing the processed phosphorylation da
 This function reads phosphorylation data from multiple files as specified in fileTable, filters the data based on localization probability and score difference, and removes reverse and potential contaminant entries. It constructs an intensity matrix and annotation data, which are then used to create a \code{SummarizedExperiment} object.
 }
 \examples{
-# fileTable <- data.table::fread("file_information.csv")
-# ppe <- readPhosphoExperiment(fileTable, localProbCut = 0.75, scoreDiffCut = 5)
+file1 <- system.file("extdata", "phosDDA_1.xls", package = "SmartPhos")
+file2 <- system.file("extdata", "proteomeDDA_1.xls", package = "SmartPhos")
+# Create fileTable
+fileTable <- data.frame(
+   type = c("phosphoproteome", "proteome"),
+   fileName = c(file1, file2),
+   sample = c("Sample1", "sample1"),
+   id = c("s1", "s2")
+)
+# Call the function
+se <- readPhosphoExperiment(fileTable, localProbCut = 0.75, scoreDiffCut = 5)
+print(se)
 
 }

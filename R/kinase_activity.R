@@ -1,5 +1,5 @@
 #' @name getDecouplerNetwork
-#' 
+#'
 #' @title Load Kinase-Substrate Interaction Network
 #'
 #' @description
@@ -8,7 +8,7 @@
 #' @param speciesRef A \code{character} string specifying the species. Supported values are "Homo sapiens" and "Mus musculus". Default is "Homo_sapiens".
 #'
 #' @return A \code{data frame} containing the kinase-substrate interaction network for the specified species.
-#' 
+#'
 #' @examples
 #' # Load the human kinase-substrate interaction network
 #' human_network <- getDecouplerNetwork("Homo sapiens")
@@ -19,7 +19,7 @@
 #' @importFrom utils read.table data
 #' @export
 getDecouplerNetwork <- function(speciesRef = "Homo_sapiens") {
-  
+
   # load network of kinase-substrate interaction from omnipathR_kinase_network folder
   if (speciesRef == "Homo sapiens") {
     data("Homo_sapiens")
@@ -31,7 +31,7 @@ getDecouplerNetwork <- function(speciesRef = "Homo_sapiens") {
 }
 
 #' @name calcKinaseScore
-#' 
+#'
 #' @title Calculate Kinase Activity Scores using \code{decoupleR}
 #'
 #' @description
@@ -60,41 +60,53 @@ getDecouplerNetwork <- function(speciesRef = "Homo_sapiens") {
 #' @importFrom dplyr distinct filter select rename mutate
 #' @importFrom decoupleR intersect_regulons check_corr run_wmean
 #' @importFrom tibble column_to_rownames
-#' 
+#'
 #' @examples
-#' # result <- calcKinaseScore(resTab, decoupler_network, corrThreshold = 0.9, statType = "stat")
-#' 
-#' 
+#' resTab <- data.frame(
+#' site = c("EGFR_Y1172", "EGFR_Y1197", "EGFR_S1166", "ROCK2_S1374", "WASL_Y256", "GAB1_Y259", "ADD1_S586", "EPHA2_Y772", "PRKDC_T2638", "PRKDC_T2609", "PRKDC_S2612"),
+#' stat = c(-10.038770, -5.945562, 5.773384, -7.303834, 5.585326, 5.971104, 5.199119, -5.169500, 5.130228, 5.407387, 4.493933),
+#' log2FC = c(-2.6113343, -2.4858615, 1.0056629, -1.1561780, 1.6421145, 2.0296634, 1.3766283, -0.8531656, 1.0742881, 1.0042942, 1.0608129)
+#' )
+#' decoupler_network <- data.frame(
+#' source = c(rep("ABL1", 5), rep("CDK2", 6)),
+#' mor = c(rep(1, 11)),
+#' target = c("EGFR_Y1172", "EGFR_Y1197", "EGFR_S1166", "ROCK2_S1374", "WASL_Y256", "GAB1_Y259", "ADD1_S586", "EPHA2_Y772", "PRKDC_T2638", "PRKDC_T2609", "PRKDC_S2612"),
+#' likelihood = c(rep(1, 11))
+#' )
+#' # Call the function
+#' calcKinaseScore(resTab, decoupler_network)
+#'
+#'
 #' @export
 calcKinaseScore <- function(resTab, decoupler_network, corrThreshold = 0.9, statType = "stat", nPerm = 100) {
-  
+
   # Remove duplicate rows based on the 'site' column and keep all other columns
   resTab <- resTab %>%
     distinct(site, .keep_all = TRUE) %>%
     # Filter the rows where 'site' is present in the 'target' column of decoupler_network
     filter(site %in% decoupler_network$target)
-  
+
   # Prepare the input table based on the specified statType
   if (statType == "stat") {
-    inputTab <- resTab %>% select(site, stat) %>% dplyr::rename(t = stat) 
+    inputTab <- resTab %>% select(site, stat) %>% dplyr::rename(t = stat)
   } else if (statType == "log2FC") {
-    inputTab <- resTab %>% select(site, log2FC) 
+    inputTab <- resTab %>% select(site, log2FC)
   }
   rownames(inputTab) <- NULL
   inputTab <- inputTab %>% data.frame() %>% column_to_rownames("site")
   # Intersect the input table with the decoupler network to find common regulons
-  decoupler_network <- decoupleR::intersect_regulons(mat = inputTab, 
-                                                     network = decoupler_network, 
-                                                     .source = source, 
-                                                     .target = target, 
+  decoupler_network <- decoupleR::intersect_regulons(mat = inputTab,
+                                                     network = decoupler_network,
+                                                     .source = source,
+                                                     .target = target,
                                                      minsize = 5)
   # Check for correlated regulons within the decoupler network and remove interactions with correlation >= threshold
   correlated_regulons <- decoupleR::check_corr(decoupler_network) %>%  #not necessary for now
     dplyr::filter(correlation >= corrThreshold)
-  decoupler_network <- decoupler_network %>% 
+  decoupler_network <- decoupler_network %>%
     dplyr::filter(!source %in% correlated_regulons$source.2)
   # Calculate the kinase score by computing the weighted mean
-  kinase_activity <- decoupleR::run_wmean(mat = as.matrix(inputTab), 
+  kinase_activity <- decoupleR::run_wmean(mat = as.matrix(inputTab),
                                           network = decoupler_network,
                                           sparse = FALSE,
                                           times = nPerm)
@@ -111,7 +123,7 @@ calcKinaseScore <- function(resTab, decoupler_network, corrThreshold = 0.9, stat
 #'
 #' @title Plot Kinase score for Differential Expression data
 #'
-#' @description 
+#' @description
 #' `plotKinaseDE` generates a \code{bar plot} of the top kinases associated with the differentially expressed genes based on their scores.
 #'
 #' @param scoreTab A \code{data frame} containing kinase scores with columns source, score, and p_value.
@@ -132,13 +144,13 @@ calcKinaseScore <- function(resTab, decoupler_network, corrThreshold = 0.9, stat
 #'
 #' @examples
 #' # Example usage:
-#' # scoreTab <- data.frame(
-#' #  source = c("Kinase1", "Kinase2", "Kinase3", "Kinase4"),
-#' #  score = c(2.3, -1.5, 0, 3.1),
-#' #  p_value = c(0.01, 0.2, 0.05, 0.03)
-#' # )
-#' # plot <- plotKinaseDE(scoreTab, nTop = 3, pCut = 0.05)
-#' # print(plot)
+#' scoreTab <- data.frame(
+#'  source = c("Kinase1", "Kinase2", "Kinase3", "Kinase4"),
+#'  score = c(2.3, -1.5, 0, 3.1),
+#'  p_value = c(0.01, 0.2, 0.05, 0.03)
+#' )
+#' plot <- plotKinaseDE(scoreTab, nTop = 3, pCut = 0.05)
+#' print(plot)
 #'
 #' @importFrom dplyr mutate filter group_by slice_max
 #' @importFrom stats reorder
@@ -151,18 +163,18 @@ plotKinaseDE <- function(scoreTab, nTop = 10, pCut = 0.05) {
     filter(score_sign != 0) %>%
     # Group by score sign and select the top nTop kinases by absolute score
     group_by(score_sign) %>% slice_max(abs(score), n = nTop)
-  p <- ggplot(plotTab, aes(x = reorder(source, score), y = score)) + 
-    geom_bar(aes(fill = significance), stat = "identity") 
-  
+  p <- ggplot(plotTab, aes(x = reorder(source, score), y = score)) +
+    geom_bar(aes(fill = significance), stat = "identity")
+
   # Customize the fill color based on the significance levels
   if (length(unique(plotTab$significance)) == 2) {
     p <- p + scale_fill_manual(values = c("indianred", "lightgrey"), labels = c(paste0("p <= ",pCut), paste0("p > ",pCut)))
   } else if (unique(plotTab$significance) == paste0("p > ",pCut)) {
-    p <- p + scale_fill_manual(values = "lightgrey", labels = paste0("p > ",pCut)) 
+    p <- p + scale_fill_manual(values = "lightgrey", labels = paste0("p > ",pCut))
   } else if (unique(plotTab$significance) == c(paste0("p <= ",pCut))) {
-    p <- p + scale_fill_manual(values = "indianred", labels = paste0("p <= ",pCut)) 
-  } 
-  p <- p + 
+    p <- p + scale_fill_manual(values = "indianred", labels = paste0("p <= ",pCut))
+  }
+  p <- p +
     theme_linedraw() +
     theme(axis.title = element_text(face = "bold", size = 15),
           axis.text.y = element_text(size =15),
@@ -172,17 +184,17 @@ plotKinaseDE <- function(scoreTab, nTop = 10, pCut = 0.05) {
           legend.text = element_text(size =15),
           legend.key.height = unit(0.8, "cm"),
           legend.key.width = unit(0.8, "cm"),
-          #panel.grid.major = element_blank(), 
+          #panel.grid.major = element_blank(),
           panel.grid.minor = element_blank()) +
-    xlab("Kinases") + ylab("Kinase score") + 
-    ggtitle(paste0("Kinase activity inference, top ", nTop, " kinases")) + 
+    xlab("Kinases") + ylab("Kinase score") +
+    ggtitle(paste0("Kinase activity inference, top ", nTop, " kinases")) +
     coord_flip()
   return(p)
 }
 
 
 #' @name plotKinaseTimeSeries
-#' 
+#'
 #' @title Plot Kinase Activity Time Series
 #'
 #' @description
@@ -196,7 +208,7 @@ plotKinaseDE <- function(scoreTab, nTop = 10, pCut = 0.05) {
 #'
 #' @details
 #' The heatmap shows kinase activity scores over different time points. Significant activities (based on the specified p-value threshold) are marked with an asterisk (*). The color gradient represents the activity score, with blue indicating low activity, red indicating high activity, and white as the midpoint.
-#' 
+#'
 #' @examples
 #' # Example usage:
 #' scoreTab <- data.frame(
@@ -212,12 +224,12 @@ plotKinaseDE <- function(scoreTab, nTop = 10, pCut = 0.05) {
 #' @importFrom ggplot2 ggplot aes geom_tile geom_text scale_fill_gradient2 scale_x_discrete scale_y_discrete theme_bw ylab xlab ggtitle theme element_text unit
 #' @export
 plotKinaseTimeSeries <- function(scoreTab, pCut = 0.05, clusterName = "cluster1") {
-  
+
   # Add a significance marker based on the p-value threshold
   plotTab <- dplyr::mutate(scoreTab, sig = ifelse(p_value<=pCut, "*", ""))
   # Rename the score column for better readability in the plot
   plotTab <- plotTab %>% rename(Activity_score = "score")
-  
+
   # Create the heatmap plot
   p <- ggplot(plotTab, aes(x=timepoint, y = source,fill = Activity_score)) +
     geom_tile() +
@@ -225,7 +237,7 @@ plotKinaseTimeSeries <- function(scoreTab, pCut = 0.05, clusterName = "cluster1"
     scale_fill_gradient2(low = "blue", high = "red", mid = "white", midpoint = 0) +
     scale_x_discrete(expand = c(0,0)) +scale_y_discrete(expand = c(0,0)) +
     theme_bw() +
-    ylab("Kinase") + xlab("Time point") + ggtitle(paste("Kinase activity infererence,", clusterName)) + 
+    ylab("Kinase") + xlab("Time point") + ggtitle(paste("Kinase activity infererence,", clusterName)) +
     theme(axis.title = element_text(face = "bold", size = 15),
           axis.text.y = element_text(size =15),
           axis.text.x = element_text(size = 15, angle = 45, vjust = 1, hjust = 1),

@@ -24,8 +24,3 @@ A \code{data.table} containing the processed phosphorylation data for the specif
 \details{
 This function processes phosphorylation data for a single sample by filtering based on localization probability and non-zero intensity. It handles multiplicity by summarizing intensities and optionally removes duplicates. The resulting data is returned as a data.table with unique identifiers.
 }
-\examples{
-# inputTab <- data.table::fread("phosphorylation_data.tsv")
-# result <- readOnePhosDIA(inputTab, "Sample_1", localProbCut = 0.75, removeDup = TRUE)
-
-}

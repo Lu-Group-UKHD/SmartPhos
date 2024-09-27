@@ -16,10 +16,20 @@
 #' The function can operate in two modes: standard gene sets and PTM-specific gene sets. For PTM-specific gene sets, additional filtering and processing are performed.
 #'
 #' @examples
-#' # Example usage:
-#' # Assuming `genesOfInterest` is a vector of genes and `referenceGenes` is a vector of reference genes
-#' # and `geneSetCollection` is a list of gene sets
-#' # results <- runFisher(genesOfInterest, referenceGenes, geneSetCollection, ptm = FALSE)
+#' # Load multiAssayExperiment object
+#' data("dda_example")
+#' # Get SummarizedExperiment object
+#' se <- dda_example[["Proteome"]]
+#' SummarizedExperiment::colData(se) <- SummarizedExperiment::colData(dda_example)
+#' # Preprocess the proteome assay
+#' result <- preprocessProteome(se, normalize = TRUE)
+#' # Call the function to perform differential expression analyis
+#' de <- performDifferentialExp(se = result, assay = "Intensity", method = "limma", reference = "1stCrtl", target = "EGF", condition = "treatment")
+#' genesList <- unique(de$resDE$Gene)
+#' referenceList <- unique(SummarizedExperiment::rowData(result)$Gene)
+#' inGMT <- loadGSC(paste0("inst/shiny-app/geneset/","Cancer_Hallmark.gmt"),type="gmt")
+#' # Run the function
+#' resultFisher <- runFisher(genes = genesList, reference = referenceList, inputSet = inGMT)
 #'
 #' @importFrom dplyr filter group_by ungroup mutate bind_rows arrange tibble n
 #' @importFrom tidyr separate
@@ -118,11 +128,21 @@ runFisher <- function (genes, reference, inputSet, ptm = FALSE) {
 #' The results are filtered based on the p-value threshold and adjusted for multiple testing if \code{ifFDR} is \code{TRUE}. The function generates a dot plot where the size and color of the points represent the significance of enrichment.
 #'
 #' @examples
-#' # Example usage:
-#' # Assuming `clusterTable` is a data frame with cluster assignments,
-#' # `summarizedExp` is a SummarizedExperiment object,
-#' # and `geneSetCollection` is a list or data frame of gene sets
-#' # results <- clusterEnrich(clusterTable, summarizedExp, geneSetCollection, ptm = FALSE)
+#' # Load multiAssayExperiment object
+#' data("dia_example")
+#' # Get SummarizedExperiment object
+#' se <- dia_example[["Phosphoproteome"]]
+#' SummarizedExperiment::colData(se) <- SummarizedExperiment::colData(dia_example)
+#' seProcess <- preprocessPhos(seData = se, normalize = TRUE, impute = "QRILC")
+#' result <- addZeroTime(seProcess, condition = "treatment", treat = "EGF", zeroTreat = "1stCrtl", timeRange = c("20min","40min", "6h"))
+#' # Get the numeric matrix
+#' exprMat <- SummarizedExperiment::assay(result)
+#' # Call the clustering function
+#' clust <- clusterTS(x = exprMat, k = 3)
+#' genesetPath <- appDir <- system.file("shiny-app/geneset", package = "SmartPhos")
+#' inGMT <- piano::loadGSC(paste0(genesetPath,"/Cancer_Hallmark.gmt"),type="gmt")
+#' # Call the function
+#' clusterEnrich(clust$cluster, seProcess, inGMT)
 #'
 #' @importFrom dplyr filter mutate group_by summarise ungroup bind_rows arrange n
 #' @importFrom ggplot2 ggplot geom_point aes scale_fill_gradient xlab ylab theme element_text

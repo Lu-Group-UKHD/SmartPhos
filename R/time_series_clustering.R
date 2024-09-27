@@ -26,9 +26,22 @@
 #' The function can also censor extreme values, either symmetrically or asymmetrically, based on the \code{censor} parameter.
 #'
 #' @examples
-#' # Example usage:
-#' # Assuming `dataMatrix` is a numeric matrix with expression data
-#' # scaledMatrix <- mscale(dataMatrix, center = TRUE, scale = TRUE, censor = 2)
+#' # Create a sample matrix (3 rows by 5 columns)
+#' sample_matrix <- matrix(c(1:15), nrow = 3, byrow = TRUE)
+#' print(sample_matrix)
+#'
+#' # Scale and center the matrix using the default settings
+#' result1 <- mscale(sample_matrix, center = TRUE, scale = TRUE)
+#' print(result1)
+#'
+#' # Only center the matrix without scaling
+#' result2 <- mscale(sample_matrix, center = TRUE, scale = FALSE)
+#' print(result2)
+#'
+#' # Only scale the matrix without centering
+#' result3 <- mscale(sample_matrix, center = FALSE, scale = TRUE)
+#' print(result3)
+#'
 #'
 #' @importFrom stats median sd
 #' @importFrom matrixStats rowMads
@@ -105,9 +118,14 @@ mscale <- function(x, center = TRUE, scale = TRUE, censor = NULL, useMad = FALSE
 #' }
 #'
 #' @examples
-#' # Example usage:
-#' # Assuming data is a SummarizedExperiment object with appropriate data
-#' # result <- addZeroTime(data, treat = "TreatmentA", zeroTreat = "Control", timeRange = c("10min", "20min"))
+#' # Load multiAssayExperiment object
+#' data("dia_example")
+#' # Get SummarizedExperiment object
+#' se <- dia_example[["Phosphoproteome"]]
+#' SummarizedExperiment::colData(se) <- SummarizedExperiment::colData(dia_example)
+#' # Call the function
+#' result <- addZeroTime(se, condition = "treatment", treat = "EGF", zeroTreat = "1stCrtl", timeRange = c("20min","40min", "6h"))
+#' print(result)
 #'
 #' @importFrom SummarizedExperiment colData rowData assay assays elementMetadata SummarizedExperiment
 #' @export
@@ -161,9 +179,17 @@ addZeroTime <- function(data, condition, treat, zeroTreat, timeRange) {
 #' }
 #'
 #' @examples
-#' # Example usage:
-#' # Assuming x is a numeric matrix with time-series data
-#' # result <- clusterTS(x, k = 4, pCut = 0.8, twoCondition = FALSE)
+#' # Load multiAssayExperiment object
+#' data("dia_example")
+#' # Get SummarizedExperiment object
+#' se <- dia_example[["Phosphoproteome"]]
+#' SummarizedExperiment::colData(se) <- SummarizedExperiment::colData(dia_example)
+#' seProcess <- preprocessPhos(seData = se, normalize = TRUE, impute = "QRILC")
+#' result <- addZeroTime(seProcess, condition = "treatment", treat = "EGF", zeroTreat = "1stCrtl", timeRange = c("20min","40min", "6h"))
+#' # Get the numeric matrix
+#' exprMat <- SummarizedExperiment::assay(result)
+#' # Call the function
+#' clusterTS(x = exprMat, k = 3)
 #'
 #' @importFrom e1071 cmeans
 #' @importFrom dplyr filter left_join mutate arrange group_by ungroup
@@ -173,6 +199,7 @@ addZeroTime <- function(data, condition, treat, zeroTreat, timeRange) {
 #' @importFrom stringr str_extract str_split
 #' @importFrom magrittr %>%
 #' @importFrom Biobase rowMax
+#'
 #' @export
 clusterTS <- function(x, k = 5, pCut = NULL, twoCondition = FALSE) {
 

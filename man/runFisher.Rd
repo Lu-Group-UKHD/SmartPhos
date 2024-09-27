@@ -25,9 +25,19 @@ A \code{data frame} with the results of the Fisher's Exact Test, including the g
 The function can operate in two modes: standard gene sets and PTM-specific gene sets. For PTM-specific gene sets, additional filtering and processing are performed.
 }
 \examples{
-# Example usage:
-# Assuming `genesOfInterest` is a vector of genes and `referenceGenes` is a vector of reference genes
-# and `geneSetCollection` is a list of gene sets
-# results <- runFisher(genesOfInterest, referenceGenes, geneSetCollection, ptm = FALSE)
+# Load multiAssayExperiment object
+data("dda_example")
+# Get SummarizedExperiment object
+se <- dda_example[["Proteome"]]
+SummarizedExperiment::colData(se) <- SummarizedExperiment::colData(dda_example)
+# Preprocess the proteome assay
+result <- preprocessProteome(se, normalize = TRUE)
+# Call the function to perform differential expression analyis
+de <- performDifferentialExp(se = result, assay = "Intensity", method = "limma", reference = "1stCrtl", target = "EGF", condition = "treatment")
+genesList <- unique(de$resDE$Gene)
+referenceList <- unique(SummarizedExperiment::rowData(result)$Gene)
+inGMT <- loadGSC(paste0("inst/shiny-app/geneset/","Cancer_Hallmark.gmt"),type="gmt")
+# Run the function
+resultFisher <- runFisher(genes = genesList, reference = referenceList, inputSet = inGMT)
 
 }
