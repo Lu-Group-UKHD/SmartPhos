@@ -39,7 +39,6 @@ result <- preprocessProteome(se, normalize = TRUE)
 # Call the function to perform differential expression analyis
 de <- performDifferentialExp(se = result, assay = "Intensity", method = "limma", reference = "1stCrtl", target = "EGF", condition = "treatment")
 # Plot the box plot for the given id and symbol
-plot <- plotBox(de$seSub, "p99", "PPP6C")
-plot
+plotBox(de$seSub, "p99", "PPP6C")
 
 }

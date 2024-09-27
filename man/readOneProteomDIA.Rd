@@ -20,7 +20,3 @@ A \code{data.table} containing the processed data with columns for intensity, Un
 \details{
 This function processes DIA proteomics data for a single sample by filtering out rows with non-quantitative data, converting character values to numeric, and renaming columns for consistency. It also ensures that each protein group has a unique identifier.
 }
-\examples{
-# result <- readOneProteomDIA(inputTab, sampleName)
-
-}

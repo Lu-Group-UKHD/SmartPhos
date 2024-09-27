@@ -48,17 +48,3 @@ The function performs the following steps:
   \item Extracts significant features based on the specified p-value or FDR cutoff.
 }
 }
-\examples{
-# Load multiAssayExperiment object
-data("dda_example")
-# Get SummarizedExperiment object
-se <- dda_example[["Proteome"]]
-SummarizedExperiment::colData(se) <- SummarizedExperiment::colData(dda_example)
-# Preprocess the proteome assay
-result <- preprocessProteome(se, normalize = TRUE)
-# Subset the result
-resultSub <- result[, result$treatment == "EGF"]
-# Perform clustering
-clusterResult <- clusterTS(assay(resultSub), 5)
-
-}

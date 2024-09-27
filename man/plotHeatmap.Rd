@@ -56,7 +56,6 @@ SummarizedExperiment::colData(se) <- SummarizedExperiment::colData(dia_example)
 # Generate the imputed assay
 result <- preprocessPhos(seData = se, normalize = TRUE, impute = "QRILC")
 # Plot heatmap for top variant
-plot <- plotHeatmap(type = "Top variant", top = 10, se = result, cutCol = 2)
-plot
+plotHeatmap(type = "Top variant", top = 10, se = result, cutCol = 2)
 
 }

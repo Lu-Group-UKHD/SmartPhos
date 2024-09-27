@@ -33,7 +33,6 @@ fileTable <- data.frame(
    id = c("s1", "s2")
 )
 # Call the function
-se <- readPhosphoExperiment(fileTable, localProbCut = 0.75, scoreDiffCut = 5)
-print(se)
+readPhosphoExperiment(fileTable, localProbCut = 0.75, scoreDiffCut = 5)
 
 }

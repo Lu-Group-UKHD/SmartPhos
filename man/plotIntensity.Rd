@@ -26,7 +26,6 @@ SummarizedExperiment::colData(se) <- SummarizedExperiment::colData(dia_example)
 # Preprocess the phosphoproteome assay
 result <- preprocessPhos(seData = se, normalize = TRUE, impute = "QRILC")
 # Call the plotting function
-plot <- plotIntensity(result, color = "replicate")
-plot
+plotIntensity(result, color = "replicate")
 
 }

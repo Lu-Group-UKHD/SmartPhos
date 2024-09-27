@@ -17,10 +17,6 @@
 #' The function filters the input phosphorylation data based on three criteria: localization probability, score difference, and intensity. Only rows that meet or exceed the specified cutoffs for these criteria and have non-zero intensity are retained. The filtered data is then returned with a unique identifier for each row.
 #'
 #' @import data.table
-#' @examples
-#' # inputTab <- data.table::fread("phosphorylation_data.csv")
-#' # filteredData <- readOnePhos(inputTab, sampleName = "Sample1", localProbCut = 0.75, scoreDiffCut = 5, multiMap = FALSE)
-#'
 readOnePhos <- function(inputTab, sampleName, localProbCut = 0.75, scoreDiffCut = 5, multiMap) {
 
   # Define sample specific column names
@@ -90,8 +86,7 @@ readOnePhos <- function(inputTab, sampleName, localProbCut = 0.75, scoreDiffCut 
 #'    id = c("s1", "s2")
 #' )
 #' # Call the function
-#' se <- readPhosphoExperiment(fileTable, localProbCut = 0.75, scoreDiffCut = 5)
-#' print(se)
+#' readPhosphoExperiment(fileTable, localProbCut = 0.75, scoreDiffCut = 5)
 #'
 #' @export
 readPhosphoExperiment <- function(fileTable, localProbCut = 0.75, scoreDiffCut = 5) {
@@ -301,8 +296,7 @@ readOnePhosDIA <- function(inputTab, sampleName, localProbCut = 0.75, removeDup 
 #' @examples
 #' file <- system.file("extdata", "phosDIA_1.xls", package = "SmartPhos")
 #' fileTable <- data.frame(type = "phosphoproteome", fileName = file, id = c("Sample_1"))
-#' result <- readPhosphoExperimentDIA(fileTable, localProbCut = 0.75, onlyReviewed = FALSE, showProgressBar = FALSE)
-#' print(result)
+#' readPhosphoExperimentDIA(fileTable, localProbCut = 0.75, onlyReviewed = FALSE, showProgressBar = FALSE)
 #'
 #' @export
 readPhosphoExperimentDIA <- function(fileTable, localProbCut = 0.75, onlyReviewed = TRUE,
@@ -510,8 +504,7 @@ readOneProteom <- function(inputTab, sampleName, pepNumCut = 1, ifLFQ = TRUE) {
 #'    id = c("s1", "s2")
 #' )
 #' # Call the function
-#' se <- readProteomeExperiment(fileTable, fdrCut = 0.1, scoreCut = 10, pepNumCut = 1, ifLFQ = TRUE)
-#' print(se)
+#' readProteomeExperiment(fileTable, fdrCut = 0.1, scoreCut = 10, pepNumCut = 1, ifLFQ = TRUE)
 #'
 #' @import data.table SummarizedExperiment
 #'
@@ -603,9 +596,6 @@ readProteomeExperiment <- function(fileTable, fdrCut = 0.1, scoreCut = 10, pepNu
 #' @details
 #' This function processes DIA proteomics data for a single sample by filtering out rows with non-quantitative data, converting character values to numeric, and renaming columns for consistency. It also ensures that each protein group has a unique identifier.
 #'
-#' @examples
-#' # result <- readOneProteomDIA(inputTab, sampleName)
-#'
 #' @import data.table
 readOneProteomDIA <- function(inputTab, sampleName) {
 
@@ -676,8 +666,7 @@ readOneProteomDIA <- function(inputTab, sampleName) {
 #' @examples
 #' file <- system.file("extdata", "proteomeDIA_1.xls", package = "SmartPhos")
 #' fileTable <- data.frame(type = "proteome", fileName = file, id = c("sample1", "sample2"))
-#' result <- readProteomeExperimentDIA(fileTable)
-#' print(result)
+#' readProteomeExperimentDIA(fileTable)
 #'
 #' @import data.table
 #' @import BiocParallel

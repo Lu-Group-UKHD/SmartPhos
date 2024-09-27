@@ -1,5 +1,5 @@
 #' @name getOneSymbol
-#' 
+#'
 #' @title Extract the Last Gene Symbol from a Semicolon-Separated List
 #'
 #' @description
@@ -28,7 +28,7 @@ getOneSymbol <- function(Gene) {
 
 
 #' @name preprocessProteome
-#' 
+#'
 #' @title Preprocess Proteome Data
 #'
 #' @description
@@ -55,8 +55,8 @@ getOneSymbol <- function(Gene) {
 #' se <- dia_example[["Proteome"]]
 #' SummarizedExperiment::colData(se) <- SummarizedExperiment::colData(dia_example)
 #' # Call the function
-#' result <- preprocessProteome(seData = se, normalize = TRUE, impute = "QRILC")
-#' 
+#' preprocessProteome(seData = se, normalize = TRUE, impute = "QRILC")
+#'
 #' @importFrom SummarizedExperiment colData rowData assay assays
 #' @importFrom dplyr filter mutate
 #' @importFrom tidyr pivot_longer
@@ -71,7 +71,7 @@ preprocessProteome <- function(seData, filterList = NULL, missCut = 50,
                                transform = "log2", normalize = FALSE, getPP = FALSE,
                                removeOutlier = NULL, impute = "none", batch = NULL,
                                verbose = FALSE, scaleFactorTab = NULL) {
-  
+
   # Retrieve desired sample type
   if (getPP) {
     # Retrieve PP samples if specified
@@ -82,7 +82,7 @@ preprocessProteome <- function(seData, filterList = NULL, missCut = 50,
     fpe <- seData[,seData$sampleType %in% c("FullProteome", "FP")]
     colData(fpe) <- colData(seData)[colnames(fpe),]
   }
-  
+
   # Remove specified outliers
   if (length(removeOutlier) > 0) {
     if (length(removeOutlier) > 1) {
@@ -94,26 +94,26 @@ preprocessProteome <- function(seData, filterList = NULL, missCut = 50,
       fpe <- fpe[, !grepl(removeOutlier, fpe$sample)]
     }
   }
-  
+
   # Apply specified filters
   if (!is.null(filterList)) {
     for (n in names(filterList)) {
       fpe <- fpe[,fpe[[n]] %in% filterList[[n]]]
     }
   }
-  
+
   # Rename columns to sample names
   colnames(fpe) <- fpe$sample
-  
+
   # Process gene names and remove features without symbols
   rowData(fpe)$Gene <- getOneSymbol(rowData(fpe)$Gene)
   fpe <- fpe[!rowData(fpe)$Gene %in% c(NA,""),]
-  
+
   # Filter features based on missing values
   countMat <- assay(fpe)
   missPer <- rowSums(is.na(countMat))/ncol(countMat)*100
   fpeSub <- fpe[missPer < missCut,]
-  
+
   # Apply transformation and normalization
   if (transform=="log2") {
     if (normalize) {
@@ -147,7 +147,7 @@ preprocessProteome <- function(seData, filterList = NULL, missCut = 50,
       assay(fpeSub) <- assay(fpeSub)
     }
   }
-  
+
   # Impute missing values
   if (impute != "none") {
     rowData(fpeSub)$name <- rowData(fpeSub)$UniprotID
@@ -168,7 +168,7 @@ preprocessProteome <- function(seData, filterList = NULL, missCut = 50,
       imp <- t(mf$ximp)
     }
     else if (impute == "MinDet") {
-      imp <- DEP::impute(fpeSub, "MinDet")  
+      imp <- DEP::impute(fpeSub, "MinDet")
     }
     assays(fpeSub)[["imputed"]] <- assay(imp)
     rowData(fpeSub)$name <- NULL
@@ -179,7 +179,7 @@ preprocessProteome <- function(seData, filterList = NULL, missCut = 50,
       print(dim(fpeSub))
     }
   }
-  
+
   # Remove batch effects if specified
   if(!is.null(batch)) {
     if(length(batch) == 1) {
@@ -199,12 +199,12 @@ preprocessProteome <- function(seData, filterList = NULL, missCut = 50,
     assays(fpeSub)[["imputed"]] <- assay(remBatchImp)
     assay(fpeSub) <- assay(remBatch)
   }
-  
+
   return(fpeSub)
 }
 
-#' @name preprocessPhos 
-#' 
+#' @name preprocessPhos
+#'
 #' @title Preprocess Phosphoproteome Data
 #'
 #' @description
@@ -232,7 +232,7 @@ preprocessProteome <- function(seData, filterList = NULL, missCut = 50,
 #' se <- dia_example[["Phosphoproteome"]]
 #' SummarizedExperiment::colData(se) <- SummarizedExperiment::colData(dia_example)
 #' # Call the function
-#' result <- preprocessPhos(seData = se, normalize = TRUE, impute = "QRILC")
+#' preprocessPhos(seData = se, normalize = TRUE, impute = "QRILC")
 #'
 #' @importFrom SummarizedExperiment colData rowData assay assays
 #' @importFrom dplyr filter mutate
@@ -248,10 +248,10 @@ preprocessPhos <- function(seData, filterList = NULL, missCut = 50,
                            transform="log2", normalize = FALSE, getFP = FALSE,
                            removeOutlier = NULL, assayName = NULL, batch = NULL,
                            scaleFactorTab = NULL, impute = "none", verbose = FALSE) {
-  
+
   # Retrieve the desired sample type or specified assay
   if (is.null(assayName)) {
-    if (getFP) { 
+    if (getFP) {
       # Retrieve FullProteome samples if specified
       ppe <- seData[,seData$sampleType %in% c("FullProteome", "FP")]
       colData(ppe) <- colData(seData)[colnames(ppe),]
@@ -264,7 +264,7 @@ preprocessPhos <- function(seData, filterList = NULL, missCut = 50,
     ppe <- seData[[assayName]]
     colData(ppe) <- colData(seData[,colnames(ppe)])
   }
-  
+
   # Remove specified outliers
   if (length(removeOutlier) > 0) {
     if (length(removeOutlier) > 1) {
@@ -276,14 +276,14 @@ preprocessPhos <- function(seData, filterList = NULL, missCut = 50,
       ppe <- ppe[, !grepl(removeOutlier, ppe$sample)]
     }
   }
-  
+
   # Apply specified filters
   if (!is.null(filterList)) {
     for (n in names(filterList)) {
       ppe <- ppe[,ppe[[n]] %in% filterList[[n]]]
     }
   }
-  
+
   # Rename columns to sample names
   colnames(ppe) <- ppe$sample
   # Get last gene name
@@ -299,7 +299,7 @@ preprocessPhos <- function(seData, filterList = NULL, missCut = 50,
   countMat <- assay(ppe)
   missPer <- rowSums(is.na(countMat))/ncol(countMat)*100
   ppeSub <- ppe[missPer < missCut,]
-  
+
   # Apply transformation and normalization
   if (transform=="log2") {
     if (normalize) {
@@ -333,7 +333,7 @@ preprocessPhos <- function(seData, filterList = NULL, missCut = 50,
       assay(ppeSub) <- assay(ppeSub)
     }
   }
-  
+
   # Impute missing values
   if (impute != "none") {
     rowData(ppeSub)$name <- rowData(ppeSub)$site
@@ -348,7 +348,7 @@ preprocessPhos <- function(seData, filterList = NULL, missCut = 50,
       imp <- DEP::impute(ppeSub, "bpca")
     }
     else if (impute == "MinDet") {
-      imp <- DEP::impute(ppeSub, "MinDet")  
+      imp <- DEP::impute(ppeSub, "MinDet")
     }
     else {
       doParallel::registerDoParallel(cores = 6)  # Set number of CPU cores
@@ -365,7 +365,7 @@ preprocessPhos <- function(seData, filterList = NULL, missCut = 50,
       print(dim(ppeSub))
     }
   }
-  
+
   # Remove batch effects if specified
   if(!is.null(batch)) {
     if(length(batch) == 1) {
@@ -385,6 +385,6 @@ preprocessPhos <- function(seData, filterList = NULL, missCut = 50,
     assays(ppeSub)[["imputed"]] <- assay(remBatchImp)
     assay(ppeSub) <- assay(remBatch)
   }
-  
+
   return(ppeSub)
 }

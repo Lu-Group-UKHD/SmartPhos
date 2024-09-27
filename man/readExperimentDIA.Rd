@@ -51,6 +51,6 @@ fileTable <- data.frame(
    outputID = c("s1", "s2", "s3")
 )
 # Call the function
-mae <- readExperimentDIA(fileTable, localProbCut = 0.75, annotation_col = c("id"), onlyReviewed = FALSE, normalizeByProtein = FALSE)
+readExperimentDIA(fileTable, localProbCut = 0.75, annotation_col = c("id"), onlyReviewed = FALSE, normalizeByProtein = FALSE)
 
 }

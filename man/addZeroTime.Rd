@@ -40,7 +40,6 @@ data("dia_example")
 se <- dia_example[["Phosphoproteome"]]
 SummarizedExperiment::colData(se) <- SummarizedExperiment::colData(dia_example)
 # Call the function
-result <- addZeroTime(se, condition = "treatment", treat = "EGF", zeroTreat = "1stCrtl", timeRange = c("20min","40min", "6h"))
-print(result)
+addZeroTime(se, condition = "treatment", treat = "EGF", zeroTreat = "1stCrtl", timeRange = c("20min","40min", "6h"))
 
 }

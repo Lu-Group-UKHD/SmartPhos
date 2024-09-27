@@ -27,9 +27,10 @@
 #' de <- performDifferentialExp(se = result, assay = "Intensity", method = "limma", reference = "1stCrtl", target = "EGF", condition = "treatment")
 #' genesList <- unique(de$resDE$Gene)
 #' referenceList <- unique(SummarizedExperiment::rowData(result)$Gene)
-#' inGMT <- loadGSC(paste0("inst/shiny-app/geneset/","Cancer_Hallmark.gmt"),type="gmt")
+#' genesetPath <- appDir <- system.file("shiny-app/geneset", package = "SmartPhos")
+#' inGMT <- piano::loadGSC(paste0(genesetPath,"/Cancer_Hallmark.gmt"),type="gmt")
 #' # Run the function
-#' resultFisher <- runFisher(genes = genesList, reference = referenceList, inputSet = inGMT)
+#' runFisher(genes = genesList, reference = referenceList, inputSet = inGMT)
 #'
 #' @importFrom dplyr filter group_by ungroup mutate bind_rows arrange tibble n
 #' @importFrom tidyr separate

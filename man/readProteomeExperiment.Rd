@@ -43,7 +43,6 @@ fileTable <- data.frame(
    id = c("s1", "s2")
 )
 # Call the function
-se <- readProteomeExperiment(fileTable, fdrCut = 0.1, scoreCut = 10, pepNumCut = 1, ifLFQ = TRUE)
-print(se)
+readProteomeExperiment(fileTable, fdrCut = 0.1, scoreCut = 10, pepNumCut = 1, ifLFQ = TRUE)
 
 }

@@ -41,16 +41,12 @@ sample_matrix <- matrix(c(1:15), nrow = 3, byrow = TRUE)
 print(sample_matrix)
 
 # Scale and center the matrix using the default settings
-result1 <- mscale(sample_matrix, center = TRUE, scale = TRUE)
-print(result1)
+mscale(sample_matrix, center = TRUE, scale = TRUE)
 
 # Only center the matrix without scaling
-result2 <- mscale(sample_matrix, center = TRUE, scale = FALSE)
-print(result2)
+mscale(sample_matrix, center = TRUE, scale = FALSE)
 
 # Only scale the matrix without centering
-result3 <- mscale(sample_matrix, center = FALSE, scale = TRUE)
-print(result3)
-
+mscale(sample_matrix, center = FALSE, scale = TRUE)
 
 }

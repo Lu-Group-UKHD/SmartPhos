@@ -31,17 +31,13 @@
 #' print(sample_matrix)
 #'
 #' # Scale and center the matrix using the default settings
-#' result1 <- mscale(sample_matrix, center = TRUE, scale = TRUE)
-#' print(result1)
+#' mscale(sample_matrix, center = TRUE, scale = TRUE)
 #'
 #' # Only center the matrix without scaling
-#' result2 <- mscale(sample_matrix, center = TRUE, scale = FALSE)
-#' print(result2)
+#' mscale(sample_matrix, center = TRUE, scale = FALSE)
 #'
 #' # Only scale the matrix without centering
-#' result3 <- mscale(sample_matrix, center = FALSE, scale = TRUE)
-#' print(result3)
-#'
+#' mscale(sample_matrix, center = FALSE, scale = TRUE)
 #'
 #' @importFrom stats median sd
 #' @importFrom matrixStats rowMads
@@ -124,8 +120,7 @@ mscale <- function(x, center = TRUE, scale = TRUE, censor = NULL, useMad = FALSE
 #' se <- dia_example[["Phosphoproteome"]]
 #' SummarizedExperiment::colData(se) <- SummarizedExperiment::colData(dia_example)
 #' # Call the function
-#' result <- addZeroTime(se, condition = "treatment", treat = "EGF", zeroTreat = "1stCrtl", timeRange = c("20min","40min", "6h"))
-#' print(result)
+#' addZeroTime(se, condition = "treatment", treat = "EGF", zeroTreat = "1stCrtl", timeRange = c("20min","40min", "6h"))
 #'
 #' @importFrom SummarizedExperiment colData rowData assay assays elementMetadata SummarizedExperiment
 #' @export
@@ -353,19 +348,6 @@ clusterTS <- function(x, k = 5, pCut = NULL, twoCondition = FALSE) {
 #'   \item Extracts significant features based on the specified p-value or FDR cutoff.
 #' }
 #'
-#' @examples
-#' # Load multiAssayExperiment object
-#' data("dda_example")
-#' # Get SummarizedExperiment object
-#' se <- dda_example[["Proteome"]]
-#' SummarizedExperiment::colData(se) <- SummarizedExperiment::colData(dda_example)
-#' # Preprocess the proteome assay
-#' result <- preprocessProteome(se, normalize = TRUE)
-#' # Subset the result
-#' resultSub <- result[, result$treatment == "EGF"]
-#' # Perform clustering
-#' clusterResult <- clusterTS(assay(resultSub), 5)
-#'
 #' @importFrom limma lmFit eBayes topTable
 #' @importFrom splines ns
 #' @importFrom dplyr filter as_tibble
@@ -490,8 +472,7 @@ splineFilter <- function(exprMat, subjectID = NULL, time, df, pCut = 0.5, ifFDR 
 #' result <- preprocessProteome(se, normalize = TRUE)
 #' # Plot a specific gene experssion over time
 #' timerange <- unique(se$timepoint)
-#' plot <- plotTimeSeries(result, type = "expression", geneID = "p18", symbol = "TMEM238", condition = "treatment", treatment = "EGF", timerange = timerange)
-#' plot
+#' plotTimeSeries(result, type = "expression", geneID = "p18", symbol = "TMEM238", condition = "treatment", treatment = "EGF", timerange = timerange)
 #'
 #' @export
 plotTimeSeries <- function(se, type, geneID, symbol, condition, treatment, refTreat, addZero = FALSE, zeroTreat = NULL, timerange) {

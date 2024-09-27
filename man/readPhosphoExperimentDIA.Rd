@@ -32,7 +32,6 @@ This function processes phosphorylation data from DIA experiments by filtering b
 \examples{
 file <- system.file("extdata", "phosDIA_1.xls", package = "SmartPhos")
 fileTable <- data.frame(type = "phosphoproteome", fileName = file, id = c("Sample_1"))
-result <- readPhosphoExperimentDIA(fileTable, localProbCut = 0.75, onlyReviewed = FALSE, showProgressBar = FALSE)
-print(result)
+readPhosphoExperimentDIA(fileTable, localProbCut = 0.75, onlyReviewed = FALSE, showProgressBar = FALSE)
 
 }

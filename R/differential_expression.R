@@ -1,5 +1,5 @@
 #' @name performDifferentialExp
-#' 
+#'
 #' @title Perform Differential Expression Analysis
 #'
 #' @description
@@ -43,7 +43,7 @@
 #' @importFrom tibble as_tibble
 #' @importFrom SummarizedExperiment assays colData
 #' @importFrom stats model.matrix
-#' 
+#'
 #' @examples
 #' # Load multiAssayExperiment object
 #' data("dda_example")
@@ -53,20 +53,19 @@
 #' # Preprocess the proteome assay
 #' result <- preprocessProteome(se, normalize = TRUE)
 #' # Call the function to perform differential expression analyis
-#' de <- performDifferentialExp(se = result, assay = "Intensity", method = "limma", reference = "1stCrtl", target = "EGF", condition = "treatment")
-#' print(de)
+#' performDifferentialExp(se = result, assay = "Intensity", method = "limma", reference = "1stCrtl", target = "EGF", condition = "treatment")
 #'
 #' @export
 performDifferentialExp <- function(se, assay, method = "limma", condition = NULL, reference, target, refTime = NULL, targetTime = NULL) {
-  
+
   # Stop if method is other than limma or proDA
   if (!(method %in% c("limma", "ProDA"))) stop("Invalid method!! Provide either limma or ProDA")
-  
+
   # Stop if method is other than limma or proDA
   if (!is.null(condition)) {
     if (is.null(se[[condition]])) stop("Invalid condtion! Provide condition which is part of the given Summarized Experiment object")
   }
-  
+
   # Identify samples based on condition and time points if provided
   if (!is.null(condition)) {
     if (!is.null(refTime)) {
@@ -82,18 +81,18 @@ performDifferentialExp <- function(se, assay, method = "limma", condition = NULL
     referenceID <- reference
     targetID <- target
   }
-  
+
   # Subset the SummarizedExperiment object to the selected samples
   seSub <- se[, se$sample %in% c(referenceID, targetID)]
   # Create a comparison column indicating reference and target samples
   seSub$comparison <-  ifelse(seSub$sample %in% referenceID, "reference", "target")
   seSub$comparison <- factor(seSub$comparison, levels = c("reference", "target"))
-  
+
   # Extract the expression matrix and colData
   seqMat <- seSub
   exprMat <- assays(seqMat)[[assay]]
   colData <- data.frame(colData(seqMat))
-  
+
   # Create the design matrix for the differential expression analysis
   if(is.null(seSub$subjectID)) {
     design <- model.matrix(~ comparison, data = colData)
@@ -104,7 +103,7 @@ performDifferentialExp <- function(se, assay, method = "limma", condition = NULL
   resNames <- colnames(design)
   # Extract the metadata from the SummarizedExperiment object
   meta <- as.data.frame(elementMetadata(seSub))
-  
+
   # Perform differential expression analysis using the specified method
   if (method == "limma") {
     fit <- limma::lmFit(exprMat, design = design)
@@ -133,15 +132,15 @@ performDifferentialExp <- function(se, assay, method = "limma", condition = NULL
       filter(!is.na(padj)) %>%
       arrange(pvalue)
   }
-  
+
   # Return the results and the subsetted SummarizedExperiment object
   return(list(resDE = resDE, seSub = seSub))
-  
+
 }
 
 
 #' @name plotVolcano
-#' 
+#'
 #' @title Plot Volcano Plot for Differential Expression Analysis
 #'
 #' @description
@@ -158,7 +157,7 @@ performDifferentialExp <- function(se, assay, method = "limma", condition = NULL
 #'
 #' @importFrom ggplot2 ggplot aes geom_vline geom_hline geom_point annotate scale_color_manual xlab ggtitle theme
 #' @importFrom dplyr mutate case_when
-#' 
+#'
 #' @examples
 #' # Load multiAssayExperiment object
 #' data("dda_example")
@@ -170,17 +169,16 @@ performDifferentialExp <- function(se, assay, method = "limma", condition = NULL
 #' # Call the function to perform differential expression analyis
 #' de <- performDifferentialExp(se = result, assay = "Intensity", method = "limma", reference = "1stCrtl", target = "EGF", condition = "treatment")
 #' # Plot the volcano plot from the result
-#' plot <- plotVolcano(de$resDE)
-#' plot
+#' plotVolcano(de$resDE)
 #'
 #' @export
 plotVolcano <- function(tableDE, pFilter = 0.05, fcFilter = 0.5) {
-  
+
   if (!("log2FC" %in% colnames(tableDE))) stop("column 'log2FC' not found")
   if (!("pvalue" %in% colnames(tableDE))) stop("column 'pvalue' not found")
   if (!("Gene" %in% colnames(tableDE))) stop("column 'Gene' not found")
   if (!("ID" %in% colnames(tableDE))) stop("column 'ID' not found")
-  
+
   # Convert the input table to a data frame and ensure the 'ID' column is of type character
   dataVolcano <- data.frame(tableDE)
   dataVolcano$ID <- as.character(dataVolcano$ID)
@@ -190,7 +188,7 @@ plotVolcano <- function(tableDE, pFilter = 0.05, fcFilter = 0.5) {
     dataVolcano$log2FC <= -as.numeric(fcFilter) & dataVolcano$pvalue <= as.numeric(pFilter) ~ "Down",
     dataVolcano$pvalue > as.numeric(pFilter) | (dataVolcano$log2FC < as.numeric(fcFilter) & dataVolcano$log2FC > -as.numeric(fcFilter)) ~ "Not Sig"
   ))
-  
+
   # Create the volcano plot
   v <- ggplot(dataVolcano, aes(x = log2FC, y = -log10(pvalue), label = Gene, customdata = ID)) +
     # Add vertical lines for fold-change thresholds
@@ -214,7 +212,7 @@ plotVolcano <- function(tableDE, pFilter = 0.05, fcFilter = 0.5) {
 }
 
 #' @name plotBox
-#' 
+#'
 #' @title Plot Boxplot of Intensity Data
 #'
 #' @description
@@ -237,7 +235,7 @@ plotVolcano <- function(tableDE, pFilter = 0.05, fcFilter = 0.5) {
 #'
 #' @importFrom ggplot2 ggplot aes geom_boxplot geom_point geom_line ylab xlab ggtitle theme_bw theme element_text
 #' @importFrom SummarizedExperiment assays
-#' 
+#'
 #' @examples
 #' # Load multiAssayExperiment object
 #' data("dda_example")
@@ -249,20 +247,19 @@ plotVolcano <- function(tableDE, pFilter = 0.05, fcFilter = 0.5) {
 #' # Call the function to perform differential expression analyis
 #' de <- performDifferentialExp(se = result, assay = "Intensity", method = "limma", reference = "1stCrtl", target = "EGF", condition = "treatment")
 #' # Plot the box plot for the given id and symbol
-#' plot <- plotBox(de$seSub, "p99", "PPP6C")
-#' plot
+#' plotBox(de$seSub, "p99", "PPP6C")
 #'
 #' @export
 plotBox <- function(se, id, symbol) {
-  
+
   exprMat <- assays(se)[["Intensity"]]
-  
+
   # Check if the SE object contains subject-specific data
   if(is.null(se$subjectID)) {
     # Prepare data frame for plotting without subject-specific information
     plotTab <- data.frame(group = se$comparison,
                           value = exprMat[id,])
-    p <- ggplot(plotTab, aes(x= group, y = value)) 
+    p <- ggplot(plotTab, aes(x= group, y = value))
   } else {
     # Prepare data frame for plotting with subject-specific information
     plotTab <- data.frame(group = se$comparison,
@@ -271,18 +268,18 @@ plotBox <- function(se, id, symbol) {
     p <- ggplot(plotTab, aes(x= group, y = value)) +
       geom_line(aes(group = subjectID), linetype = "dotted", color = "grey50")
   }
-  
+
   # Create the boxplot with additional formatting
   p <- p + geom_boxplot(aes(fill = group),
                         width = 0.5, alpha = 0.5,
-                        outlier.shape = NA) + 
-    geom_point() + 
-    ylab("Normalized Intensities") + xlab("") + 
-    ggtitle(symbol) + theme_bw() + 
-    theme(text=element_text(size=15), 
+                        outlier.shape = NA) +
+    geom_point() +
+    ylab("Normalized Intensities") + xlab("") +
+    ggtitle(symbol) + theme_bw() +
+    theme(text=element_text(size=15),
           plot.title = element_text(hjust = 0.5),
           legend.position = "none",
           axis.text.x = element_text(angle = 45, hjust = 1, vjust = 0.5, size = 15))
-  
+
   return(p)
 }

@@ -27,7 +27,7 @@ The function performs the following steps:
 \examples{
 # Load multiAssayExperiment object
 data("dia_example")
-normalized_data <- performCombinedNormalization(dia_example)
-print(normalized_data)
+# Call the function
+performCombinedNormalization(dia_example)
 
 }

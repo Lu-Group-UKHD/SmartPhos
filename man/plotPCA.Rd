@@ -39,7 +39,6 @@ result <- preprocessPhos(seData = se, normalize = TRUE, impute = "QRILC")
 # Perform PCA
 pca <- stats::prcomp(t(SummarizedExperiment::assays(result)[["imputed"]]), center = TRUE, scale.=TRUE)
 # Plot PCA results
-plot <- plotPCA(pca = pca, se = result, color = "treatment")
-plot
+plotPCA(pca = pca, se = result, color = "treatment")
 
 }

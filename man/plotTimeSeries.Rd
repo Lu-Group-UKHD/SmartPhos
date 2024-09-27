@@ -64,7 +64,6 @@ SummarizedExperiment::colData(se) <- SummarizedExperiment::colData(dda_example)
 result <- preprocessProteome(se, normalize = TRUE)
 # Plot a specific gene experssion over time
 timerange <- unique(se$timepoint)
-plot <- plotTimeSeries(result, type = "expression", geneID = "p18", symbol = "TMEM238", condition = "treatment", treatment = "EGF", timerange = timerange)
-plot
+plotTimeSeries(result, type = "expression", geneID = "p18", symbol = "TMEM238", condition = "treatment", treatment = "EGF", timerange = timerange)
 
 }

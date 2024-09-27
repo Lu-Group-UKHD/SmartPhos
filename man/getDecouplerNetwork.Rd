@@ -17,9 +17,9 @@ A \code{data frame} containing the kinase-substrate interaction network for the 
 }
 \examples{
 # Load the human kinase-substrate interaction network
-human_network <- getDecouplerNetwork("Homo sapiens")
+getDecouplerNetwork("Homo sapiens")
 
 # Load the mouse kinase-substrate interaction network
-mouse_network <- getDecouplerNetwork("Mus musculus")
+getDecouplerNetwork("Mus musculus")
 
 }

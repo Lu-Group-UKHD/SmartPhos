@@ -11,10 +11,10 @@
 #'
 #' @examples
 #' # Load the human kinase-substrate interaction network
-#' human_network <- getDecouplerNetwork("Homo sapiens")
+#' getDecouplerNetwork("Homo sapiens")
 #'
 #' # Load the mouse kinase-substrate interaction network
-#' mouse_network <- getDecouplerNetwork("Mus musculus")
+#' getDecouplerNetwork("Mus musculus")
 #'
 #' @importFrom utils read.table data
 #' @export
@@ -149,8 +149,7 @@ calcKinaseScore <- function(resTab, decoupler_network, corrThreshold = 0.9, stat
 #'  score = c(2.3, -1.5, 0, 3.1),
 #'  p_value = c(0.01, 0.2, 0.05, 0.03)
 #' )
-#' plot <- plotKinaseDE(scoreTab, nTop = 3, pCut = 0.05)
-#' print(plot)
+#' plotKinaseDE(scoreTab, nTop = 3, pCut = 0.05)
 #'
 #' @importFrom dplyr mutate filter group_by slice_max
 #' @importFrom stats reorder
@@ -217,8 +216,7 @@ plotKinaseDE <- function(scoreTab, nTop = 10, pCut = 0.05) {
 #'  score = runif(9, -2, 2),
 #'  p_value = runif(9, 0, 0.1)
 #' )
-#' p <- plotKinaseTimeSeries(scoreTab)
-#' print(p)
+#' plotKinaseTimeSeries(scoreTab)
 #'
 #' @importFrom dplyr mutate rename
 #' @importFrom ggplot2 ggplot aes geom_tile geom_text scale_fill_gradient2 scale_x_discrete scale_y_discrete theme_bw ylab xlab ggtitle theme element_text unit

@@ -36,7 +36,6 @@ scoreTab <- data.frame(
  score = c(2.3, -1.5, 0, 3.1),
  p_value = c(0.01, 0.2, 0.05, 0.03)
 )
-plot <- plotKinaseDE(scoreTab, nTop = 3, pCut = 0.05)
-print(plot)
+plotKinaseDE(scoreTab, nTop = 3, pCut = 0.05)
 
 }

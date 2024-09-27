@@ -57,6 +57,6 @@ data("dia_example")
 se <- dia_example[["Phosphoproteome"]]
 SummarizedExperiment::colData(se) <- SummarizedExperiment::colData(dia_example)
 # Call the function
-result <- preprocessPhos(seData = se, normalize = TRUE, impute = "QRILC")
+preprocessPhos(seData = se, normalize = TRUE, impute = "QRILC")
 
 }

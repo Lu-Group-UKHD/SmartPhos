@@ -1,8 +1,8 @@
-#' @name plotMissing 
-#' 
+#' @name plotMissing
+#'
 #' @title Plot Missing Data Completeness
 #'
-#' @description 
+#' @description
 #' \code{plotMissing} generates a bar plot showing the completeness (percentage of non-missing values) for each sample in a \code{SummarizedExperiment} object.
 #'
 #' @param se A \code{SummarizedExperiment} object containing the assay data.
@@ -15,7 +15,7 @@
 #' @importFrom SummarizedExperiment assay
 #' @importFrom ggplot2 ggplot aes geom_bar ggtitle ylab theme element_text
 #' @importFrom tibble tibble
-#' 
+#'
 #' @examples
 #' # Load multiAssayExperiment object
 #' data("dda_example")
@@ -25,17 +25,17 @@
 #' # Call the function
 #' plot <- plotMissing(se)
 #' plot
-#' 
+#'
 #' @export
 plotMissing <- function(se) {
-  
+
   # Extract the assay data from the SummarizedExperiment object
   countMat <- assay(se)
-  
+
   # Create a table with sample names and their corresponding percentage of non-missing values
-  plotTab <- tibble(sample = se$sample, 
+  plotTab <- tibble(sample = se$sample,
                     perNA = colSums(is.na(countMat))/nrow(countMat))
-  
+
   # Generate the bar plot using ggplot2
   missPlot <- ggplot(plotTab, aes(x = sample, y = 1-perNA)) +
     geom_bar(stat = "identity") +
@@ -43,13 +43,13 @@ plotMissing <- function(se) {
     ylab("completeness") +
     theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust=0),
           plot.title = element_text(hjust = 0.5, face = "bold"))
-  
+
   return(missPlot)
 }
 
 
 #' @name plotIntensity
-#' 
+#'
 #' @title Plot Intensity Boxplots
 #'
 #' @description
@@ -65,7 +65,7 @@ plotMissing <- function(se) {
 #' @importFrom dplyr filter left_join
 #' @importFrom tidyr pivot_longer
 #' @importFrom tibble as_tibble
-#' 
+#'
 #' @examples
 #' # Load multiAssayExperiment object
 #' data("dia_example")
@@ -75,31 +75,30 @@ plotMissing <- function(se) {
 #' # Preprocess the phosphoproteome assay
 #' result <- preprocessPhos(seData = se, normalize = TRUE, impute = "QRILC")
 #' # Call the plotting function
-#' plot <- plotIntensity(result, color = "replicate")
-#' plot
+#' plotIntensity(result, color = "replicate")
 #'
 #' @export
 plotIntensity <- function(se, color = "none") {
-  
+
   # Extract the assay data from the SummarizedExperiment object
   countMat <- assay(se)
-  
+
   # Convert the assay data to a tibble, pivot to long format, and filter out missing values
-  countTab <- countMat %>% as_tibble(rownames = "id") %>% 
+  countTab <- countMat %>% as_tibble(rownames = "id") %>%
     pivot_longer(-id) %>%
     filter(!is.na(value))
-  
+
   # Extract metadata from the SummarizedExperiment object
   meta <- as.data.frame(colData(se))
   # Join the count data with metadata
   countTabmeta <- left_join(countTab, meta, by = c('name' = 'sample'))
-  
+
   # Create the ggplot object with boxplots of intensities
   g <- ggplot(countTabmeta, aes(x = name, y = value)) +
     ggtitle("Boxplot of intensities") +
     theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0),
           plot.title = element_text(hjust = 0.5, face = "bold"))
-  
+
   # Add color to the boxplots if a valid metadata column is specified
   if (color == "none"){
     g <- g + geom_boxplot()
@@ -107,12 +106,12 @@ plotIntensity <- function(se, color = "none") {
   else {
     g <- g + geom_boxplot(aes(color = !!sym(color)))
   }
-  
+
   return(g)
 }
 
 #' @name plotPCA
-#' 
+#'
 #' @title Plot PCA
 #'
 #' @description
@@ -135,7 +134,7 @@ plotIntensity <- function(se, color = "none") {
 #' @importFrom dplyr left_join
 #' @importFrom tibble rownames_to_column
 #' @importFrom rlang sym
-#' 
+#'
 #' @examples
 #' # Load multiAssayExperiment object
 #' data("dia_example")
@@ -147,22 +146,21 @@ plotIntensity <- function(se, color = "none") {
 #' # Perform PCA
 #' pca <- stats::prcomp(t(SummarizedExperiment::assays(result)[["imputed"]]), center = TRUE, scale.=TRUE)
 #' # Plot PCA results
-#' plot <- plotPCA(pca = pca, se = result, color = "treatment")
-#' plot
+#' plotPCA(pca = pca, se = result, color = "treatment")
 #'
 #' @export
 plotPCA <- function(pca, se, xaxis = "PC1", yaxis = "PC2", color = "none", shape = "none") {
-  
+
   # Calculate the proportion of variance explained by each principal component
   varExplained <- pca$sdev^2/sum(pca$sdev^2)
   # Convert the PCA result to a data frame
   pcaDf <- as.data.frame(pca[["x"]])
   # Convert the metadata to a data frame
   meta <- as.data.frame(colData(se))
-  # Join the PCA scores with the metadata 
+  # Join the PCA scores with the metadata
   pcaMeta <- left_join(rownames_to_column(pcaDf),
                        meta, by = c("rowname" = "sample"))
-  
+
   # Create the initial ggplot object with labels for variance explained
   g <- ggplot(pcaMeta, aes(x = !!sym(xaxis), y = !!sym(yaxis),
                            text = paste("sample:", meta$sample))) +
@@ -173,7 +171,7 @@ plotPCA <- function(pca, se, xaxis = "PC1", yaxis = "PC2", color = "none", shape
          y=paste0(yaxis,": ",
                   round(varExplained[as.numeric(strsplit(yaxis, "PC")[[1]][2])]*100, 1), "%")) +
     scale_shape(solid = FALSE)
-  
+
   # Add points to the plot with optional color and shape aesthetics
   if (color == "none" & shape == "none") {
     g <- g + geom_point(size = 2)
@@ -192,7 +190,7 @@ plotPCA <- function(pca, se, xaxis = "PC1", yaxis = "PC2", color = "none", shape
 }
 
 #' @name plotHeatmap
-#' 
+#'
 #' @title Plot Heatmap of Intensity assay
 #'
 #' @description
@@ -221,7 +219,7 @@ plotPCA <- function(pca, se, xaxis = "PC1", yaxis = "PC2", color = "none", shape
 #' @importFrom tibble rownames_to_column
 #' @importFrom grDevices colorRampPalette
 #' @importFrom rlang sym
-#' 
+#'
 #' @examples
 #' # Load multiAssayExperiment object
 #' data("dia_example")
@@ -231,12 +229,11 @@ plotPCA <- function(pca, se, xaxis = "PC1", yaxis = "PC2", color = "none", shape
 #' # Generate the imputed assay
 #' result <- preprocessPhos(seData = se, normalize = TRUE, impute = "QRILC")
 #' # Plot heatmap for top variant
-#' plot <- plotHeatmap(type = "Top variant", top = 10, se = result, cutCol = 2)
-#' plot
+#' plotHeatmap(type = "Top variant", top = 10, se = result, cutCol = 2)
 #'
 #' @export
 plotHeatmap <- function(type, se, data = NULL, top = 100, cutCol = 1, cutRow = 1, clustCol = TRUE, clustRow = TRUE, annotationCol = NULL, title = NULL) {
-  
+
   # Select the appropriate intensity assay and gene IDs based on the type of heatmap
   if (type == "Top variant") {
     exprMat <- assays(se)[["imputed"]]
@@ -245,11 +242,11 @@ plotHeatmap <- function(type, se, data = NULL, top = 100, cutCol = 1, cutRow = 1
     geneIDs <- orderID[seq(1, as.integer(top))]
     exprMat <- exprMat[geneIDs,]
     geneSymbol <- rowData(se[match(geneIDs, rownames(se)),])$Gene
-  } 
+  }
   else if (type == "Differentially expressed") {
     if(!is.null(data)) {
       geneIDs <- arrange(data, stat)$ID
-      exprMat <- assays(se)[["imputed"]][geneIDs,] 
+      exprMat <- assays(se)[["imputed"]][geneIDs,]
       geneSymbol <- data[match(geneIDs, data$ID),]$Gene
     }
     else {
@@ -259,30 +256,30 @@ plotHeatmap <- function(type, se, data = NULL, top = 100, cutCol = 1, cutRow = 1
   else if (type == "Selected time series cluster") {
     if(!is.null(data)) {
       geneIDs <- unique(data$ID)
-      exprMat <- assays(se)[["imputed"]][geneIDs,] 
+      exprMat <- assays(se)[["imputed"]][geneIDs,]
       geneSymbol <- data[match(geneIDs, data$ID),]$Gene
     }
     else {
       print("Please give data argument")
     }
   }
-  
+
   # Prepare column annotations from the metadata
   cd <- as.data.frame(colData(se))
   annCol <- cd[row.names(cd) %in% colnames(exprMat),][c(annotationCol)]
   row.names(annCol) <- colnames(exprMat)
-  
+
   # Prepare the title of heatmap if Null
   if (is.null(title)) title = type
-  
+
   # Prepare color scale for the heatmap
   color <- colorRampPalette(c("navy", "white", "firebrick"))(100)
-  
+
   # Perform row normalization and clip extreme values
   exprMat <- t(scale(t(exprMat)))
   exprMat[exprMat > 4] <- 4
   exprMat[exprMat < -4] <- -4
-  
+
   # Plot the heatmap based on the type and whether annotations are provided
   if (type == "Top variant") {
     if (is.null(annotationCol)) {

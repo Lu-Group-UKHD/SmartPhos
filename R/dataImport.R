@@ -170,7 +170,7 @@ generateInputTable_DIA <- function(rawFolder) {
 #'    id = c("s1", "s2")
 #' )
 #' # Call the function
-#' mae <- readExperiment(fileTable, localProbCut = 0.75, scoreDiffCut = 5, fdrCut = 0.1, scoreCut = 10, pepNumCut = 1, ifLFQ = TRUE, annotation_col = c("id"))
+#' readExperiment(fileTable, localProbCut = 0.75, scoreDiffCut = 5, fdrCut = 0.1, scoreCut = 10, pepNumCut = 1, ifLFQ = TRUE, annotation_col = c("id"))
 #'
 #' @import MultiAssayExperiment
 #' @export
@@ -240,7 +240,7 @@ readExperiment <- function(fileTable, localProbCut = 0.75, scoreDiffCut = 5, fdr
 #'    outputID = c("s1", "s2", "s3")
 #' )
 #' # Call the function
-#' mae <- readExperimentDIA(fileTable, localProbCut = 0.75, annotation_col = c("id"), onlyReviewed = FALSE, normalizeByProtein = FALSE)
+#' readExperimentDIA(fileTable, localProbCut = 0.75, annotation_col = c("id"), onlyReviewed = FALSE, normalizeByProtein = FALSE)
 #'
 #' @import MultiAssayExperiment
 #' @export

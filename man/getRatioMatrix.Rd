@@ -20,9 +20,9 @@ A numeric \code{matrix} representing the ratio of intensity of PP (phosphoproteo
 \code{getRatioMatrix} calculates the ratio matrix of phosphoproteome data from a \code{MultiAssayExperiment} object.
 }
 \examples{
-# Example usage:
-# Assuming maeData is a MultiAssayExperiment object with appropriate data
-# ratio_matrix <- getRatioMatrix(maeData, normalization = TRUE, getAdjustedPP = TRUE)
-# print(ratio_matrix)
+# Load multiAssayExperiment object
+data("dia_example")
+# Call the function
+getRatioMatrix(dia_example, normalization = TRUE)
 
 }

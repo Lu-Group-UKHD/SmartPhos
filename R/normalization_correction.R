@@ -21,8 +21,7 @@
 #' @examples
 #' # Example usage:
 #' x <- matrix(rnorm(20), nrow=5, ncol=4)
-#' normalized_x <- medianNorm(x, method = "median")
-#' print(normalized_x)
+#' medianNorm(x, method = "median")
 #'
 #' @importFrom matrixStats colMedians
 #' @export
@@ -67,8 +66,8 @@ medianNorm <- function(x, method = "median") {
 #' @examples
 #' # Load multiAssayExperiment object
 #' data("dia_example")
-#' normalized_data <- performCombinedNormalization(dia_example)
-#' print(normalized_data)
+#' # Call the function
+#' performCombinedNormalization(dia_example)
 #'
 #' @importFrom MultiAssayExperiment assay
 #' @export
@@ -103,10 +102,10 @@ performCombinedNormalization <- function(maeData) {
 #' @return A numeric \code{matrix} representing the ratio of intensity of PP (phosphoproteome) data to FP (full proteome) data.
 #'
 #' @examples
-#' # Example usage:
-#' # Assuming maeData is a MultiAssayExperiment object with appropriate data
-#' # ratio_matrix <- getRatioMatrix(maeData, normalization = TRUE, getAdjustedPP = TRUE)
-#' # print(ratio_matrix)
+#' # Load multiAssayExperiment object
+#' data("dia_example")
+#' # Call the function
+#' getRatioMatrix(dia_example, normalization = TRUE)
 #'
 #' @importFrom MultiAssayExperiment assay assays
 #' @export
@@ -164,10 +163,10 @@ getRatioMatrix <- function(maeData, normalization = FALSE, getAdjustedPP = FALSE
 #' @return A \code{ggplot2} object representing the boxplot of the log2 ratios.
 #'
 #' @examples
-#' # Example usage:
-#' # Assuming maeData is a MultiAssayExperiment object with appropriate data
-#' # plot <- plotLogRatio(maeData, normalization = TRUE)
-#' # print(plot)
+#' # Load multiAssayExperiment object
+#' data("dia_example")
+#' # Call the function
+#' plotLogRatio(dia_example, normalization = TRUE)
 #'
 #' @importFrom MultiAssayExperiment assay
 #' @importFrom matrixStats colMedians
@@ -177,25 +176,25 @@ getRatioMatrix <- function(maeData, normalization = FALSE, getAdjustedPP = FALSE
 #' @importFrom ggplot2 ggplot aes geom_boxplot ggtitle xlab ylab geom_hline theme element_text
 #' @export
 plotLogRatio <- function(maeData, normalization = FALSE) {
-  
-  
+
+
   # Calculate the ratio matrix of phosphoproteome to full proteome data, if adjustment already performed, use the adjusted ratio for plotting.
   ratioMat <- getRatioMatrix(maeData, normalization)
-  
+
   # Extract and log-transform phosphoproteome data
   phosPP <- log2(assay(maeData[,colnames(ratioMat)][["Phosphoproteome"]]))
   medianPP <- colMedians(phosPP,na.rm = TRUE)
   names(medianPP) <- colnames(ratioMat)
-  
+
   # Create a table for plotting
   plotTab <- as_tibble(ratioMat, rownames = "feature") %>%
     pivot_longer(-feature) %>%
     filter(!is.na(value)) %>%
     mutate(medianPP = medianPP[name])
-  
-  #decide if adjustment already performed. 
+
+  #decide if adjustment already performed.
   ifAlreadyAjusted <- "adjustFactorPP" %in% colnames(colData(maeData))
-  
+
   # Generate a ggplot boxplot of the log2 ratios
   ggplot(plotTab, aes(x=name, y=value)) +
     geom_boxplot(aes(fill = medianPP)) +
@@ -334,7 +333,7 @@ runPhosphoAdjustment <- function(maeData, normalization = FALSE, minOverlap = 3,
   # Add adjusting factor to sample annotation
   adjFac[names(optRes$par)] <- optRes$par
 
-  
+
   maeData$adjustFactorPP <- unname(adjFac[match(rownames(colData(maeData)),names(adjFac))])
   # Adjust phospho measurement on PP samples
   phosMat <- assay(maeData[,names(adjFac)][["Phosphoproteome"]])

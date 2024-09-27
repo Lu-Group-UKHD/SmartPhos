@@ -54,6 +54,6 @@ data("dia_example")
 se <- dia_example[["Proteome"]]
 SummarizedExperiment::colData(se) <- SummarizedExperiment::colData(dia_example)
 # Call the function
-result <- preprocessProteome(seData = se, normalize = TRUE, impute = "QRILC")
+preprocessProteome(seData = se, normalize = TRUE, impute = "QRILC")
 
 }

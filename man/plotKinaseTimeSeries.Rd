@@ -30,7 +30,6 @@ scoreTab <- data.frame(
  score = runif(9, -2, 2),
  p_value = runif(9, 0, 0.1)
 )
-p <- plotKinaseTimeSeries(scoreTab)
-print(p)
+plotKinaseTimeSeries(scoreTab)
 
 }

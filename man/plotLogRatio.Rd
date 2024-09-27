@@ -18,9 +18,9 @@ A \code{ggplot2} object representing the boxplot of the log2 ratios.
 \code{plotLogRatio} generates a boxplot of the log2 ratio of intensities of phosphoproteome to full proteome data from a \code{MultiAssayExperiment} object.
 }
 \examples{
-# Example usage:
-# Assuming maeData is a MultiAssayExperiment object with appropriate data
-# plot <- plotLogRatio(maeData, normalization = TRUE)
-# print(plot)
+# Load multiAssayExperiment object
+data("dia_example")
+# Call the function
+plotLogRatio(dia_example, normalization = TRUE)
 
 }

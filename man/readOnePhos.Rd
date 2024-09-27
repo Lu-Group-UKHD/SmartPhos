@@ -32,8 +32,3 @@ A \code{data.frame} containing the filtered phosphorylation data for the specifi
 \details{
 The function filters the input phosphorylation data based on three criteria: localization probability, score difference, and intensity. Only rows that meet or exceed the specified cutoffs for these criteria and have non-zero intensity are retained. The filtered data is then returned with a unique identifier for each row.
 }
-\examples{
-# inputTab <- data.table::fread("phosphorylation_data.csv")
-# filteredData <- readOnePhos(inputTab, sampleName = "Sample1", localProbCut = 0.75, scoreDiffCut = 5, multiMap = FALSE)
-
-}
