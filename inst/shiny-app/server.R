@@ -1680,7 +1680,7 @@ shinyServer(function(input, output, session) {
           }
           # retrieve the phosphodatabase
           if(input$selePTMSet == "select from available PTM set databases") {
-            ptmSetDb <- read.table(paste0("ptmset/", input$sigSetPTM), header = TRUE, sep = "\t",stringsAsFactors = FALSE)
+            load(paste0("ptmset/", input$sigSetPTM))
             inputsValue$sigSetPTM <- input$sigSetPTM
           }
           else {
@@ -1732,7 +1732,7 @@ shinyServer(function(input, output, session) {
           colorList$cols <- NULL
           # get PTM set database
           if(input$selePTMSet == "select from available PTM set databases") {
-            ptmSetDb <- read.table(paste0("ptmset/", input$sigSetPTM), header = TRUE, sep = "\t",stringsAsFactors = FALSE)
+            load(paste0("ptmset/", input$sigSetPTM))
             inputsValue$sigSetPTM <- input$sigSetPTM
           }
           else {
@@ -1775,17 +1775,16 @@ shinyServer(function(input, output, session) {
         #
         # })
         if(input$selePTMSet == "select from available PTM set databases") {
-          database <- read.table(paste0("ptmset/", input$sigSetPTM),
-                                 header = TRUE, sep = "\t",stringsAsFactors = FALSE)
-          inputsValue$sigSet <- input$sigSet
+          load(paste0("ptmset/", input$sigSetPTM))
+          inputsValue$sigSetPTM <- input$sigSetPTM
         }
         else {
-          database <- read.table(filePath(), header = TRUE,
+            ptmSetDb <- read.table(filePath(), header = TRUE,
                                  sep = "\t",stringsAsFactors = FALSE)
         }
         ptm <- TRUE
         clustEnr <- clusterEnrich(clusterTab = clusterTabVal(),
-                                  se = processedData(), inputSet = database,
+                                  se = processedData(), inputSet = ptmSetDb,
                                   ptm = ptm, filterP = input$sigLevel,
                                   ifFDR = input$ifEnrichFDR)
         if (nrow(clustEnr$table) > 0) {
@@ -1859,7 +1858,8 @@ shinyServer(function(input, output, session) {
     }
     else {
       if(input$selePTMSet == "select from available PTM set databases") {
-        setList <- read.table(paste0("ptmset/", input$sigSetPTM), sep = "\t", header = TRUE, stringsAsFactors = FALSE)
+        load(paste0("ptmset/", input$sigSetPTM))
+        setList <- ptmSetDb
       }
       else {
         setList <- read.table(filePath(), sep = "\t", header = TRUE, stringsAsFactors = FALSE)
@@ -1908,7 +1908,8 @@ shinyServer(function(input, output, session) {
 
       else {
         if(input$selePTMSet == "select from available PTM set databases") {
-          geneList <- read.table(paste0("ptmset/", input$sigSetPTM), header = TRUE, sep = "\t", stringsAsFactors = FALSE)
+          load(paste0("ptmset/", input$sigSetPTM))
+          geneList <- ptmSetDb
         }
         else {
           geneList <- read.table(filePath(), header = TRUE, sep = "\t", stringsAsFactors = FALSE)

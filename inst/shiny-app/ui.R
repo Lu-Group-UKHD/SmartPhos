@@ -1,8 +1,8 @@
-# This script contains the user-interface (UI) part for the Phosphoproteomics Shiny app. 
+# This script contains the user-interface (UI) part for the Phosphoproteomics Shiny app.
 # The UI is simple and very easy to navigate. It contains multiple tabs on the
 # top, each focusing on one aspect of the phosphoproteomics and proteomics data
-# exploration. User simply has to upload a MultiAssayExperiment object generated 
-# by the SmartPhos package and then they are ready to explore. 
+# exploration. User simply has to upload a MultiAssayExperiment object generated
+# by the SmartPhos package and then they are ready to explore.
 
 library(shiny)
 library(shinythemes)
@@ -15,21 +15,21 @@ library(plotly)
 navbarPage("SmartPhos explorer",
            theme =  shinytheme("flatly"),
            useShinyjs(),
-           
+
            tags$style(type="text/css",
                       ".shiny-output-error { visibility: hidden; }",
                       ".shiny-output-error:before { visibility: hidden; }"
            ),
-           
+
            # First tab. This tab contains the preprocessing options before diving
            # into the data. This tab allows the user to upload a MultiAssayExperiment
            # object or upload a zip file containing mass spec files by Spectronaut
            # or MaxQuant. It contains options for selecting between the proteome
            # or phosphoproteome assay. Options for choosing the transformation method,
-           # normalization, and displaying the missing values. 
+           # normalization, and displaying the missing values.
            tabPanel("Preprocesing",
                     h5("Updated on 01.07.2024, please check the Update Notes panel for detailed information"),
-                    # h4(a("Instruction on how to use SmartPhosExplorer", 
+                    # h4(a("Instruction on how to use SmartPhosExplorer",
                     #      href="https://www.huber.embl.de/users/jlu/smartPhos/vignette.html",
                     #      target="_blank")),
                     titlePanel("Data input and preprocessing"),
@@ -39,7 +39,7 @@ navbarPage("SmartPhos explorer",
                         bsCollapse(id = "collapse1", open = "Upload",
                                    bsCollapsePanel("Upload",
                                                    "This panel has options for uploading Mass Spectrometry files or an R MultiAssayExperiment object.",
-                                                   radioButtons("upload", "Select the upload method:", 
+                                                   radioButtons("upload", "Select the upload method:",
                                                                 c("Upload a zip file", "Upload a R object"),
                                                                 inline = TRUE),
                                                    conditionalPanel(
@@ -115,7 +115,7 @@ navbarPage("SmartPhos explorer",
                         actionButton("missingV", "Plot completness of the assay",
                                      style="color: #FFFFFF; background-color: #3498DB; border-color: #2E86C1"),
                         hr(),
-                        actionButton("launch_app", "Launch MatrixQCvis", 
+                        actionButton("launch_app", "Launch MatrixQCvis",
                                      style="color: #FFFFFF; background-color: #CD5C5C; border-color: #D35400"),
                       ),
                     mainPanel(
@@ -128,7 +128,7 @@ navbarPage("SmartPhos explorer",
                       DT::dataTableOutput("metaData"),
                       plotOutput("missingPlot")
                 ))),
-           
+
            # This tab performs principal component analysis (PCA) on the imputed
            # assay from the first tab and then plot the principal components. The
            # user has options for selecting the principal component for the axes.
@@ -159,18 +159,18 @@ navbarPage("SmartPhos explorer",
                         span(textOutput("messagePCA"), style = "color:red; font-size:20px"),
                         plotlyOutput("pcplot", height = 800, width = 1000)
                     ))),
-           
+
            # This tabs allow the user to plot and download heatmap for the imputed
            # assay from the first tab. There is option to choose the top variants
            # genes, differentially expressed genes or genes from the selected time
-           # series cluster. The user can also divide the heatmap plot into the 
+           # series cluster. The user can also divide the heatmap plot into the
            # row and/or column clusters based on Hierarchical clustering and can
-           # add additional annotations. Heatmap can be dowloaded as a PDF too. 
+           # add additional annotations. Heatmap can be dowloaded as a PDF too.
            tabPanel("Heatmap",
                     titlePanel("Visualizing heatmap"),
                     sidebarLayout(
                       sidebarPanel(
-                        radioButtons("chooseType",label = "Genes to plot", 
+                        radioButtons("chooseType",label = "Genes to plot",
                                      choices = c("Top variant", "Differentially expressed", "Selected time series cluster"),
                                      selected = "Top variant"),
                         conditionalPanel(condition = "input.chooseType =='Top variant'",
@@ -189,7 +189,7 @@ navbarPage("SmartPhos explorer",
                         span(textOutput("errMsg1"), style = "color:red"),
                         plotOutput("plotHM", width = 1000, height = 1000)
                       ))),
-           
+
            # This tab performs differential expression analysis on the transformed
            # and normalized assay from the first tab. The two methods available are
            # limma and ProDA. Users have options to filter the differentially expressed
@@ -226,14 +226,14 @@ navbarPage("SmartPhos explorer",
                           splitLayout(cellWidths = c("60%", "40%"), uiOutput("ui.plot"), plotlyOutput("plotVolcano"))
                         )
                       ))),
-           
+
            # This tab performs clustering of time series gene expression patterns
-           # using fuzzy c-mean clustering. There is option to perform hypothesis 
+           # using fuzzy c-mean clustering. There is option to perform hypothesis
            # testing (spline fitting) to filter out proteins whose patterns are
            # not consistent. Samples at different time points are linked by patient
-           # ID if provided (PatID in fileTable). Currently, time points should 
+           # ID if provided (PatID in fileTable). Currently, time points should
            # have either no unit or "h" and/or "min" unit. The time points would
-           # have no unit in a future installment. Zero timepoint can also be added 
+           # have no unit in a future installment. Zero timepoint can also be added
            # when treatments with no zero timepoints are selected.
            tabPanel("Time series clustering",
                     titlePanel("Clustering of time series gene expression patterns"),
@@ -241,7 +241,7 @@ navbarPage("SmartPhos explorer",
                       sidebarPanel(
                         uiOutput("seleMetaColBoxTime"),
                         radioButtons("clusterFor", "Perform clustering on:", c("expression", "logFC", "two-condition expression"), inline = TRUE),
-                        conditionalPanel(condition = "input.clusterFor == 'logFC' | input.clusterFor == 'two-condition expression'", 
+                        conditionalPanel(condition = "input.clusterFor == 'logFC' | input.clusterFor == 'two-condition expression'",
                                          uiOutput("clusterTreatRefBox")),
                         uiOutput("clusterTreatBox"),
                         uiOutput("timerangeBox"),
@@ -250,8 +250,8 @@ navbarPage("SmartPhos explorer",
                         uiOutput("zeroTreat"),
                         sliderInput("topVarTime", "Use top % variant genes along time" , 0, 100, 80, 5),
                         checkboxInput("ifFilterFit","Filter genes based on spline fit test", value = FALSE),
-                        conditionalPanel(condition = "input.ifFilterFit == true", 
-                                         textInput("pSpline", "P value cut-off", 0.05), 
+                        conditionalPanel(condition = "input.ifFilterFit == true",
+                                         textInput("pSpline", "P value cut-off", 0.05),
                                          checkboxInput("ifSplineFdr","Use FDR", FALSE)),
                         textOutput("numGeneCluster"),
                         br(),
@@ -262,7 +262,7 @@ navbarPage("SmartPhos explorer",
                         br(),
                         # plotSilhouette is currently disabled --------------------------------------------------------
                         # actionButton("plotSilhouette","Plot Silhouette and WSS scores", style = "background-color:salmon"),
-                        # h6("(Silhouette and WSS scores may help to select optimal cluster numbers. 
+                        # h6("(Silhouette and WSS scores may help to select optimal cluster numbers.
                         # May take long time to calculate when number of genes is high.)")),
                       ),
                       mainPanel(tags$style(type="text/css",
@@ -274,12 +274,12 @@ navbarPage("SmartPhos explorer",
                                 DT::dataTableOutput("eachClusterTab"),
                                 plotOutput("clusterTimePlot",height = 350, width = 566)
                       ))),
-           
+
            # This tab performs enrichment analysis on result from hypothesis testing
            # or time-series clustering. User can choose to perform either Pathway
            # enrichment or Phospho-signature enrichment, the latter is available
            # only for Phosphoproteome data.
-           # For Pathway enrichment: the method is gene-centric, i.e., for 
+           # For Pathway enrichment: the method is gene-centric, i.e., for
            # phosphoproteome, it does not consider multiple phosphorylation sites.
            # For DE result, user can choose to perform either PAGE (Parametric
            # Analysis of Gene Set Enrichment)  or GSEA (Gene Set Enrichment Analysis)
@@ -287,14 +287,14 @@ navbarPage("SmartPhos explorer",
            # are stored in the geneset folder (.gmt files) at the same directory
            # as the scripts of shiny app.
            # ---------------------
-           # For Phospho-signature enrichment: the method is available only for 
+           # For Phospho-signature enrichment: the method is available only for
            # phosphoproteome data and use a site-centric database in which each
            # set (signature set) has PTM sites and their direction of regulation
            # instead of just protein names. The database are from Krug et al.,2019
-           # (https://doi.org/10.1074%2Fmcp.TIR118.000943) and stored locally in 
+           # (https://doi.org/10.1074%2Fmcp.TIR118.000943) and stored locally in
            # the ptmset folder. We use the PTM-SEA algorithm from Krug et al. to
            # analyze the result from Differential Exression analysis and Fisher's
-           # exact test for the result from Time series cluster. For the latter, 
+           # exact test for the result from Time series cluster. For the latter,
            # each signature set is split into one containing the upregulated
            # phosphosites and one containing the downregulated phosphosites.
            tabPanel("Enrichment analysis",
@@ -307,7 +307,7 @@ navbarPage("SmartPhos explorer",
                                                       c("Pathway enrichment", "Phospho-signature enrichment"),
                                                       inline = FALSE)),
                         conditionalPanel(condition = "input.assay == 'Proteome'",
-                                         radioButtons("analysisMethod1", 
+                                         radioButtons("analysisMethod1",
                                                       "Select analysis method",
                                                       c("Pathway enrichment"),
                                                       selected = "Pathway enrichment")),
@@ -315,12 +315,12 @@ navbarPage("SmartPhos explorer",
                                      c("Differential expression", "Selected time-series cluster", "All time-series clusters")),
                         conditionalPanel(condition = "input.seleSourceEnrich == 'Differential expression'",
                                          conditionalPanel(condition = "input.analysisMethod == 'Pathway enrichment' || input.assay == 'Proteome'",
-                                                          radioButtons("enrichMethod", 
+                                                          radioButtons("enrichMethod",
                                                                        "Select enrichment method",
                                                                        c("PAGE", "GSEA"),
                                                                        inline = TRUE)),
                                          conditionalPanel(condition = "input.enrichMethod == 'GSEA' || input.analysisMethod == 'Phospho-signature enrichment'",
-                                                          numericInput("permNum", 
+                                                          numericInput("permNum",
                                                                        "Permutation number",
                                                                        value = 100,
                                                                        min = 10, max = 10000)),
@@ -341,7 +341,7 @@ navbarPage("SmartPhos explorer",
                                          conditionalPanel(condition = "input.seleGeneSet == 'select from available gene set databases'",
                                                           selectInput("sigSet", "Select geneset database",
                                                                       list.files(path = "geneset/", pattern = "\\.gmt$"),
-                                                                      selectize = FALSE, 
+                                                                      selectize = FALSE,
                                                                       selected = "Cancer_Hallmark.gmt", size = 8)),
                                          conditionalPanel(condition = "input.seleGeneSet == 'upload a gene set database'",
                                                           fileInput("uploadGeneSet", "Upload the desired gene set file (.gmt format)"))
@@ -352,9 +352,9 @@ navbarPage("SmartPhos explorer",
                                                       selected = "select from available PTM set databases"),
                                          conditionalPanel(condition = "input.selePTMSet == 'select from available PTM set databases'",
                                                           selectInput("sigSetPTM",  "Select PTM set database",
-                                                                      list.files(path = "ptmset/", pattern = "\\.txt$"),
+                                                                      list.files(path = "ptmset/", pattern = "\\.rda$"),
                                                                       selectize = FALSE,
-                                                                      selected = "Human_PTM.txt", size = 8)),
+                                                                      selected = "human_PTM.rda", size = 8)),
                                          conditionalPanel(condition = "input.selePTMSet == 'upload a PTM set database'",
                                                           fileInput("uploadPTMSet", "Upload the desired PTM set file (.txt format)"))
                         ),
@@ -377,13 +377,13 @@ navbarPage("SmartPhos explorer",
                                                  DT::dataTableOutput("geneTabClicked"),
                                                  plotOutput("plotGeneEnr"))
                       ))),
-           
-           # This tab performs kinase activity inference using decoupleR. From 
+
+           # This tab performs kinase activity inference using decoupleR. From
            # changes in abundance of phosphorylation sites between 2 conditions,
-           # it infers how active the responsible kinases are between two said 
+           # it infers how active the responsible kinases are between two said
            # conditions. A network of kinase ("source") and their phosphorylation
-           # targets were constructed using databases from OmnipathR. Note that 
-           # we remove interactions whose source is only ProtMapper. The network 
+           # targets were constructed using databases from OmnipathR. Note that
+           # we remove interactions whose source is only ProtMapper. The network
            # is constructed with data from either homo sapiens or mus musculus.
            # Result from hypothesis testing or time-series clustering (logFC) are
            # used to infer kinase activity with the function decoupler::run_wmean().
@@ -421,11 +421,11 @@ navbarPage("SmartPhos explorer",
                                 column(plotOutput("plotKinase",height = 800, width = 600),width =6),
                                 DT::dataTableOutput("pSiteTab"),
                                 uiOutput("downloadUI4")
-                                
+
                       ))),
-           
-           # This tab displays the information about all the selections and inputs 
-           # by the user. It also allows to download all the log information in a 
+
+           # This tab displays the information about all the selections and inputs
+           # by the user. It also allows to download all the log information in a
            # text/tsv file.
            tabPanel("Log Info",
                     titlePanel("Log information of the inputs and selections"),

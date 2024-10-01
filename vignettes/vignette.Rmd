@@ -572,4 +572,3 @@ Liberzon, A., Subramanian, A., Pinchback, R. M., Thorvaldsdóttir, H., Tamayo, P
 Subramanian, A., Tamayo, P., Mootha, V. K., Mukherjee, S., Ebert, B. L., Gillette, M. A., Paulovich, A. G., Pomeroy, S. L., Golub, T. R., Lander, E. S., & Mesirov, J. P. (2005). Gene set enrichment analysis: A knowledge-based approach for interpreting genome-wide expression profiles. Proceedings of the National Academy of Sciences of the United States of America, 102(43), 15545–15550. https://doi.org/10.1073/pnas.0506580102 
 
 Türei, D., Valdeolivas, A., Gul, L., Palacio-Escat, N., Klein, M., Ivanova, O., Ölbei, M., Gábor, A., Theis, F. J., Módos, D., Korcsmáros, T., & Sáez-Rodríguez, J. (2021). Integrated intra‐ and intercellular signaling knowledge for multicellular omics analysis. Molecular Systems Biology, 17(3). https://doi.org/10.15252/msb.20209923
-           

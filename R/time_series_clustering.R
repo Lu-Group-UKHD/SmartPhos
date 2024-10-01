@@ -200,9 +200,6 @@ clusterTS <- function(x, k = 5, pCut = NULL, twoCondition = FALSE) {
 
   options(warn=-1)
 
-  # Set seed for reproducible clustering results
-  set.seed(12345)
-
   # Remove rows with NA values
   x.center <- x[complete.cases(x),]
 
