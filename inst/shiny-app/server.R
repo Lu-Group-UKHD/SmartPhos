@@ -42,7 +42,8 @@ shinyServer(function(input, output, session) {
 
   # a box showing saved results
   output$saveListBox <- renderUI({
-    selectInput("seleFile", label = NULL, saveList$file, size = 5, selectize = FALSE)
+    selectInput("seleFile", label = NULL, saveList$file,
+                size = 5, selectize = FALSE)
   })
 
   # save calculated results
@@ -68,7 +69,8 @@ shinyServer(function(input, output, session) {
 
   # download the multiAssayExperiment object
   output$download <- downloadHandler(
-    filename = function() { paste0(input$text, "_", format(Sys.Date(), "%Y%m%d"), ".Rds") },
+    filename = function()
+        { paste0(input$text, "_", format(Sys.Date(), "%Y%m%d"), ".Rds") },
     content = function(file) {
       saveRDS(mae(), file = file)
     })
@@ -120,7 +122,8 @@ shinyServer(function(input, output, session) {
     withProgress(message = 'Processing files', {
       fileTable <- as.data.frame(read.delim(file.path(outDir, "fileTable.txt")))
       #fileTable$fileName <- sub("^", "./rawFolder/", fileTable$fileName)
-      fileTable$fileName <- file.path(outDir, fileTable$fileName) #outDir is a variable
+      #outDir is a variable
+      fileTable$fileName <- file.path(outDir, fileTable$fileName)
 
       tryCatch({
         inputsValue$tool <- input$tool
@@ -271,7 +274,8 @@ shinyServer(function(input, output, session) {
   observeEvent(input$processSelection, {
     withProgress(message = 'Processing files', {
       # normalization correction if selected
-      # first step, whether to perform phospho normalization correction, if phospho data is selected.
+      # first step, whether to perform phospho normalization correction,
+      # if phospho data is selected.
       maeData <- mae()
 
       if (input$assay == "Phosphoproteome") {
@@ -329,7 +333,8 @@ shinyServer(function(input, output, session) {
       # summarizedAssayExperiment object of the selected assay
       se <- maeData[[input$assay]]
       colData(se) <- colData(maeData[, colnames(se)])
-      # make sure NUll is passed to batch argument when user have not selected Batch correction
+      # make sure NUll is passed to batch argument when user have not
+      # selected Batch correction
       if (input$batch) batchCol <- input$colBatch else batchCol <- NULL
       inputsValue$batch <- input$batch
       inputsValue$colBatch <- batchCol
@@ -379,7 +384,8 @@ shinyServer(function(input, output, session) {
 
   # download summarized experiment object
   output$downloadSEobj <- downloadHandler(
-    filename = function() { paste0("summarizedExp", "_", format(Sys.Date(), "%Y%m%d"), ".Rds") },
+    filename = function()
+        { paste0("summarizedExp", "_", format(Sys.Date(), "%Y%m%d"), ".Rds") },
     content = function(file) {
       saveRDS(processedDataUF(), file = file)
     })
@@ -399,7 +405,8 @@ shinyServer(function(input, output, session) {
   # data table
   output$metaData <- DT::renderDataTable({
     if (!is.null(processedDataUF())) {
-      colDataTable <- mutate_if(data.frame(colData(processedDataUF())), is.character, as.factor)
+      colDataTable <- mutate_if(data.frame(colData(processedDataUF())),
+                                is.character, as.factor)
       datatable(colDataTable, filter = "top", rownames = FALSE,
                 caption = "Subset the data for further analysis by selecting the annotations in the filtering boxes",
                 selection = "none", style = "bootstrap")
@@ -469,13 +476,15 @@ shinyServer(function(input, output, session) {
     if ("imputed" %in% assayNames(processedData())) {
       output$errMsgPCA <- renderText("")
       withProgress(message = "Running principal component analysis, please wait...", {
-        pca <- stats::prcomp(t(assays(processedData())[["imputed"]]), center = TRUE, scale.=TRUE)
+        pca <- stats::prcomp(t(assays(processedData())[["imputed"]]),
+                             center = TRUE, scale.=TRUE)
 
         # download PCA values as tsv file
         output$downloadPCATable <- downloadHandler(
           filename = function() { paste('PCAvalues', '.tsv', sep='') },
           content = function(file) {
-            write.table(pcaDf, file = file, quote = FALSE, sep = '\t', col.names = NA)
+            write.table(pcaDf, file = file, quote = FALSE, sep = '\t',
+                        col.names = NA)
         })
         # rendering select option for x-axis of PCA plot
         output$xaxisPCAui <- renderUI({
@@ -675,7 +684,8 @@ shinyServer(function(input, output, session) {
   # the selection box to select treatment for the reference group
   output$treat1Box <- renderUI({
     allTreat <- unique(processedData()[[input$seleMetaColDiff]])
-    selectInput("seleTreat1", "Select level(s) for the reference group", allTreat, multiple = TRUE)
+    selectInput("seleTreat1", "Select level(s) for the reference group",
+                allTreat, multiple = TRUE)
   })
 
   # select time point for reference
@@ -684,14 +694,16 @@ shinyServer(function(input, output, session) {
       if (!is.null(input$seleTreat1))
         allTime <- unique(processedData()[,processedData()[[input$seleMetaColDiff]] %in% input$seleTreat1]$timepoint) else
           allTime <- unique(processedData()$timepoint)
-        selectInput("seleTime1", "Select time point(s) for the reference group", allTime, multiple = TRUE)
+        selectInput("seleTime1", "Select time point(s) for the reference group",
+                    allTime, multiple = TRUE)
     }
   })
 
   # the selection box to select treatment for the target groups
   output$treat2Box <- renderUI({
     allTreat <- unique(processedData()[[input$seleMetaColDiff]])
-    selectInput("seleTreat2", "Select levels(s) for the target group", allTreat, multiple = TRUE)
+    selectInput("seleTreat2", "Select levels(s) for the target group",
+                allTreat, multiple = TRUE)
   })
 
   # the select the comparison time point
@@ -700,7 +712,8 @@ shinyServer(function(input, output, session) {
       if (!is.null(input$seleTreat2))
         allTime <- unique(processedData()[,processedData()[[input$seleMetaColDiff]] %in% input$seleTreat2]$timepoint) else
           allTime <- unique(processedData()$timepoint)
-        selectInput("seleTime2", "Select time point(s) for the target group", allTime, multiple = TRUE)
+        selectInput("seleTime2", "Select time point(s) for the target group",
+                    allTime, multiple = TRUE)
     }
   })
 
@@ -747,7 +760,8 @@ shinyServer(function(input, output, session) {
           if (!is.null(processedData()$timepoint)) {
             inputsValue$Time1 <- input$seleTime1
             inputsValue$Time2 <- input$seleTime2
-            de <- performDifferentialExp(se = processedData(), assay = "Intensity",
+            de <- performDifferentialExp(se = processedData(),
+                                         assay = "Intensity",
                                          method = input$deMethod,
                                          condition = input$seleMetaColDiff,
                                          reference = input$seleTreat1,
@@ -756,7 +770,8 @@ shinyServer(function(input, output, session) {
                                          targetTime = input$seleTime2)
           }
           else {
-            de <- performDifferentialExp(se = processedData(), assay = "Intensity",
+            de <- performDifferentialExp(se = processedData(),
+                                         assay = "Intensity",
                                          method = input$deMethod,
                                          condition = input$seleMetaColDiff,
                                          reference = input$seleTreat1,
@@ -786,9 +801,11 @@ shinyServer(function(input, output, session) {
       DEtab <- tableDE()
       if(input$ifAdjusted) {
         inputsValue$ifAdjusted <- input$ifAdjusted
-        DEtab <- filter(DEtab, abs(log2FC) >= input$fcFilter, padj <= as.numeric(input$pFilter))
+        DEtab <- filter(DEtab, abs(log2FC) >= input$fcFilter,
+                        padj <= as.numeric(input$pFilter))
       } else {
-        DEtab <- filter(DEtab, abs(log2FC) >= input$fcFilter, pvalue <= as.numeric(input$pFilter))
+        DEtab <- filter(DEtab, abs(log2FC) >= input$fcFilter,
+                        pvalue <= as.numeric(input$pFilter))
       }
       inputsValue$fcFilter <- input$fcFilter
       inputsValue$pFilter <- input$pFilter
@@ -864,7 +881,7 @@ shinyServer(function(input, output, session) {
     lastInfo <- d$customdata
     lastClicked$geneID <- filterDE()[filterDE()$ID == lastInfo,]$ID
     if (input$assay == "Phosphoproteome") {
-      # site contains the information of the gene, residue and site position information
+      # site contains the information of the gene, residue and site position
       lastClicked$geneSymbol <- filterDE()[filterDE()$ID == lastInfo,]$site
     }
     else {
@@ -926,7 +943,8 @@ shinyServer(function(input, output, session) {
         inputsValue$geneID_DE <- lastClicked$geneID
         inputsValue$geneSymbol_DE <- lastClicked$geneSymbol
 
-        p <- plotBox(se = processedDataSub(), id = lastClicked$geneID, symbol = lastClicked$geneSymbol)
+        p <- plotBox(se = processedDataSub(), id = lastClicked$geneID,
+                     symbol = lastClicked$geneSymbol)
       }
     }
   })
@@ -964,7 +982,8 @@ shinyServer(function(input, output, session) {
   output$downloadClusterTab <- downloadHandler(
     filename = function() { paste('clusterTable', '.tsv', sep='') },
     content = function(file) {
-      allClusterFeature <- clusterTabVal() %>% distinct(feature, .keep_all = TRUE) %>% .$feature
+      allClusterFeature <- clusterTabVal() %>%
+          distinct(feature, .keep_all = TRUE) %>% .$feature
       if (!is.null(rowData(processedData())$site)) {
         allClusterSite <- rowData(processedData())[allClusterFeature, "site"]
         allClusterSequence <- rowData(processedData())[allClusterFeature, "Sequence"]
@@ -1011,7 +1030,8 @@ shinyServer(function(input, output, session) {
           remove1sampleT <- append(remove1sampleT, time)
       }
       timepointRef <- timepointRef[!timepointRef %in% remove1sampleT]
-      allTimepoint <- intersect(allTimepoint, timepointRef)  # select only the intersection
+      # select only the intersection
+      allTimepoint <- intersect(allTimepoint, timepointRef)
     }
 
     allTime(allTimepoint)
@@ -1054,8 +1074,10 @@ shinyServer(function(input, output, session) {
       if (!is.null(input$seleZeroTreat) && input$addZero) {
         inputsValue$addZero <- input$addZero
         inputsValue$seleZeroTreat <- input$seleZeroTreat
-        processedDataSub <- addZeroTime(processedData(), input$seleMetaColTime,
-                                        input$seleTreat_cluster, input$seleZeroTreat,
+        processedDataSub <- addZeroTime(processedData(),
+                                        input$seleMetaColTime,
+                                        input$seleTreat_cluster,
+                                        input$seleZeroTreat,
                                         input$seleTimeRange)
       }
       else {
@@ -1069,7 +1091,8 @@ shinyServer(function(input, output, session) {
         inputsValue$pSpline <- input$pSpline
         inputsValue$ifSplineFdr <- input$ifSplineFdr
         if (!is.null(processedDataSub$subjectID)) {
-          assayMat <- splineFilter(assayMat, subjectID = processedDataSub$subjectID,
+          assayMat <- splineFilter(assayMat,
+                                   subjectID = processedDataSub$subjectID,
                                    time = processedDataSub$timepoint,
                                    df = length(unique(processedDataSub$timepoint))-1,
                                    pCut = as.numeric(input$pSpline),
@@ -1270,7 +1293,8 @@ shinyServer(function(input, output, session) {
         }
         processedDataSub <- processedDataSub[rownames(assayMat),]
       }
-      processedDataSub$timeTreat <- paste0(processedDataSub$timepoint,"_", processedDataSub[[input$seleMetaColTime]])
+      processedDataSub$timeTreat <- paste0(processedDataSub$timepoint,"_",
+                                           processedDataSub[[input$seleMetaColTime]])
       exprMat <- lapply(unique(processedDataSub$timeTreat), function(tt) {
         rowMedians(assayMat[,processedDataSub$timeTreat == tt])
       }) %>% bind_cols() %>% as.matrix()
@@ -1371,7 +1395,8 @@ shinyServer(function(input, output, session) {
         distinct(feature, .keep_all = TRUE) %>%
         mutate(feature = as.character(feature))
       clusterData <- rowData(processedData()[selectedTab$feature,])
-      # If the data is phosphoproteomic: include the columns indicating phosphorylation site and peptide sequence
+      # If the data is phosphoproteomic: include the columns indicating
+      # phosphorylation site and peptide sequence
       if ((!is.null(clusterData$site)) && (!is.null(clusterData$Sequence))) {
         selectedTab <- selectedTab %>%
           mutate(Sequence = clusterData$Sequence,
@@ -1391,7 +1416,8 @@ shinyServer(function(input, output, session) {
   # selection of a cluster
   output$seleClusterBox <- renderUI({
     if(!is.null(clusterTabVal())) {
-      selectInput("seleCluster", "Select a cluster", sort(unique(clusterTabVal()$cluster)))
+      selectInput("seleCluster", "Select a cluster",
+                  sort(unique(clusterTabVal()$cluster)))
     }
   })
 
@@ -1459,7 +1485,8 @@ shinyServer(function(input, output, session) {
   # a value to check whether enrichment tab is clicked
   clickRecord <- reactiveValues(enrich = FALSE, gene = FALSE, kinase = FALSE)
 
-  # a reactive variable to save gene table of a clicked dot in cluster enrichment profile
+  # a reactive variable to save gene table of a clicked dot in a
+  # cluster enrichment profile
   geneTable <- reactiveVal()
 
   # if user upload a gene set database
@@ -1589,7 +1616,7 @@ shinyServer(function(input, output, session) {
           else {
             inGMT <- loadGSC(filePath(),type="gmt")
           }
-          # Applying the Fisher's exact test with the runFisher function from utils.
+          # Applying the Fisher's exact test with the runFisher function
           # Other enrichment methods can be added here
           if (input$enrichMethod1 == "Fisher's exact test")
             inputsValue$enrichMethod1 <- input$enrichMethod1
@@ -1603,8 +1630,8 @@ shinyServer(function(input, output, session) {
           } else {
             resTab <- filter(resTab, pval <= input$sigLevel) %>% arrange(pval)
           }
-          # if all genes are filtered out: show a notification and set GSEres$resTab
-          # to NULL to avoid causing error later on
+          # if all genes are filtered out: show a notification and set
+          # GSEres$resTab to NULL to avoid causing error later on
           if (nrow(resTab) > 0) {
             GSEres$resTab <- resTab
           } else {
@@ -1684,13 +1711,17 @@ shinyServer(function(input, output, session) {
             inputsValue$sigSetPTM <- input$sigSetPTM
           }
           else {
-            ptmSetDb <- read.table(filePath(), header = TRUE, sep = "\t",stringsAsFactors = FALSE)
+            ptmSetDb <- read.table(filePath(), header = TRUE, sep = "\t",
+                                   stringsAsFactors = FALSE)
           }
 
           # perform GSEA
           inputsValue$permNum <- input$permNum
-          resTab <- runGSEAforPhospho(geneStat = myCoef, ptmSetDb = ptmSetDb, nPerm =  input$permNum,
-                                      weight = 1, correl.type = "rank", statistic = "Kolmogorov-Smirnov", min.overlap = 5) %>%
+          resTab <- runGSEAforPhospho(geneStat = myCoef, ptmSetDb = ptmSetDb,
+                                      nPerm =  input$permNum,
+                                      weight = 1, correl.type = "rank",
+                                      statistic = "Kolmogorov-Smirnov",
+                                      min.overlap = 5) %>%
             as.data.frame()
           colnames(resTab) <- c("Name", "Site.number", "Stat", "Number.pSite.Db", "Number.PTM.site.Db",
                                 "pvalue", "Number.up", "Number.down", "padj")
@@ -1736,7 +1767,8 @@ shinyServer(function(input, output, session) {
             inputsValue$sigSetPTM <- input$sigSetPTM
           }
           else {
-            ptmSetDb <- read.table(filePath(), header = TRUE, sep = "\t",stringsAsFactors = FALSE)
+            ptmSetDb <- read.table(filePath(), header = TRUE, sep = "\t",
+                                   stringsAsFactors = FALSE)
           }
           # Run the Fisher's exact test for sites in the cluster
           resTab <- runFisher(genes = selectedCluster()$site,
@@ -1750,8 +1782,8 @@ shinyServer(function(input, output, session) {
           } else {
             resTab <- filter(resTab, pval <= input$sigLevel) %>% arrange(pval)
           }
-          # if all genes are filtered out: show a notification and set GSEres$resTab
-          # to NULL to avoid causing error later on
+          # if all genes are filtered out: show a notification and set
+          # GSEres$resTab to NULL to avoid causing error later on
           if (nrow(resTab) > 0) {
             GSEres$resTab <- resTab
           } else {
@@ -1862,13 +1894,16 @@ shinyServer(function(input, output, session) {
         setList <- ptmSetDb
       }
       else {
-        setList <- read.table(filePath(), sep = "\t", header = TRUE, stringsAsFactors = FALSE)
+        setList <- read.table(filePath(), sep = "\t", header = TRUE,
+                              stringsAsFactors = FALSE)
       }
       if (input$seleSourceEnrich == "Selected time-series cluster")
-        setList <- setList %>% mutate(signature = ifelse(site.direction == "u", paste0(signature,"_upregulated"), paste0(signature, "_downregulated")))
+        setList <- setList %>% mutate(signature = ifelse(site.direction == "u",
+                                                         paste0(signature,"_upregulated"), paste0(signature, "_downregulated")))
       setList <- setList %>%
         filter(signature %in% resTab$Name, site.ptm == "p") %>%
-        separate(site.annotation, sep=":", into = c("site", "PubMedID"), extra = "merge", fill="right")
+        separate(site.annotation, sep=":", into = c("site", "PubMedID"),
+                 extra = "merge", fill="right")
     }
 
     if (input$seleSourceEnrich == "Differential expression") {
@@ -2015,7 +2050,8 @@ shinyServer(function(input, output, session) {
   # render the cluster enrichment profile plot as interactively plotly plot
   output$clustEnrPlot <- renderPlotly({
     if(!is.null(GSEres$resTab)) {
-      p <- ggplotly(GSEres$enrPlot, source = "enrich", height = 60*length(unique(GSEres$resTab$Name)))
+      p <- ggplotly(GSEres$enrPlot, source = "enrich",
+                    height = 60*length(unique(GSEres$resTab$Name)))
       p %>% event_register("plotly_click")
       #ggplotly(GSEres$enrPlot)
       p
@@ -2035,7 +2071,8 @@ shinyServer(function(input, output, session) {
       mutate(feature = as.character(feature))
     clusterData <- rowData(processedData()[selectedTab$feature,])
 
-    # If the data is phosphoproteomic: include the columns indicating phosphorylation site and peptide sequence
+    # If the data is phosphoproteomic: include the columns indicating
+    # phosphorylation site and peptide sequence
     if ((!is.null(clusterData$site)) && (!is.null(clusterData$Sequence))) {
       selectedTab <- selectedTab %>%
         mutate(Sequence = clusterData$Sequence,
@@ -2112,7 +2149,7 @@ shinyServer(function(input, output, session) {
     }
   )
 
-  ####### Not in use: Plot the enrichment map for enrichment analysis################
+  ###### Not in use: Plot the enrichment map for enrichment analysis ###########
 
   output$plot4 <- renderPlot({
     if (!is.null(GSEres$resObj)) {
@@ -2129,7 +2166,8 @@ shinyServer(function(input, output, session) {
 
   ####Widgets
 
-  # reactive variable to store the decoupler network (update itself if change organism)
+  # reactive variable to store the decoupler network
+  # (update itself if change organism)
   decoupler_network <- reactive({
     network <- getDecouplerNetwork(input$speciesRef)
     inputsValue$speciesRef <- input$speciesRef
@@ -2146,9 +2184,12 @@ shinyServer(function(input, output, session) {
         if (!is.null(filterDE())) {
           withProgress(message = "Running kinase activity inference, please wait...", {
             output$errMsgKinase <- renderText("")
-            # compute the kinase score or report error (usually because the selected organism was not correct)
+            # compute the kinase score or report error
+            # (usually because the selected organism was not correct)
             tryCatch({
-              scoreTab <- calcKinaseScore(filterDE(), decoupler_network(), statType = input$statTypeKinase, nPerm = input$nPermKinase)
+              scoreTab <- calcKinaseScore(filterDE(), decoupler_network(),
+                                          statType = input$statTypeKinase,
+                                          nPerm = input$nPermKinase)
               inputsValue$statTypeKinase <- input$statTypeKinase
               inputsValue$nPermKinase <- input$nPermKinase
               scoreTab <- scoreTab %>% mutate(padj = p.adjust(p_value, method = "BH")) %>% arrange(p_value)
@@ -2172,7 +2213,8 @@ shinyServer(function(input, output, session) {
             clusterData <- clusterTabVal()
             clusterData <- clusterData[clusterData$cluster == input$seleCluster,]
             inputsValue$seleClusterKinase <- input$seleCluster
-            allClusterFeature <- clusterData %>% distinct(feature, .keep_all = TRUE) %>% .$feature
+            allClusterFeature <- clusterData %>%
+                distinct(feature, .keep_all = TRUE) %>% .$feature
             allClusterSite <- data.frame(rowData(processedData())[allClusterFeature, "site"])
             allClusterSite$feature <- allClusterFeature
             clusterData <- clusterData %>%
@@ -2182,7 +2224,8 @@ shinyServer(function(input, output, session) {
               inputsValue$seleKinaseTimeMethod <- input$seleKinaseTimeMethod
               # compute the kinase ACTIVITY score
               # initiate an empty dataframe to store score result
-              scoreTab <- data.frame(source = c(), score = c(), p_value = c(), timepoint = c())
+              scoreTab <- data.frame(source = c(), score = c(),
+                                     p_value = c(), timepoint = c())
               # get the order of time points
               timeVector <- input$seleTimeRange
               inputsValue$seleTimeRangeKinase <- input$seleTimeRange
@@ -2318,9 +2361,10 @@ shinyServer(function(input, output, session) {
                   }) %>% bind_rows() %>%
                     filter(number.pSite.in.cluster>0)
                 } else { # i.e. if seleAssoMethod == 'FGSEA'
-                  # GSEA to test kinase association with cluster using FGSEA from decoupleR
-                  # Data is taken from clusterTabVal() instead of selectedCluster() since
-                  # the former has unrounded probability values
+                  # GSEA to test kinase association with cluster using FGSEA
+                  # from decoupleR. Data is taken from clusterTabVal() instead
+                  # of selectedCluster() since the former has unrounded
+                  # probability values
                   selectedTab <- filter(clusterTabVal(), cluster == input$seleCluster) %>%
                     distinct(feature, .keep_all = TRUE) %>%
                     mutate(feature = as.character(feature))
@@ -2493,7 +2537,8 @@ shinyServer(function(input, output, session) {
   output$downloadLogValues <- downloadHandler(
     filename = function() { paste('Logvalues', '.tsv', sep='') },
     content = function(file) {
-      write.table(allInputs(), file = file, quote = FALSE, sep = '\t', col.names = NA)
+      write.table(allInputs(), file = file, quote = FALSE, sep = '\t',
+                  col.names = NA)
     })
 
 })

@@ -41,7 +41,7 @@ runFisher <- function (genes, reference, inputSet, ptm = FALSE) {
   # Retrieve the gene sets
   if (!ptm) {
     genesets <- inputSet$gsc
-    setList <- 1:length(genesets)
+    setList <- seq_len(genesets)
   } else {
     # Filter and process the PTM-specific gene sets
     genesets <- inputSet %>%
@@ -59,33 +59,33 @@ runFisher <- function (genes, reference, inputSet, ptm = FALSE) {
     setList <- unique(genesets$signature)
   }
   # Remove genes from the reference set that are in the genes of interest
-  reference = reference[!reference %in% genes]
+  reference <-  reference[!reference %in% genes]
 
   # Apply Fisher's Exact Test to each gene set
-  rtab = lapply(setList, function(i) {
+  rtab <-  lapply(setList, function(i) {
     # Identify the geneset and its name
     if (!ptm) {
-      geneset = genesets[[i]]
-      nameSet = names(genesets)[i]
+      geneset <-  genesets[[i]]
+      nameSet <-  names(genesets)[i]
     } else {
-      geneset = genesets[genesets$signature == i, "site"]
-      nameSet = i
+      geneset <-  genesets[genesets$signature == i, "site"]
+      nameSet <-  i
     }
 
     # Create the contingency table for Fisher's Exact Test
-    RinSet = sum(reference %in% geneset)
-    RninSet = length(reference) - RinSet
-    GinSet = sum(genes %in% geneset)
-    GninSet = length(genes) - GinSet
-    fmat = matrix(c(GinSet, RinSet, GninSet, RninSet), nrow = 2,
+    RinSet <-  sum(reference %in% geneset)
+    RninSet <-  length(reference) - RinSet
+    GinSet <-  sum(genes %in% geneset)
+    GninSet <-  length(genes) - GinSet
+    fmat <-  matrix(c(GinSet, RinSet, GninSet, RninSet), nrow = 2,
                   ncol = 2, byrow = FALSE)
-    colnames(fmat) = c("inSet", "ninSet")
-    rownames(fmat) = c("genes", "reference")
+    colnames(fmat) <-  c("inSet", "ninSet")
+    rownames(fmat) <-  c("genes", "reference")
 
     # Perform Fisher's Exact Test
-    fish = fisher.test(fmat, alternative = "greater")
-    pval = fish$p.value
-    inSet = RinSet + GinSet
+    fish <-  fisher.test(fmat, alternative = "greater")
+    pval <-  fish$p.value
+    inSet <-  RinSet + GinSet
 
     # Return the result as a tibble
     tibble(Name = nameSet,
@@ -195,7 +195,7 @@ clusterEnrich <- function(clusterTab, se, inputSet, reference = NULL, ptm = FALS
   }
 
   # Create a ggplot object for visualization of enrichment results
-  p<- ggplot(plotTab, aes(x=cluster, y=Name, customdata = cluster, key = Name)) +
+  p <- ggplot(plotTab, aes(x=cluster, y=Name, customdata = cluster, key = Name)) +
     geom_point(aes(size =-log10(pval),fill=-log10(pval)), shape = 21, color = "black") +
     scale_fill_gradient(low = "white", high = "red") +
     xlab("Cluster") +
@@ -260,14 +260,14 @@ runGSEAforPhospho <- function(geneStat, ptmSetDb, nPerm, weight = 1, correl.type
         } else{
           arg.ES <- which.min(RES)
         }
-        gaps = gaps+1
-        RES = c(valleys,0) * (gaps) + 0.5*( c(0,RES) - c(valleys,0) ) * (gaps)
-        ES = sum(RES)
+        gaps <- gaps+1
+        RES <-  c(valleys,0) * (gaps) + 0.5*( c(0,RES) - c(valleys,0) ) * (gaps)
+        ES <-  sum(RES)
       }
       return(list(RES=RES, ES=ES, arg.ES=arg.ES))
     }
 
-    n.rows = length(ordered.gene.list)
+    n.rows <-  length(ordered.gene.list)
 
     # Apply weighting to the correlation vector
     if (weight == 0) {
@@ -292,7 +292,7 @@ runGSEAforPhospho <- function(geneStat, ptmSetDb, nPerm, weight = 1, correl.type
     }
 
     # Length of gene list is same as the number of rows in input matrix
-    N = length(ordered.gene.list)
+    N <-  length(ordered.gene.list)
 
 
     # Sirectionality of the gene set
@@ -306,9 +306,9 @@ runGSEAforPhospho <- function(geneStat, ptmSetDb, nPerm, weight = 1, correl.type
       # Locations of 'd' features
       tag.d <- sign( match(ordered.gene.list, gene.set2[ d.idx ], nomatch=0) )
       if (weight == 0) {
-        ind.d = which(tag.d == 1)} else {
-          ind.d = which(tag.d == 1 & correl.vector < 0)}
-      number.d = length(ind.d)
+        ind.d <-  which(tag.d == 1)} else {
+          ind.d <-  which(tag.d == 1 & correl.vector < 0)}
+      number.d <-  length(ind.d)
 
       # Number of 'u' features
       u.idx <- which(gene.set.direction=='u')
@@ -318,9 +318,9 @@ runGSEAforPhospho <- function(geneStat, ptmSetDb, nPerm, weight = 1, correl.type
       # Locations of 'up' features
       tag.u <- sign( match(ordered.gene.list, gene.set2[ u.idx ], nomatch=0) )
       if (weight == 0) {
-        ind.u = which(tag.u == 1)} else {
-          ind.u = which(tag.u == 1 & correl.vector >= 0)}
-      number.u = length(ind.u)
+        ind.u <-  which(tag.u == 1)} else {
+          ind.u <-  which(tag.u == 1 & correl.vector >= 0)}
+      number.u <-  length(ind.u)
 
 
       # For up-regulated genes/sites
@@ -338,10 +338,10 @@ runGSEAforPhospho <- function(geneStat, ptmSetDb, nPerm, weight = 1, correl.type
 
         RES.u <- cumsum(up.u-down.u[1:length(up.u)])
 
-        valleys.u = RES.u-up.u
+        valleys.u <-  RES.u-up.u
 
-        max.ES.u = suppressWarnings(max(RES.u))
-        min.ES.u = suppressWarnings(min(valleys.u))
+        max.ES.u <-  suppressWarnings(max(RES.u))
+        min.ES.u <-  suppressWarnings(min(valleys.u))
 
         # Calculate final score
         score.res <- score(max.ES.u, min.ES.u, RES.u, gaps.u, valleys.u, statistic)
@@ -351,11 +351,11 @@ runGSEAforPhospho <- function(geneStat, ptmSetDb, nPerm, weight = 1, correl.type
 
       } else {
         correl.vector.u <- rep(0, N)
-        ES.u=0
-        RES.u=0
-        arg.ES.u=NA
-        up.u=0
-        down.u=0
+        ES.u <- 0
+        RES.u <- 0
+        arg.ES.u <- NA
+        up.u <- 0
+        down.u <- 0
       }
 
       # For down-regulated genes/sites
@@ -371,10 +371,10 @@ runGSEAforPhospho <- function(geneStat, ptmSetDb, nPerm, weight = 1, correl.type
         down.d <- gaps.d/Nm.d
 
         RES.d <- cumsum(up.d-down.d[1:length(up.d)])
-        valleys.d = RES.d-up.d
+        valleys.d <-  RES.d-up.d
 
-        max.ES.d = suppressWarnings(max(RES.d))
-        min.ES.d = suppressWarnings(min(valleys.d))
+        max.ES.d <-  suppressWarnings(max(RES.d))
+        min.ES.d <-  suppressWarnings(min(valleys.d))
 
         # Calculate final score
         score.res <- score(max.ES.d, min.ES.d, RES.d, gaps.d, valleys.d, statistic)
@@ -384,13 +384,13 @@ runGSEAforPhospho <- function(geneStat, ptmSetDb, nPerm, weight = 1, correl.type
 
       } else {
         correl.vector.d <- rep(0, N)
-        ES.d=0
-        RES.d=0
-        ind.d=NA
-        number.d=0
-        arg.ES.d=NA
-        up.d=0
-        down.d=0
+        ES.d <- 0
+        RES.d <- 0
+        ind.d <- NA
+        number.d <- 0
+        arg.ES.d <- NA
+        up.d <- 0
+        down.d <- 0
       }
 
       # Make sure to meet the min.overlap threshold
@@ -409,7 +409,7 @@ runGSEAforPhospho <- function(geneStat, ptmSetDb, nPerm, weight = 1, correl.type
       ind <- list(u=ind.u, d=ind.d)
       step.up <- list(u=up.u, d=up.d )
       step.down <- list(u=1/Nm.u, d=1/Nm.d)
-      gsea.results = list(ES = ES, ES.all = list(u=ES.u, d=ES.d), arg.ES = arg.ES, RES = RES, indicator = ind, correl.vector = correl.vector, step.up=step.up, step.down=step.down,
+      gsea.results <-  list(ES = ES, ES.all = list(u=ES.u, d=ES.d), arg.ES = arg.ES, RES = RES, indicator = ind, correl.vector = correl.vector, step.up=step.up, step.down=step.down,
                           number.u = number.u, number.d = number.d)
 
 
@@ -423,23 +423,23 @@ runGSEAforPhospho <- function(geneStat, ptmSetDb, nPerm, weight = 1, correl.type
       # Match gene set to data
       tag.indicator <- sign(match(ordered.gene.list, gene.set2, nomatch=0))    # notice that the sign is 0 (no tag) or 1 (tag)
       # Positions of gene set in ordered gene list
-      ind = which(tag.indicator==1)
+      ind <-  which(tag.indicator==1)
       # 'correl.vector' is now the size of 'gene.set2'
       correl.vector <- abs(correl.vector[ind])^weight
       # Sum of weights
-      sum.correl = sum(correl.vector)
+      sum.correl <-  sum(correl.vector)
 
       # Determine peaks and valleys
       # Divide correl vector by sum of weights
-      up = correl.vector/sum.correl     # "up" represents the peaks in the mountain plot
-      gaps = (c(ind-1, N) - c(0, ind))  # gaps between ranked pathway genes
-      down = gaps/Nm
+      up <-  correl.vector/sum.correl     # "up" represents the peaks in the mountain plot
+      gaps <-  (c(ind-1, N) - c(0, ind))  # gaps between ranked pathway genes
+      down <-  gaps/Nm
 
-      RES = cumsum(c(up,up[Nh])-down)
-      valleys = RES[1:Nh]-up
+      RES <-  cumsum(c(up,up[Nh])-down)
+      valleys <-  RES[1:Nh]-up
 
-      max.ES = max(RES)
-      min.ES = min(valleys)
+      max.ES <-  max(RES)
+      min.ES <-  min(valleys)
 
       # Calculate final score
       score.res <- score(max.ES, min.ES, RES[1:Nh], gaps, valleys, statistic)
@@ -448,7 +448,7 @@ runGSEAforPhospho <- function(geneStat, ptmSetDb, nPerm, weight = 1, correl.type
       arg.ES <- score.res$arg.ES
       RES <- score.res$RES
 
-      gsea.results = list(ES = ES, arg.ES = arg.ES, RES = RES, indicator = ind, correl.vector = correl.vector, step.up=up, step.down=1/Nm)
+      gsea.results <-  list(ES = ES, arg.ES = arg.ES, RES = RES, indicator = ind, correl.vector = correl.vector, step.up=up, step.down=1/Nm)
     }
 
     return (gsea.results)
@@ -485,56 +485,56 @@ runGSEAforPhospho <- function(geneStat, ptmSetDb, nPerm, weight = 1, correl.type
   # Run GSEA for each PTM set
   rtab <- lapply(phosphoSiteCount$signature, function(signature) {
     # Get number of PTM site and phospho site in the database
-    nPTMsite = as.numeric(ptmSiteCount[ptmSiteCount$signature == signature, "no.PTM.site"])
-    nPpSite = as.numeric(phosphoSiteCount[phosphoSiteCount$signature == signature, "no.phospho.site"])
-    signatureSet = phosphoSetDb[phosphoSetDb$signature == signature,]
-    gene.set2 = signatureSet$site
-    gene.set.direction = signatureSet$site.direction
-    gene.set.PMID = signatureSet$PubMedID
+    nPTMsite <-  as.numeric(ptmSiteCount[ptmSiteCount$signature == signature, "no.PTM.site"])
+    nPpSite <-  as.numeric(phosphoSiteCount[phosphoSiteCount$signature == signature, "no.phospho.site"])
+    signatureSet <-  phosphoSetDb[phosphoSetDb$signature == signature,]
+    gene.set2 <-  signatureSet$site
+    gene.set.direction <-  signatureSet$site.direction
+    gene.set.PMID <-  signatureSet$PubMedID
     # Calculate the gsea score
     if (sum(row.names(geneStat) %in% gene.set2) < min.overlap) {
       enrichScoreNorm <- enrichScore <- pvalue <- number.u <- number.d <- 0
     } else {
-      resGSEA = gseaScorePTM(ordered.gene.list, data.expr =  data.expr, gene.set2 = gene.set2,
+      resGSEA <-  gseaScorePTM(ordered.gene.list, data.expr =  data.expr, gene.set2 = gene.set2,
                              weight = weight, correl.type = correl.type,
                              gene.set.direction = gene.set.direction, min.overlap =  min.overlap)
-      enrichScore = resGSEA$ES
+      enrichScore <-  resGSEA$ES
       if (!is.null(gene.set.direction)) {
-        number.u  = resGSEA$number.u
-        number.d = resGSEA$number.d
+        number.u  <-  resGSEA$number.u
+        number.d <-  resGSEA$number.d
       } else {
         number.u <- number.d <- 0
       }
       # Calculate the null distribution and pvalue
       if (nPerm == 0) {
-        enrichScoreNorm = enrichScore
+        enrichScoreNorm <-  enrichScore
         pvalue = 1
       } else {
-        nullDistES = sapply(1:nPerm,  function(x) gseaScorePTM(sample(ordered.gene.list), data.expr=data.expr, gene.set2=gene.set2,
+        nullDistES <-  sapply(seq_len(nPerm),  function(x) gseaScorePTM(sample(ordered.gene.list), data.expr=data.expr, gene.set2=gene.set2,
                                                                weight, correl.type, gene.set.direction = gene.set.direction, min.overlap = min.overlap)$ES)
-        nullDistES = unlist(nullDistES)
+        nullDistES <-  unlist(nullDistES)
         if (enrichScore >= 0) {
-          nullDistES.pos = nullDistES[nullDistES >= 0]
-          if (length(nullDistES.pos) == 0) nullDistES.pos = 0.5
-          posMean = mean(nullDistES.pos)
-          enrichScoreNorm = enrichScore/posMean
-          s = sum(nullDistES.pos >= enrichScore)/length(nullDistES.pos)
-          pvalue = ifelse(s == 0, 1/nPerm, s)
+          nullDistES.pos <-  nullDistES[nullDistES >= 0]
+          if (length(nullDistES.pos) == 0) nullDistES.pos <-  0.5
+          posMean <-  mean(nullDistES.pos)
+          enrichScoreNorm <-  enrichScore/posMean
+          s <-  sum(nullDistES.pos >= enrichScore)/length(nullDistES.pos)
+          pvalue <-  ifelse(s == 0, 1/nPerm, s)
         } else {
-          nullDistES.neg = nullDistES[nullDistES < 0]
-          if (length(nullDistES.neg) == 0) nullDistES.neg = 0.5
-          negMean = mean(nullDistES.neg)
-          enrichScoreNorm = enrichScore/negMean
-          s = sum(nullDistES.neg <= enrichScore)/length(nullDistES.neg)
-          pvalue = ifelse(s == 0, 1/nPerm, s)
+          nullDistES.neg <-  nullDistES[nullDistES < 0]
+          if (length(nullDistES.neg) == 0) nullDistES.neg <-  0.5
+          negMean <-  mean(nullDistES.neg)
+          enrichScoreNorm <-  enrichScore/negMean
+          s <-  sum(nullDistES.neg <= enrichScore)/length(nullDistES.neg)
+          pvalue <-  ifelse(s == 0, 1/nPerm, s)
         }
       }
     }
     tibble(Name = signature,
-           nSite = number.u + number.d,                      # number of phosphosites in the input data
-           enrichScore = enrichScoreNorm,                    # normalized enrichment score to correct for differences in signature sizes
-           n.P.site.in.Db = nPpSite,                         # number of phosphosites in the database
-           n.PTM.site.in.Db = nPTMsite,                      # number of PTM sites in the database
+           nSite = number.u + number.d,          # number of phosphosites in the input data
+           enrichScore = enrichScoreNorm,        # normalized enrichment score to correct for differences in signature sizes
+           n.P.site.in.Db = nPpSite,             # number of phosphosites in the database
+           n.PTM.site.in.Db = nPTMsite,          # number of PTM sites in the database
            pvalue = pvalue,
            number.u = number.u,
            number.d = number.d)
