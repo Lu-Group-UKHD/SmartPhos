@@ -27,8 +27,3 @@ The function performs the following steps:
   \item Creates a combined input table with file names, sample names, types, batches, and IDs.
 }
 }
-\examples{
-# inputTable <- generateInputTable(folder, batchAsFolder = FALSE)
-
-
-}

@@ -17,10 +17,3 @@ A \code{character} vector of sample names that do not meet the overlap criteria.
 \description{
 \code{checkRatioMat} checks the ratio \code{matrix} for samples that do not have sufficient overlap of phospho-peptides between enriched (PP) and unenriched (FP) samples.
 }
-\examples{
-# Example usage:
-# Assuming ratioMat is a matrix with appropriate data
-# excluded_samples <- checkRatioMat(ratioMat, minOverlap = 3)
-# print(excluded_samples)
-
-}

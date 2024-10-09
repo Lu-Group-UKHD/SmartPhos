@@ -41,10 +41,3 @@ The function performs the following steps:
   \item Adjusts the phosphoproteome measurements using the estimated adjustment factor.
 }
 }
-\examples{
-# Example usage:
-# Assuming maeData is a MultiAssayExperiment object with appropriate data
-# adjusted_maeData <- runPhosphoAdjustment(maeData, normalization = TRUE, minOverlap = 3, completeness = 0.8, ncore = 2)
-# print(adjusted_maeData)
-
-}

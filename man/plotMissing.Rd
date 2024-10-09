@@ -25,7 +25,7 @@ data("dda_example")
 se <- dda_example[["Phosphoproteome"]]
 SummarizedExperiment::colData(se) <- SummarizedExperiment::colData(dda_example)
 # Call the function
-plot <- plotMissing(se)
-plot
+plotMissing(se)
+
 
 }

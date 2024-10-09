@@ -18,10 +18,6 @@
 #'   \item Creates a combined input table with file names, sample names, types, batches, and IDs.
 #' }
 #'
-#' @examples
-#' # inputTable <- generateInputTable(folder, batchAsFolder = FALSE)
-#'
-#'
 #' @importFrom utils read.delim
 #' @export
 generateInputTable <- function(rawFolder, batchAsFolder = FALSE) {
@@ -89,8 +85,6 @@ generateInputTable <- function(rawFolder, batchAsFolder = FALSE) {
 #'   \item Creates a combined input table with file names, types, and IDs.
 #' }
 #'
-#' @examples
-#' # inputTable <- generateInputTable_DIA(folder)
 #' @importFrom utils read.delim
 #' @export
 generateInputTable_DIA <- function(rawFolder) {
@@ -307,7 +301,6 @@ readExperimentDIA <- function(fileTable, localProbCut = 0.75, annotation_col = c
 #'   \item Normalizes the phosphoproteome data by dividing it by the corresponding proteome data.
 #'   \item Replaces the phosphoproteome assay in the \code{MultiAssayExperiment} object or adds the normalized data as a new assay, depending on the \code{replace} parameter.
 #' }
-#'
 #'
 #' @import MultiAssayExperiment
 #' @export

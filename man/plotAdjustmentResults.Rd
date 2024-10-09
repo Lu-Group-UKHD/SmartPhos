@@ -29,12 +29,3 @@ The function performs the following steps:
   \item Creates box plots of the PP/FP ratios and phosphorylation intensities before and after adjustment.
 }
 }
-\examples{
-# Example usage:
-# Assuming maeData is a MultiAssayExperiment object with appropriate data
-# plots <- plotAdjustmentResults(maeData, normalization = TRUE)
-# print(plots$ratioTrendPlot)
-# print(plots$ratioBoxplot)
-# print(plots$ppBoxplot)
-
-}

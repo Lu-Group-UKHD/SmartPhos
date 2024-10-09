@@ -16,7 +16,6 @@
 #' @details
 #' The function filters the input phosphorylation data based on three criteria: localization probability, score difference, and intensity. Only rows that meet or exceed the specified cutoffs for these criteria and have non-zero intensity are retained. The filtered data is then returned with a unique identifier for each row.
 #'
-#' @import data.table
 readOnePhos <- function(inputTab, sampleName, localProbCut = 0.75, scoreDiffCut = 5, multiMap) {
 
   # Define sample specific column names
@@ -74,7 +73,9 @@ readOnePhos <- function(inputTab, sampleName, localProbCut = 0.75, scoreDiffCut 
 #' @details
 #' This function reads phosphorylation data from multiple files as specified in fileTable, filters the data based on localization probability and score difference, and removes reverse and potential contaminant entries. It constructs an intensity matrix and annotation data, which are then used to create a \code{SummarizedExperiment} object.
 #'
-#' @import data.table SummarizedExperiment
+#' @import SummarizedExperiment
+#' @importFrom data.table fread rbindlist
+#'
 #' @examples
 #' file1 <- system.file("extdata", "phosDDA_1.xls", package = "SmartPhos")
 #' file2 <- system.file("extdata", "proteomeDDA_1.xls", package = "SmartPhos")
@@ -180,7 +181,6 @@ readPhosphoExperiment <- function(fileTable, localProbCut = 0.75, scoreDiffCut =
 #' @details
 #' This function processes phosphorylation data for a single sample by filtering based on localization probability and non-zero intensity. It handles multiplicity by summarizing intensities and optionally removes duplicates. The resulting data is returned as a data.table with unique identifiers.
 #'
-#' @import data.table
 #' @importFrom stats aggregate
 readOnePhosDIA <- function(inputTab, sampleName, localProbCut = 0.75, removeDup = FALSE) {
 
@@ -289,9 +289,9 @@ readOnePhosDIA <- function(inputTab, sampleName, localProbCut = 0.75, removeDup 
 #' @details
 #' This function processes phosphorylation data from DIA experiments by filtering based on localization probability and non-zero intensity, handling multiplicity, and optionally including only reviewed proteins. The resulting data is returned as a \code{SummarizedExperiment} object with annotations and an intensity matrix.
 #'
-#' @import data.table
 #' @import BiocParallel
 #' @import SummarizedExperiment
+#' @importFrom data.table fread rbindlist
 #' @importFrom utils data
 #' @examples
 #' file <- system.file("extdata", "phosDIA_1.xls", package = "SmartPhos")
@@ -429,7 +429,6 @@ readPhosphoExperimentDIA <- function(fileTable, localProbCut = 0.75, onlyReviewe
 #' @details
 #' This function processes proteomics data for a single sample by filtering based on the number of peptides and optionally using LFQ quantification. It ensures that unique identifiers are created for each protein, and removes rows with missing or zero quantification values.
 #'
-#' @import data.table
 readOneProteom <- function(inputTab, sampleName, pepNumCut = 1, ifLFQ = TRUE) {
 
   # Define sample specific column names
@@ -506,7 +505,8 @@ readOneProteom <- function(inputTab, sampleName, pepNumCut = 1, ifLFQ = TRUE) {
 #' # Call the function
 #' readProteomeExperiment(fileTable, fdrCut = 0.1, scoreCut = 10, pepNumCut = 1, ifLFQ = TRUE)
 #'
-#' @import data.table SummarizedExperiment
+#' @import SummarizedExperiment
+#' @importFrom data.table fread rbindlist
 #'
 #' @export
 readProteomeExperiment <- function(fileTable, fdrCut = 0.1, scoreCut = 10, pepNumCut = 1, ifLFQ = TRUE) {
@@ -595,8 +595,6 @@ readProteomeExperiment <- function(fileTable, fdrCut = 0.1, scoreCut = 10, pepNu
 #'
 #' @details
 #' This function processes DIA proteomics data for a single sample by filtering out rows with non-quantitative data, converting character values to numeric, and renaming columns for consistency. It also ensures that each protein group has a unique identifier.
-#'
-#' @import data.table
 readOneProteomDIA <- function(inputTab, sampleName) {
 
   sampleName <- make.names(sampleName)  # Make sample name syntactically valid
@@ -668,9 +666,9 @@ readOneProteomDIA <- function(inputTab, sampleName) {
 #' fileTable <- data.frame(type = "proteome", fileName = file, id = c("sample1", "sample2"))
 #' readProteomeExperimentDIA(fileTable)
 #'
-#' @import data.table
 #' @import BiocParallel
 #' @import SummarizedExperiment
+#' @importFrom data.table fread rbindlist
 #' @export
 readProteomeExperimentDIA <- function(fileTable, showProgressBar = FALSE) {
   # Select proteomics entries

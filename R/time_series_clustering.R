@@ -28,7 +28,6 @@
 #' @examples
 #' # Create a sample matrix (3 rows by 5 columns)
 #' sample_matrix <- matrix(c(1:15), nrow = 3, byrow = TRUE)
-#' print(sample_matrix)
 #'
 #' # Scale and center the matrix using the default settings
 #' mscale(sample_matrix, center = TRUE, scale = TRUE)

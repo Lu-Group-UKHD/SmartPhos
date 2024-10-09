@@ -38,7 +38,3 @@ A \code{tibble} with enrichment scores and associated statistics for each PTM se
 \details{
 This function runs GSEA on phosphorylation data to identify enriched PTM sets. It calculates enrichment scores and p-values for each set, normalizes the scores, and adjusts p-values for multiple testing.
 }
-\examples{
-# result <- runGSEAforPhospho(geneStat, ptmSetDb, nPerm, weight = 1, correl.type = "rank", statistic = "Kolmogorov-Smirnov", min.overlap = 5)
-
-}

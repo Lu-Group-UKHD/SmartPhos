@@ -41,7 +41,7 @@ runFisher <- function (genes, reference, inputSet, ptm = FALSE) {
   # Retrieve the gene sets
   if (!ptm) {
     genesets <- inputSet$gsc
-    setList <- seq_len(genesets)
+    setList <- 1:length(genesets)
   } else {
     # Filter and process the PTM-specific gene sets
     genesets <- inputSet %>%
@@ -225,9 +225,6 @@ clusterEnrich <- function(clusterTab, se, inputSet, reference = NULL, ptm = FALS
 #'
 #' @details
 #' This function runs GSEA on phosphorylation data to identify enriched PTM sets. It calculates enrichment scores and p-values for each set, normalizes the scores, and adjusts p-values for multiple testing.
-#'
-#' @examples
-#' # result <- runGSEAforPhospho(geneStat, ptmSetDb, nPerm, weight = 1, correl.type = "rank", statistic = "Kolmogorov-Smirnov", min.overlap = 5)
 #'
 #' @importFrom dplyr mutate rename filter count tibble as_tibble group_by ungroup arrange bind_rows
 #' @importFrom tidyr separate
@@ -448,7 +445,7 @@ runGSEAforPhospho <- function(geneStat, ptmSetDb, nPerm, weight = 1, correl.type
       arg.ES <- score.res$arg.ES
       RES <- score.res$RES
 
-      gsea.results <-  list(ES = ES, arg.ES = arg.ES, RES = RES, indicator = ind, correl.vector = correl.vector, step.up=up, step.down=1/Nm)
+      gsea.results <- list(ES = ES, arg.ES = arg.ES, RES = RES, indicator = ind, correl.vector = correl.vector, step.up=up, step.down=1/Nm)
     }
 
     return (gsea.results)

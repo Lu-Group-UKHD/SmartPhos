@@ -221,12 +221,6 @@ plotLogRatio <- function(maeData, normalization = FALSE) {
 #'
 #' @return A \code{character} vector of sample names that do not meet the overlap criteria.
 #'
-#' @examples
-#' # Example usage:
-#' # Assuming ratioMat is a matrix with appropriate data
-#' # excluded_samples <- checkRatioMat(ratioMat, minOverlap = 3)
-#' # print(excluded_samples)
-#'
 #' @export
 checkRatioMat <- function(ratioMat, minOverlap = 3) {
   # Initialize a list to keep track of excluded samples
@@ -288,12 +282,6 @@ checkRatioMat <- function(ratioMat, minOverlap = 3) {
 #'   \item Estimates the adjustment factor using parallel optimization.
 #'   \item Adjusts the phosphoproteome measurements using the estimated adjustment factor.
 #' }
-#'
-#' @examples
-#' # Example usage:
-#' # Assuming maeData is a MultiAssayExperiment object with appropriate data
-#' # adjusted_maeData <- runPhosphoAdjustment(maeData, normalization = TRUE, minOverlap = 3, completeness = 0.8, ncore = 2)
-#' # print(adjusted_maeData)
 #'
 #' @importFrom MultiAssayExperiment assay assays colData
 #' @importFrom matrixStats colMedians
@@ -368,14 +356,6 @@ runPhosphoAdjustment <- function(maeData, normalization = FALSE, minOverlap = 3,
 #'   \item Creates a trend line plot for features present in all samples.
 #'   \item Creates box plots of the PP/FP ratios and phosphorylation intensities before and after adjustment.
 #' }
-#'
-#' @examples
-#' # Example usage:
-#' # Assuming maeData is a MultiAssayExperiment object with appropriate data
-#' # plots <- plotAdjustmentResults(maeData, normalization = TRUE)
-#' # print(plots$ratioTrendPlot)
-#' # print(plots$ratioBoxplot)
-#' # print(plots$ppBoxplot)
 #'
 #' @importFrom MultiAssayExperiment assay assays colData
 #' @importFrom dplyr bind_rows filter group_by mutate summarise
