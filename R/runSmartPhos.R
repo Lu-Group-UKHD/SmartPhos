@@ -1,5 +1,5 @@
 #' @name runSmartPhos
-#' 
+#'
 #' @title Launch the SmartPhos Shiny Application
 #'
 #' @description
@@ -7,12 +7,12 @@
 #'
 #' @return The function does not return a value; it starts the Shiny application for \code{SmartPhos}.
 #' @details
-#' The \code{runSmartPhos} function locates the \code{Shiny} app directory within the \code{SmartPhos} package and launches the application. 
+#' The \code{runSmartPhos} function locates the \code{Shiny} app directory within the \code{SmartPhos} package and launches the application.
 #' If the app directory cannot be found, the function will stop and prompt the user to re-install the \code{SmartPhos} package.
 #' @export
 #' @examples
 #' # To run the SmartPhos Shiny application, simply call:
-#' runSmartPhos()
+#' # runSmartPhos()
 
 runSmartPhos <- function() {
   # Locate the Shiny app directory within the SmartPhos package

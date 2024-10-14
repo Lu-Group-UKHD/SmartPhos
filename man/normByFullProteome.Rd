@@ -28,3 +28,10 @@ The function performs the following steps:
   \item Replaces the phosphoproteome assay in the \code{MultiAssayExperiment} object or adds the normalized data as a new assay, depending on the \code{replace} parameter.
 }
 }
+\examples{
+# load mae object
+data("dia_example")
+# call the function
+normByFullProteome(dia_example)
+
+}
