@@ -28,7 +28,7 @@ Description:
     be downloaded as a log file. Our computational framework can help unleash the full potential of
     phosphoproteomic data in biomedical research by lowering the barrier of data analysis, especially
     for large data sets with complex designs, as well as by promoting reproducible research.
-License: GPL-3 + file LICENSE
+License: GPL-3
 biocViews: Visualization, ShinyApps, GUI, QualityControl, Proteomics, DifferentialExpression, Normalization, Preprocessing, GeneSetEnrichment, Clustering, GeneExpression,
       MassSpectrometry, BatchEffect
 Imports:
