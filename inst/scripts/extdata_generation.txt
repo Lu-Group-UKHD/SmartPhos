@@ -1,0 +1,5 @@
+All the .xls files in the inst/extdata directory are generated manually. It has no resemblance with any real experiments.
+
+To create the DIA files, Spectronaut user manual was used as a reference. Source: https://biognosys.com/content/uploads/2023/03/Spectronaut-17_UserManual.pdf
+
+To create the DDA files, MaxQuant user manual was used as a reference. Source: https://cox-labs.github.io/coxdocs/maxquant_instructions.html
