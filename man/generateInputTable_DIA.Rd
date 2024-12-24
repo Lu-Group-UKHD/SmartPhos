@@ -10,7 +10,7 @@ generateInputTable_DIA(rawFolder)
 \item{rawFolder}{A \code{character} string specifying the path to the folder containing the raw files.}
 }
 \value{
-A \code{data.frame} with columns fileName, type, and id that can be used as input for further analysis.
+A \code{data.frame} with columns fileName, searchType, and id that can be used as input for further analysis.
 }
 \description{
 \code{generateInputTable_DIA} generates an input table for DIA analysis by reading files from a specified folder.
@@ -21,6 +21,6 @@ The function performs the following steps:
   \item Reads the summary file containing experimental information.
   \item Generates unique experimental IDs based on sample type, treatment, timepoint, and replicate.
   \item Processes file paths for full proteome and phosphoproteome data.
-  \item Creates a combined input table with file names, types, and IDs.
+  \item Creates a combined input table with file names, search types, and IDs.
 }
 }

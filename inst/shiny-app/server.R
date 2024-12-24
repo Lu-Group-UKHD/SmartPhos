@@ -101,10 +101,10 @@ shinyServer(function(input, output, session) {
         stopifnot(c("sampleType", "id", "fileName") %in% colnames(fileTable))
         # rendering column annotation option for column annotations
         output$colAnnoBoxPreprocess <- renderUI({
-          # excluding type since it's already represented by two assays
+          # excluding searchType since it's already represented by two assays
           selectInput("colAnnoPreprocess", "Select additional column annotations:",
-                      colnames(fileTable)[colnames(fileTable) != "type"],
-                      selected = colnames(fileTable)[colnames(fileTable) != "type"], multiple = TRUE)
+                      colnames(fileTable)[colnames(fileTable) != "searchType"],
+                      selected = colnames(fileTable)[colnames(fileTable) != "searchType"], multiple = TRUE)
         })
       },
       error = function(e) {

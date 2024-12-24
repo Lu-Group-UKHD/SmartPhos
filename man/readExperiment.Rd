@@ -16,7 +16,7 @@ readExperiment(
 )
 }
 \arguments{
-\item{fileTable}{A \code{data.frame} containing information about the input files, including type, id, sample, and other annotations.}
+\item{fileTable}{A \code{data.frame} containing information about the input files, including searchType, id, sample, and other annotations.}
 
 \item{localProbCut}{\code{Numeric}, local probability cutoff for filtering phosphoproteomic data. Default is 0.75.}
 
@@ -53,7 +53,7 @@ file1 <- system.file("extdata", "phosDDA_1.xls", package = "SmartPhos")
 file2 <- system.file("extdata", "proteomeDDA_1.xls", package = "SmartPhos")
 # Create fileTable
 fileTable <- data.frame(
-   type = c("phosphoproteome", "proteome"),
+   searchType = c("phosphoproteome", "proteome"),
    fileName = c(file1, file2),
    sample = c("Sample1", "sample1"),
    id = c("s1", "s2")

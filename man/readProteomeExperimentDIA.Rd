@@ -7,7 +7,7 @@
 readProteomeExperimentDIA(fileTable, showProgressBar = FALSE)
 }
 \arguments{
-\item{fileTable}{A \code{data frame} containing metadata about the files to be read. Must contain columns type, fileName, id, and optionally outputID.}
+\item{fileTable}{A \code{data frame} containing metadata about the files to be read. Must contain columns searchType, fileName, id, and optionally outputID.}
 
 \item{showProgressBar}{\code{Logical}, whether to show a progress bar during processing. Default is \code{FALSE}.}
 }
@@ -16,7 +16,7 @@ A \code{SummarizedExperiment} object containing the processed proteome data.
 #' @details
 The function performs the following steps:
 \itemize{
-  \item Filters the `fileTable` to include only rows where `type` is "proteome".
+  \item Filters the `fileTable` to include only rows where `searchType` is "proteome".
   \item For each file specified in `fileTable`, reads the data using `data.table::fread`.
   \item Removes rows where the `PG.ProteinGroups` column is NA or empty.
   \item Processes each sample in parallel using `BiocParallel::bplapply`, applying the `readOneProteomDIA` function to filter and clean the data for each sample.
@@ -31,7 +31,7 @@ The \code{readOneProteomDIA} function is used to read and filter the data for ea
 }
 \examples{
 file <- system.file("extdata", "proteomeDIA_1.xls", package = "SmartPhos")
-fileTable <- data.frame(type = "proteome", fileName = file, id = c("sample1", "sample2"))
+fileTable <- data.frame(searchType = "proteome", fileName = file, id = c("sample1", "sample2"))
 readProteomeExperimentDIA(fileTable)
 
 }

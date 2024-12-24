@@ -13,7 +13,7 @@ readExperimentDIA(
 )
 }
 \arguments{
-\item{fileTable}{A \code{data frame} containing metadata about the files to be read. Must contain columns type, fileName, id, and optionally outputID.}
+\item{fileTable}{A \code{data frame} containing metadata about the files to be read. Must contain columns searchType, fileName, id, and optionally outputID.}
 
 \item{localProbCut}{\code{Numeric}, the local probability cutoff for phosphoproteomic data. Default is 0.75.}
 
@@ -45,7 +45,7 @@ file1 <- system.file("extdata", "phosDIA_1.xls", package = "SmartPhos")
 file2 <- system.file("extdata", "proteomeDIA_1.xls", package = "SmartPhos")
 # Create fileTable
 fileTable <- data.frame(
-   type = c("phosphoproteome", "proteome", "proteome"),
+   searchType = c("phosphoproteome", "proteome", "proteome"),
    fileName = c(file1, file2, file2),
    id = c("Sample_1", "sample1", "sample2"),
    outputID = c("s1", "s2", "s3")

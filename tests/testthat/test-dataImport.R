@@ -5,7 +5,7 @@ file1 <- system.file("extdata", "phosDIA_1.xls", package = "SmartPhos")
 file2 <- system.file("extdata", "proteomeDIA_1.xls", package = "SmartPhos")
 
 fileTable <- data.frame(
-  type = c("phosphoproteome", "proteome", "proteome"),
+  searchType = c("phosphoproteome", "proteome", "proteome"),
   fileName = c(file1, file2, file2),
   id = c("Sample_1", "sample1", "sample2"),
   outputID = c("s1", "s2", "s3")
@@ -29,7 +29,7 @@ test_that("readExperimentDIA processes both phosphoproteome and proteome data co
 test_that("readExperimentDIA handles missing phosphoproteome data", {
 
   fileTable <- data.frame(
-    type = c("proteome", "proteome"),
+    searchType = c("proteome", "proteome"),
     fileName = c(file2, file2),
     id = c("sample1", "sample2")
   )
@@ -46,7 +46,7 @@ test_that("readExperimentDIA handles missing phosphoproteome data", {
 test_that("readExperimentDIA handles missing proteome data", {
 
   fileTable <- data.frame(
-    type = c("phosphoproteome"),
+    searchType = c("phosphoproteome"),
     fileName = c(file1),
     id = c("Sample_1")
   )
@@ -69,7 +69,7 @@ file1 <- system.file("extdata", "phosDDA_1.xls", package = "SmartPhos")
 file2 <- system.file("extdata", "proteomeDDA_1.xls", package = "SmartPhos")
 
 fileTable <- data.frame(
-  type = c("phosphoproteome", "proteome"),
+  searchType = c("phosphoproteome", "proteome"),
   fileName = c(file1, file2),
   sample = c("Sample1", "sample1"),
   id = c("s1", "s2")
@@ -90,7 +90,7 @@ test_that("readExperiment processes both phosphoproteomic and proteomic data cor
 
 test_that("readExperiment handles missing phosphoproteomic data", {
   fileTable <- data.frame(
-    type = c("proteome"),
+    searchType = c("proteome"),
     fileName = c(file2),
     sample = c("sample1"),
     id = c("s1")
@@ -107,7 +107,7 @@ test_that("readExperiment handles missing phosphoproteomic data", {
 
 test_that("readExperiment handles missing proteomic data", {
   fileTable <- data.frame(
-    type = c("phosphoproteome"),
+    searchType = c("phosphoproteome"),
     fileName = c(file1),
     sample = c("Sample1"),
     id = c("s1")
@@ -124,7 +124,7 @@ test_that("readExperiment handles missing proteomic data", {
 
 test_that("readExperiment constructs sample annotations correctly", {
   fileTable2 <- data.frame(
-    type = c("phosphoproteome", "proteome"),
+    searchType = c("phosphoproteome", "proteome"),
     fileName = c(file1, file2),
     sample = c("Sample1", "sample1"),
     id = c("s1", "s2"),
@@ -148,25 +148,25 @@ create_mock_mae <- function() {
   # Create sample data
   phospho_data <- matrix(runif(20), nrow=4, ncol=5)
   proteo_data <- matrix(runif(20, 1, 2), nrow=4, ncol=5)
-  
+
   # Set column names to match sample names
   colnames(phospho_data) <- colnames(proteo_data) <- c("S1", "S2", "S3", "S4", "S5")
-  
+
   # Create sample annotations
   sample_data <- data.frame(sampleName = c("S1", "S2", "S3", "S4", "S5"),
                             sampleType = c("FullProteome", "FullProteome", "Phosphoproteome", "Phosphoproteome", "Phosphoproteome"))
   rownames(sample_data) <- colnames(phospho_data)
-  
+
   # Create row annotations
   row_data <- data.frame(UniprotID = paste0("P", 1:4))
-  
+
   # Create SummarizedExperiment objects
   ppe <- SummarizedExperiment(assays = list(counts = phospho_data), colData = sample_data, rowData = row_data)
   fpe <- SummarizedExperiment(assays = list(counts = proteo_data), colData = sample_data, rowData = row_data)
-  
+
   # Create MultiAssayExperiment
   mae <- MultiAssayExperiment(experiments = list(Phosphoproteome = ppe, Proteome = fpe), colData = sample_data)
-  
+
   return(mae)
 }
 
@@ -189,7 +189,7 @@ test_that("normByFullProteome checks for required assays", {
 test_that("normByFullProteome handles missing samples correctly", {
   mae <- create_mock_mae()
   colData(mae)$sampleType <- "Phosphoproteome"
-  
+
   expect_error(normByFullProteome(mae), "Proteome assay for the unenriched samples i.e., sampleType with FullProteome should be present")
 })
 

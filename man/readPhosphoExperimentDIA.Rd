@@ -12,7 +12,7 @@ readPhosphoExperimentDIA(
 )
 }
 \arguments{
-\item{fileTable}{A \code{data.table} or \code{data.frame} containing metadata about the files to read. Must include columns fileName, type, and optionally outputID.}
+\item{fileTable}{A \code{data.table} or \code{data.frame} containing metadata about the files to read. Must include columns fileName, searchType, and optionally outputID.}
 
 \item{localProbCut}{A \code{numeric} value specifying the cutoff for localization probability. Default is 0.75.}
 
@@ -31,7 +31,7 @@ This function processes phosphorylation data from DIA experiments by filtering b
 }
 \examples{
 file <- system.file("extdata", "phosDIA_1.xls", package = "SmartPhos")
-fileTable <- data.frame(type = "phosphoproteome", fileName = file, id = c("Sample_1"))
+fileTable <- data.frame(searchType = "phosphoproteome", fileName = file, id = c("Sample_1"))
 readPhosphoExperimentDIA(fileTable, localProbCut = 0.75, onlyReviewed = FALSE, showProgressBar = FALSE)
 
 }

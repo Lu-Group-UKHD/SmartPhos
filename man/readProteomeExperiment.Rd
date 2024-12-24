@@ -37,7 +37,7 @@ file1 <- system.file("extdata", "phosDDA_1.xls", package = "SmartPhos")
 file2 <- system.file("extdata", "proteomeDDA_1.xls", package = "SmartPhos")
 # Create fileTable
 fileTable <- data.frame(
-   type = c("phosphoproteome", "proteome"),
+   searchType = c("phosphoproteome", "proteome"),
    fileName = c(file1, file2),
    sample = c("Sample1", "sample1"),
    id = c("s1", "s2")

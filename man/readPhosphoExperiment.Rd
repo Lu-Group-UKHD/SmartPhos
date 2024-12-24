@@ -7,7 +7,7 @@
 readPhosphoExperiment(fileTable, localProbCut = 0.75, scoreDiffCut = 5)
 }
 \arguments{
-\item{fileTable}{A \code{data.table} or \code{data.frame} containing information about the files, including columns for file names, sample names, and other relevant metadata. It must include a column named "type" with value "phosphoproteome" for relevant entries.}
+\item{fileTable}{A \code{data.table} or \code{data.frame} containing information about the files, including columns for file names, sample names, and other relevant metadata. It must include a column named "searchType" with value "phosphoproteome" for relevant entries.}
 
 \item{localProbCut}{A \code{numeric} value specifying the cutoff for localization probability. Default is 0.75.}
 
@@ -27,7 +27,7 @@ file1 <- system.file("extdata", "phosDDA_1.xls", package = "SmartPhos")
 file2 <- system.file("extdata", "proteomeDDA_1.xls", package = "SmartPhos")
 # Create fileTable
 fileTable <- data.frame(
-   type = c("phosphoproteome", "proteome"),
+   searchType = c("phosphoproteome", "proteome"),
    fileName = c(file1, file2),
    sample = c("Sample1", "sample1"),
    id = c("s1", "s2")

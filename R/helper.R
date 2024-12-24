@@ -64,7 +64,7 @@ readOnePhos <- function(inputTab, sampleName, localProbCut = 0.75, scoreDiffCut 
 #' @description
 #' \code{readPhosphoExperiment} reads and processes phosphorylation experiment data from multiple files, filtering based on localization probability and score difference, and constructs a \code{SummarizedExperiment} object.
 #'
-#' @param fileTable A \code{data.table} or \code{data.frame} containing information about the files, including columns for file names, sample names, and other relevant metadata. It must include a column named "type" with value "phosphoproteome" for relevant entries.
+#' @param fileTable A \code{data.table} or \code{data.frame} containing information about the files, including columns for file names, sample names, and other relevant metadata. It must include a column named "searchType" with value "phosphoproteome" for relevant entries.
 #' @param localProbCut A \code{numeric} value specifying the cutoff for localization probability. Default is 0.75.
 #' @param scoreDiffCut A \code{numeric} value specifying the cutoff for score difference. Default is 5.
 #'
@@ -81,7 +81,7 @@ readOnePhos <- function(inputTab, sampleName, localProbCut = 0.75, scoreDiffCut 
 #' file2 <- system.file("extdata", "proteomeDDA_1.xls", package = "SmartPhos")
 #' # Create fileTable
 #' fileTable <- data.frame(
-#'    type = c("phosphoproteome", "proteome"),
+#'    searchType = c("phosphoproteome", "proteome"),
 #'    fileName = c(file1, file2),
 #'    sample = c("Sample1", "sample1"),
 #'    id = c("s1", "s2")
@@ -94,7 +94,7 @@ readPhosphoExperiment <- function(fileTable, localProbCut = 0.75, scoreDiffCut =
 
 
   # Select only phosphoproteomic entries
-  fileTable <- fileTable[fileTable$type == "phosphoproteome",]
+  fileTable <- fileTable[fileTable$searchType == "phosphoproteome",]
   if (nrow(fileTable) == 0) {
     return(NULL)
   }
@@ -279,7 +279,7 @@ readOnePhosDIA <- function(inputTab, sampleName, localProbCut = 0.75, removeDup 
 #' @description
 #' \code{readPhosphoExperimentDIA} reads and processes phosphorylation data from DIA experiments, applying filters for localization probability, and optionally including only reviewed proteins. It constructs a \code{SummarizedExperiment} object.
 #'
-#' @param fileTable A \code{data.table} or \code{data.frame} containing metadata about the files to read. Must include columns fileName, type, and optionally outputID.
+#' @param fileTable A \code{data.table} or \code{data.frame} containing metadata about the files to read. Must include columns fileName, searchType, and optionally outputID.
 #' @param localProbCut A \code{numeric} value specifying the cutoff for localization probability. Default is 0.75.
 #' @param onlyReviewed A \code{logical} value indicating whether to include only reviewed proteins. Default is \code{TRUE}.
 #' @param showProgressBar A \code{logical} value indicating whether to show a progress bar. Default is \code{FALSE}.
@@ -295,14 +295,14 @@ readOnePhosDIA <- function(inputTab, sampleName, localProbCut = 0.75, removeDup 
 #' @importFrom utils data
 #' @examples
 #' file <- system.file("extdata", "phosDIA_1.xls", package = "SmartPhos")
-#' fileTable <- data.frame(type = "phosphoproteome", fileName = file, id = c("Sample_1"))
+#' fileTable <- data.frame(searchType = "phosphoproteome", fileName = file, id = c("Sample_1"))
 #' readPhosphoExperimentDIA(fileTable, localProbCut = 0.75, onlyReviewed = FALSE, showProgressBar = FALSE)
 #'
 #' @export
 readPhosphoExperimentDIA <- function(fileTable, localProbCut = 0.75, onlyReviewed = TRUE,
                                      showProgressBar = FALSE) {
   # Select phosphoproteomic entries
-  fileTable <- fileTable[fileTable$type == "phosphoproteome",]
+  fileTable <- fileTable[fileTable$searchType == "phosphoproteome",]
   if (nrow(fileTable) == 0) {
     return(NULL)
   }
@@ -497,7 +497,7 @@ readOneProteom <- function(inputTab, sampleName, pepNumCut = 1, ifLFQ = TRUE) {
 #' file2 <- system.file("extdata", "proteomeDDA_1.xls", package = "SmartPhos")
 #' # Create fileTable
 #' fileTable <- data.frame(
-#'    type = c("phosphoproteome", "proteome"),
+#'    searchType = c("phosphoproteome", "proteome"),
 #'    fileName = c(file1, file2),
 #'    sample = c("Sample1", "sample1"),
 #'    id = c("s1", "s2")
@@ -511,7 +511,7 @@ readOneProteom <- function(inputTab, sampleName, pepNumCut = 1, ifLFQ = TRUE) {
 #' @export
 readProteomeExperiment <- function(fileTable, fdrCut = 0.1, scoreCut = 10, pepNumCut = 1, ifLFQ = TRUE) {
   # Select proteomics entries
-  fileTable <- fileTable[fileTable$type == "proteome",]
+  fileTable <- fileTable[fileTable$searchType == "proteome",]
   if (nrow(fileTable) == 0) {
     return(NULL)
   }
@@ -644,14 +644,14 @@ readOneProteomDIA <- function(inputTab, sampleName) {
 #' @description
 #' \code{readProteomeExperimentDIA} reads and processes DIA (Data-Independent Acquisition) proteome data from multiple files and constructs a \code{SummarizedExperiment} object.
 #'
-#' @param fileTable A \code{data frame} containing metadata about the files to be read. Must contain columns type, fileName, id, and optionally outputID.
+#' @param fileTable A \code{data frame} containing metadata about the files to be read. Must contain columns searchType, fileName, id, and optionally outputID.
 #' @param showProgressBar \code{Logical}, whether to show a progress bar during processing. Default is \code{FALSE}.
 #'
 #' @return A \code{SummarizedExperiment} object containing the processed proteome data.
 #' #' @details
 #' The function performs the following steps:
 #' \itemize{
-#'   \item Filters the `fileTable` to include only rows where `type` is "proteome".
+#'   \item Filters the `fileTable` to include only rows where `searchType` is "proteome".
 #'   \item For each file specified in `fileTable`, reads the data using `data.table::fread`.
 #'   \item Removes rows where the `PG.ProteinGroups` column is NA or empty.
 #'   \item Processes each sample in parallel using `BiocParallel::bplapply`, applying the `readOneProteomDIA` function to filter and clean the data for each sample.
@@ -663,7 +663,7 @@ readOneProteomDIA <- function(inputTab, sampleName) {
 #'
 #' @examples
 #' file <- system.file("extdata", "proteomeDIA_1.xls", package = "SmartPhos")
-#' fileTable <- data.frame(type = "proteome", fileName = file, id = c("sample1", "sample2"))
+#' fileTable <- data.frame(searchType = "proteome", fileName = file, id = c("sample1", "sample2"))
 #' readProteomeExperimentDIA(fileTable)
 #'
 #' @import BiocParallel
@@ -672,7 +672,7 @@ readOneProteomDIA <- function(inputTab, sampleName) {
 #' @export
 readProteomeExperimentDIA <- function(fileTable, showProgressBar = FALSE) {
   # Select proteomics entries
-  fileTable <- fileTable[fileTable$type == "proteome",]
+  fileTable <- fileTable[fileTable$searchType == "proteome",]
   if (nrow(fileTable) == 0) {
     return(NULL)
   }

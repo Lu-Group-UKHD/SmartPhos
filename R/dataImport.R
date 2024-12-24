@@ -7,7 +7,7 @@
 #'
 #' @param rawFolder A \code{character} string specifying the path to the folder containing the raw files.
 #' @param batchAsFolder A \code{logical} value indicating whether to treat subdirectories as separate batches. Default is \code{FALSE}.
-#' @return A \code{data.frame} with columns fileName, sample, type, batch, and id that can be used as input for further analysis.
+#' @return A \code{data.frame} with columns fileName, sample, searchType, batch, and id that can be used as input for further analysis.
 #' @details
 #' The function performs the following steps:
 #' \itemize{
@@ -15,7 +15,7 @@
 #'   \item Reads the summary file containing experimental information.
 #'   \item Generates unique experimental IDs based on batch and sample names.
 #'   \item Processes file paths for full proteome and phosphoproteome data.
-#'   \item Creates a combined input table with file names, sample names, types, batches, and IDs.
+#'   \item Creates a combined input table with file names, sample names, search types, batches, and IDs.
 #' }
 #'
 #' @importFrom utils read.delim
@@ -46,12 +46,12 @@ generateInputTable <- function(rawFolder, batchAsFolder = FALSE) {
         # Create a data frame for full proteome files
         fullTab <- data.frame(fileName = rep(file.path(folderPath,"proteinGroups.txt"),length(sampleName)))
         fullTab$sample <- sampleName
-        fullTab$type <- "proteome"
+        fullTab$searchType <- "proteome"
 
         # Create a data frame for phosphoproteome files
         phosphoTab <- data.frame(fileName = rep(file.path(folderPath,"Phospho(STY)Sites.txt"),length(sampleName)))
         phosphoTab$sample <- sampleName
-        phosphoTab$type <- "phosphoproteome"
+        phosphoTab$searchType <- "phosphoproteome"
 
         # Combine the full proteome and phosphoproteome tables
         inputTab <- rbind(fullTab, phosphoTab)
@@ -75,14 +75,14 @@ generateInputTable <- function(rawFolder, batchAsFolder = FALSE) {
 #' \code{generateInputTable_DIA} generates an input table for DIA analysis by reading files from a specified folder.
 #'
 #' @param rawFolder A \code{character} string specifying the path to the folder containing the raw files.
-#' @return A \code{data.frame} with columns fileName, type, and id that can be used as input for further analysis.
+#' @return A \code{data.frame} with columns fileName, searchType, and id that can be used as input for further analysis.
 #' @details
 #' The function performs the following steps:
 #' \itemize{
 #'   \item Reads the summary file containing experimental information.
 #'   \item Generates unique experimental IDs based on sample type, treatment, timepoint, and replicate.
 #'   \item Processes file paths for full proteome and phosphoproteome data.
-#'   \item Creates a combined input table with file names, types, and IDs.
+#'   \item Creates a combined input table with file names, search types, and IDs.
 #' }
 #'
 #' @importFrom utils read.delim
@@ -108,14 +108,14 @@ generateInputTable_DIA <- function(rawFolder) {
     getFileFP <- list.files(rawFolder, pattern = "*Protein Report.xls")
     # Create a data frame for full proteome files
     fullTab <- data.frame(fileName = rep(file.path(rawFolder, getFileFP), length(id)))
-    fullTab$type <- "proteome"
+    fullTab$searchType <- "proteome"
     fullTab$id <- id
 
     # List all files in the rawFolder with pattern "*PTM Report2.xls"
     getFilePhospho <- list.files(rawFolder, pattern = "*PTM Report2.xls")
     # Create a data frame for phosphoproteome files
     phosphoTab <- data.frame(fileName = rep(file.path(rawFolder, getFilePhospho), length(id)))
-    phosphoTab$type <- "phosphoproteome"
+    phosphoTab$searchType <- "phosphoproteome"
     phosphoTab$id <- id
 
     # Combine the full proteome and phosphoproteome tables into a single input table
@@ -132,7 +132,7 @@ generateInputTable_DIA <- function(rawFolder) {
 #' @description
 #' \code{readExperiment} reads and processes DDA (Data-Dependent Acquisition) phosphoproteomic and proteomic data from a given file table, and returns a \code{MultiAssayExperiment} object.
 #'
-#' @param fileTable A \code{data.frame} containing information about the input files, including type, id, sample, and other annotations.
+#' @param fileTable A \code{data.frame} containing information about the input files, including searchType, id, sample, and other annotations.
 #' @param localProbCut \code{Numeric}, local probability cutoff for filtering phosphoproteomic data. Default is 0.75.
 #' @param scoreDiffCut \code{Numeric}, score difference cutoff for filtering phosphoproteomic data. Default is 5.
 #' @param fdrCut \code{Numeric}, false discovery rate cutoff for filtering proteomic data. Default is 0.1.
@@ -158,7 +158,7 @@ generateInputTable_DIA <- function(rawFolder) {
 #' file2 <- system.file("extdata", "proteomeDDA_1.xls", package = "SmartPhos")
 #' # Create fileTable
 #' fileTable <- data.frame(
-#'    type = c("phosphoproteome", "proteome"),
+#'    searchType = c("phosphoproteome", "proteome"),
 #'    fileName = c(file1, file2),
 #'    sample = c("Sample1", "sample1"),
 #'    id = c("s1", "s2")
@@ -206,7 +206,7 @@ readExperiment <- function(fileTable, localProbCut = 0.75, scoreDiffCut = 5, fdr
 #' @description
 #' \code{readExperimentDIA} reads and processes DIA (Data-Independent Acquisition) data for both phosphoproteome and proteome experiments, and constructs a \code{MultiAssayExperiment} object.
 #'
-#' @param fileTable A \code{data frame} containing metadata about the files to be read. Must contain columns type, fileName, id, and optionally outputID.
+#' @param fileTable A \code{data frame} containing metadata about the files to be read. Must contain columns searchType, fileName, id, and optionally outputID.
 #' @param localProbCut \code{Numeric}, the local probability cutoff for phosphoproteomic data. Default is 0.75.
 #' @param annotation_col A \code{character} vector specifying the columns in fileTable to be used for sample annotation.
 #' @param onlyReviewed A \code{logical} value indicating whether to include only reviewed proteins. Default is \code{TRUE}.
@@ -228,7 +228,7 @@ readExperiment <- function(fileTable, localProbCut = 0.75, scoreDiffCut = 5, fdr
 #' file2 <- system.file("extdata", "proteomeDIA_1.xls", package = "SmartPhos")
 #' # Create fileTable
 #' fileTable <- data.frame(
-#'    type = c("phosphoproteome", "proteome", "proteome"),
+#'    searchType = c("phosphoproteome", "proteome", "proteome"),
 #'    fileName = c(file1, file2, file2),
 #'    id = c("Sample_1", "sample1", "sample2"),
 #'    outputID = c("s1", "s2", "s3")

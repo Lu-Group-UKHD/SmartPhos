@@ -95,7 +95,7 @@ test_that("readOnePhosDIA handles multiple samples correctly", {
 #################### Tests for readPhosphoExperimentDIA() ######################
 
 file <- system.file("extdata", "phosDIA_1.xls", package = "SmartPhos")
-fileTable <- data.table::data.table(type = "phosphoproteome", fileName = file,
+fileTable <- data.table::data.table(searchType = "phosphoproteome", fileName = file,
                         id = c("Sample_1"))
 
 test_that("readPhosphoExperimentDIA processes data correctly", {
@@ -120,7 +120,7 @@ test_that("readPhosphoExperimentDIA handles no rows passing filters", {
 })
 
 file <- system.file("extdata", "phosDIA_2.xls", package = "SmartPhos")
-fileTable <- data.table::data.table(type = "phosphoproteome", fileName = file, id = c("Sample_1"))
+fileTable <- data.table::data.table(searchType = "phosphoproteome", fileName = file, id = c("Sample_1"))
 
 test_that("readPhosphoExperimentDIA handles missing PG.ProteinGroups and PG.UniProtIds", {
 
@@ -231,7 +231,7 @@ test_that("readOneProteomDIA ensures unique identifiers with no duplicates", {
 
 
 file <- system.file("extdata", "proteomeDIA_1.xls", package = "SmartPhos")
-fileTable <- data.table::data.table(type = "proteome", fileName = file, id = c("sample1", "sample2"))
+fileTable <- data.table::data.table(searchType = "proteome", fileName = file, id = c("sample1", "sample2"))
 # Test cases
 test_that("readProteomeExperimentDIA returns a SummarizedExperiment", {
 
@@ -251,7 +251,7 @@ test_that("readProteomeExperimentDIA correctly filters and processes the input d
 
 
 test_that("readProteomeExperimentDIA returns NULL when no proteome data is present", {
-  fileTable <- data.table::data.table(type = "phosphoproteome", mfileName = file, id = "sample1")
+  fileTable <- data.table::data.table(searchType = "phosphoproteome", mfileName = file, id = "sample1")
 
   result <- readProteomeExperimentDIA(fileTable)
 
@@ -262,7 +262,7 @@ test_that("readProteomeExperimentDIA throws an error when no proteins pass the t
 
   file <- system.file("extdata", "proteomeDIA_2.xls", package = "SmartPhos")
 
-  fileTable <- data.table::data.table(type = "proteome", fileName = file, id = "sample1")
+  fileTable <- data.table::data.table(searchType = "proteome", fileName = file, id = "sample1")
 
   expect_error(readProteomeExperimentDIA(fileTable),
                "No proteins could pass the specified threshold in any sample!")
