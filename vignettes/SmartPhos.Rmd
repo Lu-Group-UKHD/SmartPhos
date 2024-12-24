@@ -132,6 +132,11 @@ dea <- performDifferentialExp(se = newSE, assay = "imputed", method = "limma", c
 
 ‘dea’ is a list object which contains two values: ‘resDE’ with tabular differential expression analysis results and ‘seSub’ which is the subsetted SummarizedExperiment object based on the selected condition. 
 
+```{r}
+dea$seSub
+dea$resDE
+```
+
 Plot the volcano plot for the obtained differential expression analysis results by running the following command:
 ```{r}
 plotVolcano(dea$resDE)
@@ -142,7 +147,7 @@ plotVolcano(dea$resDE)
 
 Use plotBox() to plot the intensity data of a specified gene, with optional subject-specific lines:
 ```{r}
-#plotBox(se = dea$seSub, id = 's3878', symbol = "EGFR")
+plotBox(se = dea$seSub, id = 's447', symbol = "WASL")
 ```
 
 
