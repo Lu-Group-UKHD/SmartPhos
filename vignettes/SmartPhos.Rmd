@@ -99,7 +99,9 @@ This is performed on the original assay and not on the imputed assay.
 
 Perform principal component analysis (PCA) by running the following command:
 ```{r}
+# perform PCA
 pca <- stats::prcomp(t(assays(newSE)[["imputed"]]), center = TRUE, scale. = TRUE)
+# call the plotting function
 p <- plotPCA(pca = pca, se = newSE, color = "replicate")
 p
 ```
@@ -121,10 +123,12 @@ The goal of performing differential expression analysis is to quantify the expre
 
 If the users want paired t-test on the patient IDs, cell lines, etc, then the users must have **subjectID** as one of the column in the *fileTable.txt* file with the relevant information. The subjectID column should also be selected in the additional column annotations before the generation of multiAssayExperiment object. 
 
-The two methods available for performing differential expression analysis are:
+The *performDifferentialExp()* has two methods for performing differential expression analysis:
 
 * **limma**: uses linear models.
 * **ProDA**: uses probabilistic dropout model.
+
+Limma method needs an assay with non-missing data and is faster than the proDA method. ProDA method can work on assay with missing values also.
 
 ```{r message=FALSE}
 dea <- performDifferentialExp(se = newSE, assay = "imputed", method = "limma", condition = "treatment", reference = "EGF", target = "1stCrtl")
@@ -149,6 +153,36 @@ Use plotBox() to plot the intensity data of a specified gene, with optional subj
 ```{r}
 plotBox(se = dea$seSub, id = 's447', symbol = "WASL")
 ```
+
+# Time series clustering
+
+Time series clustering is performed to group proteins/phosphopeptides based on how their level changes over time. The *clusterTS()* function employs **fuzzy c-means clustering** algorithm which considers the time-resolved trend, but not the expression levels. Thus, members of the same cluster would have a similar trend over time (e.g., all increasing or all decreasing), though their expression level can be different.
+
+To use this function, users must have logitudinal data with **timepoint** annotation in their data. The time points are either unit-less numbers (e.g., 1, 2, 3) or are in hour and/or minute, which must be typed as "h" and "min", respectively (e.g., 1min, 2min, 3h). Please notice that mixing the two said options (e.g., 1, 2min, 3) or using other unit for time (e.g., 1hour, 2minute, 3day) will likely lead to wrong results. 
+
+```{r}
+# call addZeroTime function to add zero timepoint to EGF treatment
+newSEzero <- addZeroTime(newSE, condition = "treatment", treat = "EGF", zeroTreat = "1stCrtl", timeRange = c("10min","100min", "24h"))
+# extract the assay
+exprMat <- SummarizedExperiment::assay(newSEzero)
+# call the clustering function
+tsc <- clusterTS(x = exprMat, k = 5)
+```
+
+‘tsc’ is a list object which contains two values: ‘cluster’ with tabular time series clustering results and ‘plot’ with the clusters plots. 
+
+```{r}
+tsc$cluster
+tsc$plot
+```
+
+A single gene or phospho-site time series data can also be plotted:
+```{r}
+timerange <- unique(newSEzero$timepoint)
+plotTimeSeries(newSEzero, type = "expression", geneID = "s40", symbol = "RBM47_T519", condition = "treatment", treatment = "EGF", timerange = timerange)
+```
+
+
 
 
 

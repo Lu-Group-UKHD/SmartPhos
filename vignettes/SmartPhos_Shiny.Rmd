@@ -293,7 +293,7 @@ knitr::include_graphics("images/errorDEA.png")
 
 # Time series clustering
 
-This tab performs **fuzzy c-means clustering** to group proteins/phosphopeptides based on how their level changed over time. The algorithm considers the time-resolved trend, but not the expression levels. Thus, members of the same cluster would have a similar trend over time (e.g., all increasing or all decreasing), though their expression level can be different.
+This tab performs **fuzzy c-means clustering** to group proteins/phosphopeptides based on how their level changes over time. The algorithm considers the time-resolved trend, but not the expression levels. Thus, members of the same cluster would have a similar trend over time (e.g., all increasing or all decreasing), though their expression level can be different.
 
 To use this tab, users must specify the **timepoint** column in the **fileTable.txt** file when preparing the data. The time points are either unit-less numbers (e.g., 1, 2, 3) or are in hour and/or minute, which must be typed as "h" and "min", respectively (e.g., 1min, 2min, 3h). Please notice that mixing the two said options (e.g., 1, 2min, 3) or using other unit for time (e.g., 1hour, 2minute, 3day) will likely lead to wrong results.   
 
