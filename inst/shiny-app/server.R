@@ -717,6 +717,7 @@ shinyServer(function(input, output, session) {
     }
   })
 
+  # UI for the choice of using subjectID
   output$pairedTdea <- renderUI({
       if(!is.null(processedData()$subjectID)) {
           checkboxInput("subjectIDdea", "Perform paired t-test", FALSE)
@@ -1074,6 +1075,13 @@ shinyServer(function(input, output, session) {
     }
   })
 
+  # UI for the choice of using subjectID
+  output$pairedTtsc <- renderUI({
+      if(!is.null(processedData()$subjectID)) {
+          checkboxInput("subjectIDtsc", "Perform paired t-test", FALSE)
+      }
+  })
+
   exprMatObj <- reactive({
     # Processing with selecting expression (i.e. only 1 condition)
     if (input$clusterFor == "expression") {
@@ -1099,7 +1107,7 @@ shinyServer(function(input, output, session) {
       if (input$ifFilterFit) {
         inputsValue$pSpline <- input$pSpline
         inputsValue$ifSplineFdr <- input$ifSplineFdr
-        if (!is.null(processedDataSub$subjectID)) {
+        if (input$subjectIDtsc) {
           assayMat <- splineFilter(assayMat,
                                    subjectID = processedDataSub$subjectID,
                                    time = processedDataSub$timepoint,
@@ -1168,7 +1176,7 @@ shinyServer(function(input, output, session) {
       RefMat <- assay(processedDataRef)
       # calculate fold change by subtracting assayMat to mean intensities of RefMat
       # here the mean intensities in RefMat are calculated per time point or per time point and subject ID.
-      if (!is.null(processedData()$subjectID)) {
+      if (input$subjectIDtsc) {
         fcMat <- lapply(unique(processedDataSub$timepoint), function(tp) {
           lapply(unique(processedDataSub$subjectID), function(id) {
             RefMean = rowMeans(RefMat[,processedDataRef$timepoint == tp &
@@ -1190,7 +1198,7 @@ shinyServer(function(input, output, session) {
       if (input$ifFilterFit) {
         inputsValue$pSpline <- input$pSpline
         inputsValue$ifSplineFdr <- input$ifSplineFdr
-        if (!is.null(processedDataSub$subjectID)) {
+        if (input$subjectIDtsc) {
           fcMat <- splineFilter(fcMat, subjectID = processedDataSub$subjectID,
                                 time = processedDataSub$timepoint,
                                 df = length(unique(processedDataSub$timepoint))-1,
@@ -1283,7 +1291,7 @@ shinyServer(function(input, output, session) {
       if (input$ifFilterFit) {
         inputsValue$pSpline <- input$pSpline
         inputsValue$ifSplineFdr <- input$ifSplineFdr
-        if (!is.null(processedDataSub$subjectID)) {
+        if (input$subjectIDtsc) {
           assayMat <- splineFilter(assayMat, subjectID = processedDataSub$subjectID,
                                    time = processedDataSub$timepoint,
                                    treatment = processedDataSub[[input$seleMetaColTime]],
