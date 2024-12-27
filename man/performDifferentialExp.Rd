@@ -12,7 +12,8 @@ performDifferentialExp(
   reference,
   target,
   refTime = NULL,
-  targetTime = NULL
+  targetTime = NULL,
+  pairedTtest = FALSE
 )
 }
 \arguments{
@@ -31,6 +32,8 @@ performDifferentialExp(
 \item{refTime}{A \code{character} string or vector specifying the reference time points. Default is \code{NULL}.}
 
 \item{targetTime}{A \code{character} string or vector specifying the target time points. Default is \code{NULL}.}
+
+\item{pairedTtest}{A \code{logical} value specifying to perform paired t-test or not. Default is \code{FALSE}.}
 }
 \value{
 A list containing:

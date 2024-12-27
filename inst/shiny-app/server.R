@@ -717,6 +717,12 @@ shinyServer(function(input, output, session) {
     }
   })
 
+  output$pairedTdea <- renderUI({
+      if(!is.null(processedData()$subjectID)) {
+          checkboxInput("subjectIDdea", "Perform paired t-test", FALSE)
+      }
+  })
+
   output$seleMethodBox <- renderUI({
     allowChoice <- c("limma", "ProDA")
     radioButtons("deMethod", "Select DE method", allowChoice, inline = TRUE)
@@ -751,7 +757,8 @@ shinyServer(function(input, output, session) {
           de <- performDifferentialExp(se = processedData(), assay = "Intensity",
                                        method = input$deMethod,
                                        reference = input$seleID1,
-                                       target = input$seleID2)
+                                       target = input$seleID2,
+                                       pairedTtest = input$subjectIDdea)
         }
         else {
           inputsValue$seleMetaColDiff <- input$seleMetaColDiff
@@ -767,7 +774,8 @@ shinyServer(function(input, output, session) {
                                          reference = input$seleTreat1,
                                          target = input$seleTreat2,
                                          refTime = input$seleTime1,
-                                         targetTime = input$seleTime2)
+                                         targetTime = input$seleTime2,
+                                         pairedTtest = input$subjectIDdea)
           }
           else {
             de <- performDifferentialExp(se = processedData(),
@@ -775,7 +783,8 @@ shinyServer(function(input, output, session) {
                                          method = input$deMethod,
                                          condition = input$seleMetaColDiff,
                                          reference = input$seleTreat1,
-                                         target = input$seleTreat2)
+                                         target = input$seleTreat2,
+                                         pairedTtest = input$subjectIDdea)
           }
         }
         inputsValue$deMethod <- input$deMethod

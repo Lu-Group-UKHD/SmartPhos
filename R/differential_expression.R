@@ -13,6 +13,7 @@
 #' @param target A \code{character} string or vector specifying the target group.
 #' @param refTime A \code{character} string or vector specifying the reference time points. Default is \code{NULL}.
 #' @param targetTime A \code{character} string or vector specifying the target time points. Default is \code{NULL}.
+#' @param pairedTtest A \code{logical} value specifying to perform paired t-test or not. Default is \code{FALSE}.
 #'
 #' @return A list containing:
 #' \item{resDE}{A \code{tibble} with the differential expression results.}
@@ -56,7 +57,7 @@
 #' performDifferentialExp(se = result, assay = "Intensity", method = "limma", reference = "1stCrtl", target = "EGF", condition = "treatment")
 #'
 #' @export
-performDifferentialExp <- function(se, assay, method = "limma", condition = NULL, reference, target, refTime = NULL, targetTime = NULL) {
+performDifferentialExp <- function(se, assay, method = "limma", condition = NULL, reference, target, refTime = NULL, targetTime = NULL, pairedTtest = FALSE) {
 
   # Stop if method is other than limma or proDA
   if (!(method %in% c("limma", "ProDA"))) stop("Invalid method!! Provide either limma or ProDA")
@@ -94,10 +95,10 @@ performDifferentialExp <- function(se, assay, method = "limma", condition = NULL
   colData <- data.frame(colData(seqMat))
 
   # Create the design matrix for the differential expression analysis
-  if(is.null(seSub$subjectID)) {
-    design <- model.matrix(~ comparison, data = colData)
-  } else {
+  if(!is.null(seSub$subjectID) && pairedTtest) {
     design <- model.matrix(~ subjectID + comparison, data = colData)
+  } else {
+    design <- model.matrix(~ comparison, data = colData)
   }
   # Get the names of the design matrix columns
   resNames <- colnames(design)
