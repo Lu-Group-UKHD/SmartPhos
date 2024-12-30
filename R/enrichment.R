@@ -102,6 +102,142 @@ runFisher <- function (genes, reference, inputSet, ptm = FALSE) {
 }
 
 
+#' @name enrichDifferential
+#'
+#' @title Perform Enrichment analysis on differentially expressed genes or phospho-sites
+#'
+#' @description
+#' \code{enrichDifferential} performs enrichment analysis on differentially expressed
+#' genes and phospho-sites for either pathway or phospho-specific enrichment, depending
+#' on the input parameters. It supports multiple statistical methods such as PAGE and
+#' GSEA for pathway enrichment and a Kolmogorov-Smirnov approach for phospho-enrichment.
+#'
+#' @param dea A \code{data frame} containing the differential expression analysis results. It should include columns like
+#'   `pvalue`, `Gene` (or `site`), `stat`, and `log2FC`.
+#' @param type A \code{character} string indicating the type of enrichment. Options are `"Pathway enrichment"` or `"Phospho enrichment"`.
+#' @param gsaMethod A \code{character} string specifying the gene set analysis method for pathway enrichment. Options are `"PAGE"` or `"GSEA"`.
+#' @param geneSet A gene set collection to use for pathway enrichment.
+#' @param ptmSet A post-translational modification (PTM) set database for phospho-enrichment analysis.
+#' @param statType A \code{character} string specifying the statistic type to use. Options are `"stat"` or `"log2FC"`.
+#' @param nPerm A \code{numeric} specifying the number of permutations for GSEA. Default is 100.
+#' @param sigLevel A \code{numeric} value representing the significance threshold for filtering results. Ddefault is 0.05.
+#' @param ifFDR A \code{logical} value indicating whether to filter results using FDR-adjusted p-values. Default is `FALSE`.
+#'
+#' @return A data frame containing the results of the enrichment analysis, including columns such as the gene set name,
+#'   statistical significance, and adjusted p-values.
+#'
+#' @details
+#' The `enrichDifferential` function performs either pathway enrichment or phospho-enrichment analysis based on the `type` parameter.
+#' For pathway enrichment, it uses either the PAGE or GSEA method with a provided gene set collection. For phospho-enrichment,
+#' it uses a Kolmogorov-Smirnov test with a PTM set database. Results can be filtered by significance level and optionally adjusted for FDR.
+#'
+#' @importFrom dplyr filter arrange select
+#' @importFrom piano runGSA GSAsummaryTable
+#'
+#' @export
+#'
+#' @examples
+enrichDifferential <- function(dea, type, gsaMethod, geneSet, ptmSet, statType, nPerm = 100, sigLevel = 0.05, ifFDR = FALSE) {
+    if (type == "Pathway enrichment") {
+        # Prepare data for pathway enrichment by filtering and sorting
+        corTab <- dea %>%
+            arrange(pvalue) %>%
+            filter(!duplicated(Gene)) %>% # Remove duplicates by gene
+            arrange(stat)
+
+        # Select appropriate statistic column for analysis
+        if(statType == "stat") {
+            myCoef <- data.frame(row.names = corTab$Gene,
+                                 stat = corTab$stat,
+                                 stringsAsFactors = FALSE)
+        }
+        else {
+            myCoef <- data.frame(row.names = corTab$Gene,
+                                 stat = corTab$log2FC,
+                                 stringsAsFactors = FALSE)
+        }
+
+        # Perform pathway enrichment analysis using the chosen method
+        if (gsaMethod == "PAGE") {
+            res <- runGSA(geneLevelStats = myCoef,
+                          geneSetStat = "page",
+                          adjMethod = "fdr",
+                          gsc = geneSet,
+                          signifMethod = 'nullDist')
+        }
+        else if (gseMethod == "GSEA") {
+            res <- runGSA(geneLevelStats = myCoef,
+                          geneSetStat = "gsea",
+                          adjMethod = "fdr",
+                          gsc = geneSet,
+                          signifMethod = 'geneSampling',
+                          nPerm = nPerm)
+        }
+
+        # Summarize the results into a table
+        resTab <- GSAsummaryTable(res)
+        colnames(resTab) <- c("Name", "Gene Number", "Stat", "p.up", "p.up.adj",
+                              "p.down", "p.down.adj", "Number up", "Number down")
+
+        # Filter results based on significance threshold
+        if(ifFDR) {
+            resTab <- filter(resTab,
+                             p.up.adj <= sigLevel | p.down.adj <= sigLevel) %>%
+                arrange(desc(Stat))
+        } else {
+            resTab <- filter(resTab,
+                             p.up <= sigLevel | p.down <= sigLevel) %>%
+                arrange(desc(Stat))
+        }
+    }
+    else {
+        # Prepare data for phospho-enrichment by filtering and sorting
+        corTab <- dea %>%
+            arrange(pvalue) %>%
+            filter(!duplicated(site)) %>% # Remove duplicates by site
+            arrange(desc(stat))
+
+        # Select appropriate statistic column for analysis
+        if (statType == "stat") {
+            myCoef <- data.frame(row.names = corTab$site,
+                                 stat = corTab$stat,
+                                 stringsAsFactors = FALSE)
+        } else if (statType == "log2FC") {
+            myCoef <- data.frame(row.names = corTab$site,
+                                 stat = corTab$log2FC,
+                                 stringsAsFactors = FALSE)
+        }
+
+        # Perform phospho-enrichment analysis using the Kolmogorov-Smirnov test
+        resTab <- runGSEAforPhospho(geneStat = myCoef, ptmSetDb = ptmSet,
+                                    nPerm =  nPerm,
+                                    weight = 1, correl.type = "rank",
+                                    statistic = "Kolmogorov-Smirnov",
+                                    min.overlap = 5) %>%
+            as.data.frame()
+
+        # Rename columns for clarity
+        colnames(resTab) <- c("Name", "Site.number", "Stat", "Number.pSite.Db", "Number.PTM.site.Db",
+                              "pvalue", "Number.up", "Number.down", "padj")
+
+        # Rearrange columns in a specific order
+        resTab <- resTab %>%
+            select(Name,Site.number,Stat,Number.up,Number.down,Number.pSite.Db,
+                   Number.PTM.site.Db, pvalue, padj) # rearrange column order
+
+        # Filter results based on significance threshold
+        if (ifFDR) {
+            resTab <- filter(resTab, padj <= sigLevel) %>%
+                arrange(desc(Stat))
+        } else {
+            resTab <- filter(resTab, pvalue <= sigLevel) %>%
+                arrange(desc(Stat))
+        }
+    }
+    return(resTab)
+}
+
+
 #' @name clusterEnrich
 #'
 #' @title Perform Cluster Enrichment Analysis

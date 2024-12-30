@@ -1544,60 +1544,21 @@ shinyServer(function(input, output, session) {
           }
           # method
           inputsValue$enrichMethod <- input$enrichMethod
-          gseMethod <- input$enrichMethod
           # parameters for GSEA
-          if (gseMethod == "GSEA") {
+          if (inputsValue$enrichMethod == "GSEA") {
             nPerm <- input$permNum
             inputsValue$permNum <- input$permNum
           }
-          # processing differential expression
-          corTab <- filterDE() %>%
-            arrange(pvalue) %>%
-            filter(!duplicated(Gene)) %>%
-            arrange(stat)
-          # gene level statistics based on user input
-          inputsValue$statType <- input$statType
-          if(input$statType == "stat") {
-            myCoef <- data.frame(row.names = corTab$Gene,
-                                 stat = corTab$stat,
-                                 stringsAsFactors = FALSE)
-          }
-          else {
-            myCoef <- data.frame(row.names = corTab$Gene,
-                                 stat = corTab$log2FC,
-                                 stringsAsFactors = FALSE)
-          }
-          # perform gene set analysis based on selected statistical GSA method
-          if (gseMethod == "PAGE") {
-            res <- runGSA(geneLevelStats = myCoef,
-                          geneSetStat = "page",
-                          adjMethod = "fdr",
-                          gsc = inGMT,
-                          signifMethod = 'nullDist')
-          }
-          else if (gseMethod == "GSEA") {
-            res <- runGSA(geneLevelStats = myCoef,
-                          geneSetStat = "gsea",
-                          adjMethod = "fdr",
-                          gsc = inGMT,
-                          signifMethod = 'geneSampling',
-                          nPerm = nPerm)
-          }
+          else nPerm <- NULL
 
-          resTab <- GSAsummaryTable(res)
-          colnames(resTab) <- c("Name", "Gene Number", "Stat", "p.up", "p.up.adj",
-                                "p.down", "p.down.adj", "Number up", "Number down")
-          if(input$ifEnrichFDR) {
-            resTab <- filter(resTab,
-                             p.up.adj <= input$sigLevel | p.down.adj <= input$sigLevel) %>%
-              arrange(desc(Stat))
-          } else {
-            resTab <- filter(resTab,
-                             p.up <= input$sigLevel | p.down <= input$sigLevel) %>%
-              arrange(desc(Stat))
-          }
-          # if all genes are filtered out: show a notification and set
-          # GSEres$resTab to NULL to avoid causing error later on
+          resTab <- enrichDifferential(dea = filterDE(),
+                                       type = input$analysisMethod,
+                                       gsaMethod = input$enrichMethod,
+                                       geneSet = inGMT,
+                                       statType = input$statType,
+                                       nPerm = nPerm,
+                                       sigLevel = input$sigLevel,
+                                       ifFDR = input$ifEnrichFDR)
           if (nrow(resTab) > 0) {
             GSEres$resTab <- resTab
           } else {
@@ -1609,7 +1570,7 @@ shinyServer(function(input, output, session) {
               footer = NULL
             ))}
           GSEres$resTab <- resTab
-          GSEres$resObj <- res
+          #GSEres$resObj <- res
           clickRecord$enrich <- FALSE
           clickRecord$gene <- FALSE
         })
@@ -1707,21 +1668,6 @@ shinyServer(function(input, output, session) {
       if (!is.null(filterDE())) {
         output$errMsg <- renderText("")
         withProgress(message = "Running enrichment analysis, please wait...", {
-          # preprocess the input dataframe
-          inputTab <- filterDE() %>%
-            arrange(pvalue) %>%
-            filter(!duplicated(site)) %>%
-            arrange(desc(stat))
-          # select to use either t-statistic or log2FC
-          if (input$statType == "stat") {
-            myCoef <- data.frame(row.names = inputTab$site,
-                                 stat = inputTab$stat,
-                                 stringsAsFactors = FALSE)
-          } else if (input$statType == "log2FC") {
-            myCoef <- data.frame(row.names = inputTab$site,
-                                 stat = inputTab$log2FC,
-                                 stringsAsFactors = FALSE)
-          }
           # retrieve the phosphodatabase
           if(input$selePTMSet == "select from available PTM set databases") {
             load(paste0("ptmset/", input$sigSetPTM))
@@ -1732,26 +1678,13 @@ shinyServer(function(input, output, session) {
                                    stringsAsFactors = FALSE)
           }
 
-          # perform GSEA
-          inputsValue$permNum <- input$permNum
-          resTab <- runGSEAforPhospho(geneStat = myCoef, ptmSetDb = ptmSetDb,
-                                      nPerm =  input$permNum,
-                                      weight = 1, correl.type = "rank",
-                                      statistic = "Kolmogorov-Smirnov",
-                                      min.overlap = 5) %>%
-            as.data.frame()
-          colnames(resTab) <- c("Name", "Site.number", "Stat", "Number.pSite.Db", "Number.PTM.site.Db",
-                                "pvalue", "Number.up", "Number.down", "padj")
-          resTab <- resTab %>%
-            select(Name,Site.number,Stat,Number.up,Number.down,Number.pSite.Db,
-                   Number.PTM.site.Db, pvalue, padj) # rearrange column order
-          if (input$ifEnrichFDR) {
-            resTab <- filter(resTab, padj <= input$sigLevel) %>%
-              arrange(desc(Stat))
-          } else {
-            resTab <- filter(resTab, pvalue <= input$sigLevel) %>%
-              arrange(desc(Stat))
-          }
+          resTab <- enrichDifferential(dea = filterDE(),
+                                       type = input$analysisMethod,
+                                       ptmSet = ptmSetDb,
+                                       statType = input$statType,
+                                       nPerm = input$permNum,
+                                       sigLevel = input$sigLevel,
+                                       ifFDR = input$ifEnrichFDR)
           # if all genes are filtered out: show a notification and set
           # GSEres$resTab to NULL to avoid causing error later on
           if (nrow(resTab) > 0) {

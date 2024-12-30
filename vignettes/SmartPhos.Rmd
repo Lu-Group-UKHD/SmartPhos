@@ -183,6 +183,3 @@ plotTimeSeries(newSEzero, type = "expression", geneID = "s40", symbol = "RBM47_T
 ```
 
 
-
-
-
