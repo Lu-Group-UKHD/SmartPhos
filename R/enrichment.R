@@ -131,12 +131,26 @@ runFisher <- function (genes, reference, inputSet, ptm = FALSE) {
 #' For pathway enrichment, it uses either the PAGE or GSEA method with a provided gene set collection. For phospho-enrichment,
 #' it uses a Kolmogorov-Smirnov test with a PTM set database. Results can be filtered by significance level and optionally adjusted for FDR.
 #'
+#' @examples
+#' # Load multiAssayExperiment object
+#' data("dia_example")
+#' # Get SummarizedExperiment object
+#' se <- dia_example[["Phosphoproteome"]]
+#' SummarizedExperiment::colData(se) <- SummarizedExperiment::colData(dia_example)
+#' # Preprocess the proteome assay
+#' result <- preprocessPhos(se, normalize = TRUE)
+#' # Call the function to perform differential expression analyis
+#' dea <- performDifferentialExp(se = result, assay = "Intensity", method = "limma", reference = "1stCrtl", target = "EGF", condition = "treatment")
+#' # Load the gene set
+#' genesetPath <- appDir <- system.file("shiny-app/geneset", package = "SmartPhos")
+#' inGMT <- piano::loadGSC(paste0(genesetPath,"/Cancer_Hallmark.gmt"),type="gmt")
+#' # Call the function
+#' resTab <- enrichDifferential(dea = dea$resDE, type = "Pathway enrichment", gsaMethod = "PAGE", geneSet = inGMT, statType = "stat", nPerm = 200, sigLevel = 0.05, ifFDR = FALSE)
+#'
 #' @importFrom dplyr filter arrange select
 #' @importFrom piano runGSA GSAsummaryTable
 #'
 #' @export
-#'
-#' @examples
 enrichDifferential <- function(dea, type, gsaMethod, geneSet, ptmSet, statType, nPerm = 100, sigLevel = 0.05, ifFDR = FALSE) {
     if (type == "Pathway enrichment") {
         # Prepare data for pathway enrichment by filtering and sorting
