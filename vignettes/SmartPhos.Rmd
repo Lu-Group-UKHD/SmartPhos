@@ -80,7 +80,8 @@ SmartPhos package performs some pre-filtering and preprocessing based on various
 
 The preprocessing (transformation, normalization, imputation, etc.) on the intensity assay can be performed by running the following command:
 ```{r message=FALSE}
-newSE <- preprocessPhos(seData = se, transform = "log2", normalize = TRUE, impute = "QRILC")
+newSE <- preprocessPhos(seData = se, transform = "log2", normalize = TRUE, 
+                        impute = "QRILC")
 ```
 
 
@@ -113,7 +114,8 @@ Heatmap can be plotted using the plotHeatmap() function of SmartPhos. There are 
 * **Selected time series cluster**: After performing the time-series clustering in another tab, users have option to plot the heatmap of the selected cluster.
 
 ```{r}
-plotHeatmap(type = "Top variant", newSE, top = 10, annotationCol = c("replicate", "treatment"))
+plotHeatmap(type = "Top variant", newSE, top = 10, 
+            annotationCol = c("replicate", "treatment"))
 ```
 
 
@@ -131,7 +133,9 @@ The *performDifferentialExp()* has two methods for performing differential expre
 Limma method needs an assay with non-missing data and is faster than the proDA method. ProDA method can work on assay with missing values also.
 
 ```{r message=FALSE}
-dea <- performDifferentialExp(se = newSE, assay = "imputed", method = "limma", condition = "treatment", reference = "EGF", target = "1stCrtl")
+dea <- performDifferentialExp(se = newSE, assay = "imputed", method = "limma", 
+                              condition = "treatment", reference = "EGF", 
+                              target = "1stCrtl")
 ```
 
 ‘dea’ is a list object which contains two values: ‘resDE’ with tabular differential expression analysis results and ‘seSub’ which is the subsetted SummarizedExperiment object based on the selected condition. 
@@ -162,7 +166,9 @@ To use this function, users must have logitudinal data with **timepoint** annota
 
 ```{r}
 # call addZeroTime function to add zero timepoint to EGF treatment
-newSEzero <- addZeroTime(newSE, condition = "treatment", treat = "EGF", zeroTreat = "1stCrtl", timeRange = c("10min","100min", "24h"))
+newSEzero <- addZeroTime(newSE, condition = "treatment", treat = "EGF", 
+                         zeroTreat = "1stCrtl", 
+                         timeRange = c("10min","100min", "24h"))
 # extract the assay
 exprMat <- SummarizedExperiment::assay(newSEzero)
 # call the clustering function
@@ -179,7 +185,64 @@ tsc$plot
 A single gene or phospho-site time series data can also be plotted:
 ```{r}
 timerange <- unique(newSEzero$timepoint)
-plotTimeSeries(newSEzero, type = "expression", geneID = "s40", symbol = "RBM47_T519", condition = "treatment", treatment = "EGF", timerange = timerange)
+plotTimeSeries(newSEzero, type = "expression", geneID = "s40", 
+               symbol = "RBM47_T519", condition = "treatment", 
+               treatment = "EGF", timerange = timerange)
 ```
 
+
+# Enrichment analysis
+
+Enrichment analysis can be performed on either gene sets (gene-centric) or post-translational modification signature sets (site-centric) that are differentially expressed or in a time-series cluster.
+
+In the latter, each set contains PTM site names with direction of regulation (up- or down-regulated) instead of gene names. Only phosphorylation sites will be considered since this pipeline supports proteomic and phosphoproteomic data. The gene sets and PTM signature sets are derived from the Molecular Signatures Database (Subramanian, Tamayo et al.,2005; Liberzon et al., 2011, Liberzon et al., 2015) and the PTM Signature Database version 2.0.0 (Krug et al., 2019), respectively. Users are encouraged to consult the PTMsigDB website (https://proteomics.broadapps.org/ptmsigdb/) and the paper of Krug et al. for details on how PTM signature sets were curated and their annotation.
+
+In gene-centric pathway enrichment, users can perform either Parametric Analysis of Gene Set Enrichment (PAGE) (Kim & Volsky, 2005) or Gene Set Enrichment Analysis (GSEA) (Subramanian, Tamayo et al.,2005) with Differential Expression analysis result. With Time series clustering result, we offer the Fisher's exact test. For phospho-signature enrichment on Differential Expression analysis result, we offer PTM-Signature Enrichment Analysis (PTM-SEA), a method adapted from GSEA by Krug et al. (2019) to be applicable with the PTM Signature Database. On time series clustering result, we offer the Fisher's exact test, in which each signature set is split into two, one containing upregulated and the other downregulated phosphosites.
+
+## Gene Enrichment analysis on differential expression analysis results
+
+```{r message=FALSE}
+# Load the gene set
+genesetPath <- system.file("shiny-app/geneset", package = "SmartPhos")
+inGMT <- piano::loadGSC(paste0(genesetPath,"/Cancer_Hallmark.gmt"), type="gmt")
+# Call the function
+resTab <- enrichDifferential(dea = dea$resDE, type = "Pathway enrichment", 
+                             gsaMethod = "PAGE", geneSet = inGMT, 
+                             statType = "stat", nPerm = 200, sigLevel = 0.05, 
+                             ifFDR = FALSE)
+resTab
+```
+
+## Gene Enrichment analysis on time-series results
+
+```{r message=FALSE}
+# Load the gene set
+genesetPath <- system.file("shiny-app/geneset", package = "SmartPhos")
+inGMT <- piano::loadGSC(paste0(genesetPath,"/Chemical_and_Genetic_Perturbations.gmt"), type="gmt")
+# Call the function
+clustEnr <- clusterEnrich(clusterTab = tsc$cluster,
+                          se = newSE, inputSet = inGMT,
+                          filterP = 0.05,
+                          ifFDR = FALSE)
+clustEnr
+```
+
+## Phospho Enrichment analysis on time-series results
+
+```{r message=FALSE}
+# Load the ptm set
+ptmsetPath <- system.file("shiny-app/ptmset", package = "SmartPhos")
+load(paste0(ptmsetPath, "/human_PTM.rda"))
+# Call the function
+clustEnr <- clusterEnrich(clusterTab = tsc$cluster, se = newSE, 
+                          inputSet = ptmSetDb, ptm = TRUE, filterP = 0.05,
+                          ifFDR = FALSE)
+clustEnr
+```
+
+# Session Info
+
+```{r}
+sessionInfo()
+```
 
