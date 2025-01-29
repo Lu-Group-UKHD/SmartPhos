@@ -5,7 +5,7 @@
 #' @description
 #' \code{getDecouplerNetwork} loads the kinase-substrate interaction network for a specified species from pre-defined files.
 #'
-#' @param speciesRef A \code{character} string specifying the species. Supported values are "Homo sapiens" and "Mus musculus". Default is "Homo_sapiens".
+#' @param speciesRef A \code{character} string specifying the species. Supported values are "Homo sapiens" and "Mus musculus". Default is "Homo sapiens".
 #'
 #' @return A \code{data frame} containing the kinase-substrate interaction network for the specified species.
 #'
@@ -18,7 +18,7 @@
 #'
 #' @importFrom utils read.table data
 #' @export
-getDecouplerNetwork <- function(speciesRef = "Homo_sapiens") {
+getDecouplerNetwork <- function(speciesRef = "Homo sapiens") {
 
   # load network of kinase-substrate interaction from omnipathR_kinase_network folder
   if (speciesRef == "Homo sapiens") {

@@ -4,10 +4,10 @@
 \alias{getDecouplerNetwork}
 \title{Load Kinase-Substrate Interaction Network}
 \usage{
-getDecouplerNetwork(speciesRef = "Homo_sapiens")
+getDecouplerNetwork(speciesRef = "Homo sapiens")
 }
 \arguments{
-\item{speciesRef}{A \code{character} string specifying the species. Supported values are "Homo sapiens" and "Mus musculus". Default is "Homo_sapiens".}
+\item{speciesRef}{A \code{character} string specifying the species. Supported values are "Homo sapiens" and "Mus musculus". Default is "Homo sapiens".}
 }
 \value{
 A \code{data frame} containing the kinase-substrate interaction network for the specified species.

@@ -241,6 +241,21 @@ clustEnr <- clusterEnrich(clusterTab = tsc$cluster, se = newSE,
 clustEnr
 ```
 
+# Kinase Activity Inference
+
+SmartPhos can perform kinase activity inference based on phosphopeptides that are differentially expressed or in a cluster. Similar to enrichment analysis, users would first need to perform either a differential expression analysis or time-series clustering and select a cluster of interest. 
+
+A network of kinase-phosphosite interactions is constructed using the package **OmnipathR** (Türei et al., 2021). Users can choose to construct this network with prior knowledge from either Homo sapiens (taxonomy ID = 9606) or Mus musculus (taxonomy ID = 10090).
+
+By combining prior knowledge about known kinase-phosphosite interactions and the data, SmartPhos can infer the activity of the kinases responsible for the phosphopeptides being considered. The activity is estimated by an activity score computed with the package **decoupleR** (Badia-I-Mompel et al., 2022) following the authors' tutorial on Kinase and Transcription Factor activity estimation. For time-series clustering, users can also estimate how likely the kinases are associated with phosphopeptides in the selected cluster.
+
+## Kinase activity inference on differential expression analysis results
+
+```{r eval=FALSE}
+netw <- getDecouplerNetwork("Homo sapiens")
+scoreTab <- calcKinaseScore(dea$resDE, netw, statType = "stat", nPerm = 500)
+```
+
 # Session Info
 
 ```{r}
