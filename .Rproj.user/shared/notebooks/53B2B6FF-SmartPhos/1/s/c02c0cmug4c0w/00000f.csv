@@ -1,0 +1,2 @@
+"0","netw <- getDecouplerNetwork(""Homo sapiens"")"
+"0","scoreTab <- calcKinaseScore(dea$resDE, netw, statType = ""stat"", nPerm = 100)"
