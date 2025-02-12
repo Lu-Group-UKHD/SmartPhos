@@ -80,3 +80,4 @@ Suggests:
     PhosR (>= 1.14.0),
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
+URL: https://lu-group-ukhd.github.io/SmartPhos/
