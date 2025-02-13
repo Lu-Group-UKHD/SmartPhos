@@ -11,6 +11,7 @@ library(plotly)
 library(matrixStats)
 library(piano)
 library(dplyr)
+library(SmartPhos)
 
 
 # Increasing the limit of upload file size from 5 MB to 50 MB
