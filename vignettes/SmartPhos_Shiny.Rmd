@@ -265,29 +265,29 @@ The two methods available for performing differential expression analysis are:
 To use this tab, first the user has to select the metadata column for which they want to perform the analysis. Users need to select samples for the reference and target group, between which the differential expression analysis will be performed. This can be done by either selecting treatments or selecting sample IDs. In the former, time points should also be specified if the column **timepoint** is present in the *fileTable.txt* file. Multiple treatments and time points can be selected for each group. As the selection is updated for each group, the user interface informs users of the number of samples in each group as well as a warning if a sample is present in both group. The latter option allows users to directly choose which sample to include in each group, thereby allowing more flexibility in sample selection. The two figures below show examples of the user interface when using either option. Notice that a warning was given in the latter since one sample was present in both groups.
 
 ```{r, out.width="350px"}
-knitr::include_graphics(file.path("images", "de_option1.png"))
+knitr::include_graphics(file.path("images", "diff_option1.png"))
 ```
 
 ```{r, out.width="350px"}
-knitr::include_graphics(file.path("images", "de_option2.png"))
+knitr::include_graphics(file.path("images", "diff_option2.png"))
 ```
 
 The output of differential expression analysis is a table which contains the differentially expressed genes arranged by the lowest p-values. The other information present in the table are: Uniprot ID, log2 fold change, t-statistic, adjusted p-value and some information if the data is phosphoproteomic data. A volcano plot is also plotted, highlighing the points with positive and negative log fold-change and above certain p value. The histogram of p-value is also plotted. 
 
 ```{r}
-knitr::include_graphics(file.path("images", "de.png"))
+knitr::include_graphics(file.path("images", "diff.png"))
 ```
 
 Users have options to filter the differentially expressed genes table based on p-value and log fold change value. There is also an option of using adjusted p-value instead.
 
 ```{r, out.width="300px"}
-knitr::include_graphics(file.path("images", "de_filter.png"))
+knitr::include_graphics(file.path("images", "diff_filter.png"))
 ```
 
 If the user click on the row of the differential expression table, the corresponding point in the volcano plot is highlighted as star. Moreover, a box plot is plot to show the change in normalized intensities for the selected conditions. Also, if the user click on any coloured point in the volcano plot, the corresponding row in the differential expression table is highlighted. The user also has the option to download the differential expression table as a TSV file.
 
 ```{r}
-knitr::include_graphics(file.path("images", "de_click.png"))
+knitr::include_graphics(file.path("images", "diff_click.png"))
 ```
 
 In case the differential expression analysis is not possible for the selected settings, an error message will appear. 
