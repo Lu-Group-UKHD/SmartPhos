@@ -24,3 +24,38 @@ runSmartPhos <- function() {
   # Launch the Shiny application in normal display mode
   shiny::runApp(appDir, display.mode = "normal")
 }
+
+
+#' @name makeSmartPhosDirectory
+#'
+#' @title Create SmartPhos Directory Structure
+#'
+#' @description
+#' \code{makeSmartPhosDirectory} creates a directory for the SmartPhos shiny app,
+#' and copies the necessary Shiny app files into the newly created directory.
+#'
+#' @param path A \code{character} string specifying the directory path where the SmartPhos folder should be created.
+#'
+#' @return None (invisible NULL). The function creates the necessary directories and copies files.
+#'
+#' @details
+#' The function first creates the main directory at the specified path and a subdirectory named `"save"` for storing \code{MultiAssayExperiment} object.
+#' It then locates the Shiny application files from the SmartPhos package and copies them into the new directory.
+#'
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' makeSmartPhosDirectory("path/to/destination")
+#' }
+makeSmartPhosDirectory <- function(path) {
+    # Create the directory folder and subdirectory save
+    dir.create(path)
+    dir.create(file.path(path, "save"))
+    # Get location of current shiny app
+    shinyPath <- system.file(package = "SmartPhos", "shiny-app")
+    # Copy the contents to the newly created folder
+    list_of_files <- list.files(shinyPath)
+    file.copy(file.path(shinyPath, list_of_files), path, recursive = TRUE)
+    message("Successful!!")
+}
