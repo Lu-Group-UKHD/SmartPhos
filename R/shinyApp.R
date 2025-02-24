@@ -45,9 +45,8 @@ runSmartPhos <- function() {
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' makeSmartPhosDirectory("path/to/destination")
-#' }
+#' makeSmartPhosDirectory("shinyApp")
+#'
 makeSmartPhosDirectory <- function(path) {
     # Create the directory folder and subdirectory save
     dir.create(path)
