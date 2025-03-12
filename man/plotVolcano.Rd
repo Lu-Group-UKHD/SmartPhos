@@ -23,11 +23,12 @@ A \code{ggplot2} object representing the volcano plot.
 This function creates a volcano plot where differentially expressed genes are categorized as 'Up', 'Down', or 'Not Sig' based on the provided p-value and log2 fold-change thresholds. Points on the plot are color-coded to indicate their expression status.
 }
 \examples{
+library(SummarizedExperiment)
 # Load multiAssayExperiment object
 data("dda_example")
 # Get SummarizedExperiment object
 se <- dda_example[["Proteome"]]
-SummarizedExperiment::colData(se) <- SummarizedExperiment::colData(dda_example)
+colData(se) <- colData(dda_example)
 # Preprocess the proteome assay
 result <- preprocessProteome(se, normalize = TRUE)
 # Call the function to perform differential expression analyis

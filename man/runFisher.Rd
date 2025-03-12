@@ -25,11 +25,13 @@ A \code{data frame} with the results of the Fisher's Exact Test, including the g
 The function can operate in two modes: standard gene sets and PTM-specific gene sets. For PTM-specific gene sets, additional filtering and processing are performed.
 }
 \examples{
+library(SummarizedExperiment)
+library(piano)
 # Load multiAssayExperiment object
 data("dda_example")
 # Get SummarizedExperiment object
 se <- dda_example[["Proteome"]]
-SummarizedExperiment::colData(se) <- SummarizedExperiment::colData(dda_example)
+colData(se) <- colData(dda_example)
 # Preprocess the proteome assay
 result <- preprocessProteome(se, normalize = TRUE)
 # Call the function to perform differential expression analyis
@@ -37,7 +39,7 @@ de <- performDifferentialExp(se = result, assay = "Intensity", method = "limma",
 genesList <- unique(de$resDE$Gene)
 referenceList <- unique(SummarizedExperiment::rowData(result)$Gene)
 genesetPath <- appDir <- system.file("shiny-app/geneset", package = "SmartPhos")
-inGMT <- piano::loadGSC(paste0(genesetPath,"/Cancer_Hallmark.gmt"),type="gmt")
+inGMT <- loadGSC(paste0(genesetPath,"/Cancer_Hallmark.gmt"),type="gmt")
 # Run the function
 runFisher(genes = genesList, reference = referenceList, inputSet = inGMT)
 

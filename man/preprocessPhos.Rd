@@ -51,11 +51,12 @@ A \code{SummarizedExperiment} object with preprocessed phosphoproteome data.
 \code{preprocessPhos} preprocesses phosphoproteome data stored in a \code{SummarizedExperiment} object by performing filtering, transformation, normalization, imputation, and batch effect removal.
 }
 \examples{
+library(SummarizedExperiment)
 # Load multiAssayExperiment object
 data("dia_example")
 # Get SummarizedExperiment object
 se <- dia_example[["Phosphoproteome"]]
-SummarizedExperiment::colData(se) <- SummarizedExperiment::colData(dia_example)
+colData(se) <- colData(dia_example)
 # Call the function
 preprocessPhos(seData = se, normalize = TRUE, impute = "QRILC")
 

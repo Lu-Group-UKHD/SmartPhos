@@ -18,11 +18,12 @@ A \code{ggplot2} object showing boxplots of intensities for each sample.
 \code{plotIntensity} generates boxplots of assay intensities for each sample in a \code{SummarizedExperiment} object. Optionally, the boxplots can be colored based on a specified metadata column. The function handles missing values by filtering them out before plotting.
 }
 \examples{
+library(SummarizedExperiment)
 # Load multiAssayExperiment object
 data("dia_example")
 # Get SummarizedExperiment object
 se <- dia_example[["Phosphoproteome"]]
-SummarizedExperiment::colData(se) <- SummarizedExperiment::colData(dia_example)
+colData(se) <- colData(dia_example)
 # Preprocess the phosphoproteome assay
 result <- preprocessPhos(seData = se, normalize = TRUE, impute = "QRILC")
 # Call the plotting function

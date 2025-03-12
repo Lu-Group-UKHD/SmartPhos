@@ -16,11 +16,13 @@
 #' The function can operate in two modes: standard gene sets and PTM-specific gene sets. For PTM-specific gene sets, additional filtering and processing are performed.
 #'
 #' @examples
+#' library(SummarizedExperiment)
+#' library(piano)
 #' # Load multiAssayExperiment object
 #' data("dda_example")
 #' # Get SummarizedExperiment object
 #' se <- dda_example[["Proteome"]]
-#' SummarizedExperiment::colData(se) <- SummarizedExperiment::colData(dda_example)
+#' colData(se) <- colData(dda_example)
 #' # Preprocess the proteome assay
 #' result <- preprocessProteome(se, normalize = TRUE)
 #' # Call the function to perform differential expression analyis
@@ -28,7 +30,7 @@
 #' genesList <- unique(de$resDE$Gene)
 #' referenceList <- unique(SummarizedExperiment::rowData(result)$Gene)
 #' genesetPath <- appDir <- system.file("shiny-app/geneset", package = "SmartPhos")
-#' inGMT <- piano::loadGSC(paste0(genesetPath,"/Cancer_Hallmark.gmt"),type="gmt")
+#' inGMT <- loadGSC(paste0(genesetPath,"/Cancer_Hallmark.gmt"),type="gmt")
 #' # Run the function
 #' runFisher(genes = genesList, reference = referenceList, inputSet = inGMT)
 #'
@@ -41,7 +43,7 @@ runFisher <- function (genes, reference, inputSet, ptm = FALSE) {
   # Retrieve the gene sets
   if (!ptm) {
     genesets <- inputSet$gsc
-    setList <- 1:length(genesets)
+    setList <- 1 : length(genesets)
   } else {
     # Filter and process the PTM-specific gene sets
     genesets <- inputSet %>%
@@ -132,18 +134,20 @@ runFisher <- function (genes, reference, inputSet, ptm = FALSE) {
 #' it uses a Kolmogorov-Smirnov test with a PTM set database. Results can be filtered by significance level and optionally adjusted for FDR.
 #'
 #' @examples
+#' library(SummarizedExperiment)
+#' library(piano)
 #' # Load multiAssayExperiment object
 #' data("dia_example")
 #' # Get SummarizedExperiment object
 #' se <- dia_example[["Phosphoproteome"]]
-#' SummarizedExperiment::colData(se) <- SummarizedExperiment::colData(dia_example)
+#' colData(se) <- colData(dia_example)
 #' # Preprocess the proteome assay
 #' result <- preprocessPhos(se, normalize = TRUE)
 #' # Call the function to perform differential expression analyis
 #' dea <- performDifferentialExp(se = result, assay = "Intensity", method = "limma", reference = "1stCrtl", target = "EGF", condition = "treatment")
 #' # Load the gene set
 #' genesetPath <- appDir <- system.file("shiny-app/geneset", package = "SmartPhos")
-#' inGMT <- piano::loadGSC(paste0(genesetPath,"/Cancer_Hallmark.gmt"),type="gmt")
+#' inGMT <- loadGSC(paste0(genesetPath,"/Cancer_Hallmark.gmt"),type="gmt")
 #' # Call the function
 #' resTab <- enrichDifferential(dea = dea$resDE, type = "Pathway enrichment", gsaMethod = "PAGE", geneSet = inGMT, statType = "stat", nPerm = 200, sigLevel = 0.05, ifFDR = FALSE)
 #'
@@ -279,11 +283,12 @@ enrichDifferential <- function(dea, type, gsaMethod, geneSet, ptmSet, statType, 
 #' The results are filtered based on the p-value threshold and adjusted for multiple testing if \code{ifFDR} is \code{TRUE}. The function generates a dot plot where the size and color of the points represent the significance of enrichment.
 #'
 #' @examples
+#' library(SummarizedExperiment)
 #' # Load multiAssayExperiment object
 #' data("dia_example")
 #' # Get SummarizedExperiment object
 #' se <- dia_example[["Phosphoproteome"]]
-#' SummarizedExperiment::colData(se) <- SummarizedExperiment::colData(dia_example)
+#' colData(se) <- colData(dia_example)
 #' seProcess <- preprocessPhos(seData = se, normalize = TRUE, impute = "QRILC")
 #' result <- addZeroTime(seProcess, condition = "treatment", treat = "EGF", zeroTreat = "1stCrtl", timeRange = c("20min","40min", "6h"))
 #' # Get the numeric matrix

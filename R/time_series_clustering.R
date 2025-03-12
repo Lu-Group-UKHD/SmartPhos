@@ -113,11 +113,12 @@ mscale <- function(x, center = TRUE, scale = TRUE, censor = NULL, useMad = FALSE
 #' }
 #'
 #' @examples
+#' library(SummarizedExperiment)
 #' # Load multiAssayExperiment object
 #' data("dia_example")
 #' # Get SummarizedExperiment object
 #' se <- dia_example[["Phosphoproteome"]]
-#' SummarizedExperiment::colData(se) <- SummarizedExperiment::colData(dia_example)
+#' colData(se) <- colData(dia_example)
 #' # Call the function
 #' addZeroTime(se, condition = "treatment", treat = "EGF", zeroTreat = "1stCrtl", timeRange = c("20min","40min", "6h"))
 #'
@@ -173,15 +174,16 @@ addZeroTime <- function(data, condition, treat, zeroTreat, timeRange) {
 #' }
 #'
 #' @examples
+#' library(SummarizedExperiment)
 #' # Load multiAssayExperiment object
 #' data("dia_example")
 #' # Get SummarizedExperiment object
 #' se <- dia_example[["Phosphoproteome"]]
-#' SummarizedExperiment::colData(se) <- SummarizedExperiment::colData(dia_example)
+#' colData(se) <- colData(dia_example)
 #' seProcess <- preprocessPhos(seData = se, normalize = TRUE, impute = "QRILC")
 #' result <- addZeroTime(seProcess, condition = "treatment", treat = "EGF", zeroTreat = "1stCrtl", timeRange = c("20min","40min", "6h"))
 #' # Get the numeric matrix
-#' exprMat <- SummarizedExperiment::assay(result)
+#' exprMat <- assay(result)
 #' # Call the function
 #' clusterTS(x = exprMat, k = 3)
 #'
@@ -459,11 +461,12 @@ splineFilter <- function(exprMat, subjectID = NULL, time, df, pCut = 0.5, ifFDR 
 #' @importFrom stringr str_extract
 #'
 #' @examples
+#' library(SummarizedExperiment)
 #' # Load multiAssayExperiment object
 #' data("dda_example")
 #' # Get SummarizedExperiment object
 #' se <- dda_example[["Proteome"]]
-#' SummarizedExperiment::colData(se) <- SummarizedExperiment::colData(dda_example)
+#' colData(se) <- colData(dda_example)
 #' # Preprocess the proteome assay
 #' result <- preprocessProteome(se, normalize = TRUE)
 #' # Plot a specific gene experssion over time

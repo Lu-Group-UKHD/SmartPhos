@@ -49,11 +49,12 @@ getOneSymbol <- function(Gene) {
 #' @return A \code{SummarizedExperiment} object with preprocessed proteome data.
 #'
 #' @examples
+#' library(SummarizedExperiment)
 #' # Load multiAssayExperiment object
 #' data("dia_example")
 #' # Get SummarizedExperiment object
 #' se <- dia_example[["Proteome"]]
-#' SummarizedExperiment::colData(se) <- SummarizedExperiment::colData(dia_example)
+#' colData(se) <- colData(dia_example)
 #' # Call the function
 #' preprocessProteome(seData = se, normalize = TRUE, impute = "QRILC")
 #'
@@ -152,23 +153,14 @@ preprocessProteome <- function(seData, filterList = NULL, missCut = 50,
   if (impute != "none") {
     rowData(fpeSub)$name <- rowData(fpeSub)$UniprotID
     rowData(fpeSub)$ID <- rowData(fpeSub)$UniprotID
-    if (impute == "QRILC") {
-      imp <- DEP::impute(fpeSub, "QRILC")
+    if (impute == "missForest") {
+        doParallel::registerDoParallel(cores = 6)  # set based on number of CPU cores
+        doRNG::registerDoRNG(seed = 123)
+        mf <- missForest::missForest(t(assay(fpeSub)), parallelize = "forests", maxiter = 2, ntree = 50)
+        imp <- t(mf$ximp)
     }
-    else if (impute == "MLE") {
-      imp <- DEP::impute(fpeSub, "MLE")
-    }
-    else if (impute == "bpca") {
-      imp <- DEP::impute(fpeSub, "bpca")
-    }
-    else if (impute == "missForest") {
-      doParallel::registerDoParallel(cores = 6)  # set based on number of CPU cores
-      doRNG::registerDoRNG(seed = 123)
-      mf <- missForest::missForest(t(assay(fpeSub)), parallelize = "forests", maxiter = 2, ntree = 50)
-      imp <- t(mf$ximp)
-    }
-    else if (impute == "MinDet") {
-      imp <- DEP::impute(fpeSub, "MinDet")
+    else {
+      imp <- DEP::impute(fpeSub, fun = impute)
     }
     assays(fpeSub)[["imputed"]] <- assay(imp)
     rowData(fpeSub)$name <- NULL
@@ -226,11 +218,12 @@ preprocessProteome <- function(seData, filterList = NULL, missCut = 50,
 #' @return A \code{SummarizedExperiment} object with preprocessed phosphoproteome data.
 #'
 #' @examples
+#' library(SummarizedExperiment)
 #' # Load multiAssayExperiment object
 #' data("dia_example")
 #' # Get SummarizedExperiment object
 #' se <- dia_example[["Phosphoproteome"]]
-#' SummarizedExperiment::colData(se) <- SummarizedExperiment::colData(dia_example)
+#' colData(se) <- colData(dia_example)
 #' # Call the function
 #' preprocessPhos(seData = se, normalize = TRUE, impute = "QRILC")
 #'
@@ -338,23 +331,14 @@ preprocessPhos <- function(seData, filterList = NULL, missCut = 50,
   if (impute != "none") {
     rowData(ppeSub)$name <- rowData(ppeSub)$site
     rowData(ppeSub)$ID <- rowData(ppeSub)$site
-    if (impute == "QRILC") {
-      imp <- DEP::impute(ppeSub, "QRILC")
-    }
-    else if (impute == "MLE") {
-      imp <- DEP::impute(ppeSub, "MLE")
-    }
-    else if (impute == "bpca") {
-      imp <- DEP::impute(ppeSub, "bpca")
-    }
-    else if (impute == "MinDet") {
-      imp <- DEP::impute(ppeSub, "MinDet")
+    if (impute == "missForest") {
+        doParallel::registerDoParallel(cores = 6)  # Set number of CPU cores
+        doRNG::registerDoRNG(seed = 123)
+        mf <- missForest::missForest(t(assay(ppeSub)), parallelize = "forests", maxiter = 2, ntree = 50)
+        imp <- t(mf$ximp)
     }
     else {
-      doParallel::registerDoParallel(cores = 6)  # Set number of CPU cores
-      doRNG::registerDoRNG(seed = 123)
-      mf <- missForest::missForest(t(assay(ppeSub)), parallelize = "forests", maxiter = 2, ntree = 50)
-      imp <- t(mf$ximp)
+      imp <- DEP::impute(ppeSub, fun = impute)
     }
     assays(ppeSub)[["imputed"]] <- assay(imp)
     rowData(ppeSub)$name <- NULL

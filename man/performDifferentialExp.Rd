@@ -63,11 +63,12 @@ The main steps of the function are as follows:
 The function returns a \code{list} containing the formatted differential expression results and the subsetted SE object. This allows users to further explore or visualize the results as needed.
 }
 \examples{
+library(SummarizedExperiment)
 # Load multiAssayExperiment object
 data("dda_example")
 # Get SummarizedExperiment object
 se <- dda_example[["Proteome"]]
-SummarizedExperiment::colData(se) <- SummarizedExperiment::colData(dda_example)
+colData(se) <- colData(dda_example)
 # Preprocess the proteome assay
 result <- preprocessProteome(se, normalize = TRUE)
 # Call the function to perform differential expression analyis

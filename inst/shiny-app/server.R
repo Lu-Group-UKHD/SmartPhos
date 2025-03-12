@@ -954,7 +954,7 @@ shinyServer(function(input, output, session) {
         inputsValue$geneID_DE <- lastClicked$geneID
         inputsValue$geneSymbol_DE <- lastClicked$geneSymbol
 
-        p <- plotBox(se = processedDataSub(), id = lastClicked$geneID,
+        p <- intensityBoxPlot(se = processedDataSub(), id = lastClicked$geneID,
                      symbol = lastClicked$geneSymbol)
       }
     }
@@ -1980,7 +1980,7 @@ shinyServer(function(input, output, session) {
       if (!is.null(lastClicked)) {
 
         if (input$seleSourceEnrich == "Differential expression") {
-          p <- plotBox(se = processedDataSub(), id = geneID, symbol = geneSymbol)
+          p <- intensityBoxPlot(se = processedDataSub(), id = geneID, symbol = geneSymbol)
           p
         }
         else if (input$seleSourceEnrich == "Selected time-series cluster") {

@@ -47,11 +47,12 @@ The function first retrieves or computes the reference set of genes or PTM sites
 The results are filtered based on the p-value threshold and adjusted for multiple testing if \code{ifFDR} is \code{TRUE}. The function generates a dot plot where the size and color of the points represent the significance of enrichment.
 }
 \examples{
+library(SummarizedExperiment)
 # Load multiAssayExperiment object
 data("dia_example")
 # Get SummarizedExperiment object
 se <- dia_example[["Phosphoproteome"]]
-SummarizedExperiment::colData(se) <- SummarizedExperiment::colData(dia_example)
+colData(se) <- colData(dia_example)
 seProcess <- preprocessPhos(seData = se, normalize = TRUE, impute = "QRILC")
 result <- addZeroTime(seProcess, condition = "treatment", treat = "EGF", zeroTreat = "1stCrtl", timeRange = c("20min","40min", "6h"))
 # Get the numeric matrix

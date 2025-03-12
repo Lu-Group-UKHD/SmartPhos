@@ -34,15 +34,16 @@ The function performs the following steps:
 }
 }
 \examples{
+library(SummarizedExperiment)
 # Load multiAssayExperiment object
 data("dia_example")
 # Get SummarizedExperiment object
 se <- dia_example[["Phosphoproteome"]]
-SummarizedExperiment::colData(se) <- SummarizedExperiment::colData(dia_example)
+colData(se) <- colData(dia_example)
 seProcess <- preprocessPhos(seData = se, normalize = TRUE, impute = "QRILC")
 result <- addZeroTime(seProcess, condition = "treatment", treat = "EGF", zeroTreat = "1stCrtl", timeRange = c("20min","40min", "6h"))
 # Get the numeric matrix
-exprMat <- SummarizedExperiment::assay(result)
+exprMat <- assay(result)
 # Call the function
 clusterTS(x = exprMat, k = 3)
 

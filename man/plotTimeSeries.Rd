@@ -55,11 +55,12 @@ The function can add a zero time point if specified and handles data with and wi
 The x-axis represents time, and the y-axis represents the selected metric (normalized expression or logFC). The plot is customized with various aesthetic elements, such as point size, line type, axis labels, and title formatting.
 }
 \examples{
+library(SummarizedExperiment)
 # Load multiAssayExperiment object
 data("dda_example")
 # Get SummarizedExperiment object
 se <- dda_example[["Proteome"]]
-SummarizedExperiment::colData(se) <- SummarizedExperiment::colData(dda_example)
+colData(se) <- colData(dda_example)
 # Preprocess the proteome assay
 result <- preprocessProteome(se, normalize = TRUE)
 # Plot a specific gene experssion over time

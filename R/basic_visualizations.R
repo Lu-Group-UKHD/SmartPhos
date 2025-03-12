@@ -17,11 +17,12 @@
 #' @importFrom tibble tibble
 #'
 #' @examples
+#' library(SummarizedExperiment)
 #' # Load multiAssayExperiment object
 #' data("dda_example")
 #' # Get SummarizedExperiment object
 #' se <- dda_example[["Phosphoproteome"]]
-#' SummarizedExperiment::colData(se) <- SummarizedExperiment::colData(dda_example)
+#' colData(se) <- colData(dda_example)
 #' # Call the function
 #' plotMissing(se)
 #'
@@ -67,11 +68,12 @@ plotMissing <- function(se) {
 #' @importFrom tibble as_tibble
 #'
 #' @examples
+#' library(SummarizedExperiment)
 #' # Load multiAssayExperiment object
 #' data("dia_example")
 #' # Get SummarizedExperiment object
 #' se <- dia_example[["Phosphoproteome"]]
-#' SummarizedExperiment::colData(se) <- SummarizedExperiment::colData(dia_example)
+#' colData(se) <- colData(dia_example)
 #' # Preprocess the phosphoproteome assay
 #' result <- preprocessPhos(seData = se, normalize = TRUE, impute = "QRILC")
 #' # Call the plotting function
@@ -144,9 +146,9 @@ plotIntensity <- function(se, color = "none") {
 #' # Generate the imputed assay
 #' result <- preprocessPhos(seData = se, normalize = TRUE, impute = "QRILC")
 #' # Perform PCA
-#' pca <- stats::prcomp(t(SummarizedExperiment::assays(result)[["imputed"]]), center = TRUE, scale.=TRUE)
+#' pcaResult <- stats::prcomp(t(SummarizedExperiment::assays(result)[["imputed"]]), center = TRUE, scale.=TRUE)
 #' # Plot PCA results
-#' plotPCA(pca = pca, se = result, color = "treatment")
+#' plotPCA(pca = pcaResult, se = result, color = "treatment")
 #'
 #' @export
 plotPCA <- function(pca, se, xaxis = "PC1", yaxis = "PC2", color = "none", shape = "none") {
@@ -221,11 +223,12 @@ plotPCA <- function(pca, se, xaxis = "PC1", yaxis = "PC2", color = "none", shape
 #' @importFrom rlang sym
 #'
 #' @examples
+#' library(SummarizedExperiment)
 #' # Load multiAssayExperiment object
 #' data("dia_example")
 #' # Get SummarizedExperiment object
 #' se <- dia_example[["Phosphoproteome"]]
-#' SummarizedExperiment::colData(se) <- SummarizedExperiment::colData(dia_example)
+#' colData(se) <- colData(dia_example)
 #' # Generate the imputed assay
 #' result <- preprocessPhos(seData = se, normalize = TRUE, impute = "QRILC")
 #' # Plot heatmap for top variant

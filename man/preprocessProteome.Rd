@@ -48,11 +48,12 @@ A \code{SummarizedExperiment} object with preprocessed proteome data.
 \code{preprocessProteome} preprocesses proteome data stored in a \code{SummarizedExperiment} object by performing filtering, transformation, normalization, imputation, and batch effect removal.
 }
 \examples{
+library(SummarizedExperiment)
 # Load multiAssayExperiment object
 data("dia_example")
 # Get SummarizedExperiment object
 se <- dia_example[["Proteome"]]
-SummarizedExperiment::colData(se) <- SummarizedExperiment::colData(dia_example)
+colData(se) <- colData(dia_example)
 # Call the function
 preprocessProteome(seData = se, normalize = TRUE, impute = "QRILC")
 

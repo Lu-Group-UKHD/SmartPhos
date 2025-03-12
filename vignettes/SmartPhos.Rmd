@@ -154,9 +154,9 @@ plotVolcano(dea$resDE)
 
 **pFilter** and **fcFilter** arguments can be used to change the thresholds for the upregulated and downregulated genes being represented in the volcano plot.
 
-Use plotBox() to plot the intensity data of a specified gene, with optional subject-specific lines:
+Use intensityBoxPlot() to plot the intensity data of a specified gene, with optional subject-specific lines:
 ```{r}
-plotBox(se = dea$seSub, id = 's447', symbol = "WASL")
+intensityBoxPlot(se = dea$seSub, id = 's447', symbol = "WASL")
 ```
 
 # Time series clustering

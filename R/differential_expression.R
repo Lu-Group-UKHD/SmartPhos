@@ -46,11 +46,12 @@
 #' @importFrom stats model.matrix
 #'
 #' @examples
+#' library(SummarizedExperiment)
 #' # Load multiAssayExperiment object
 #' data("dda_example")
 #' # Get SummarizedExperiment object
 #' se <- dda_example[["Proteome"]]
-#' SummarizedExperiment::colData(se) <- SummarizedExperiment::colData(dda_example)
+#' colData(se) <- colData(dda_example)
 #' # Preprocess the proteome assay
 #' result <- preprocessProteome(se, normalize = TRUE)
 #' # Call the function to perform differential expression analyis
@@ -160,11 +161,12 @@ performDifferentialExp <- function(se, assay, method = "limma", condition = NULL
 #' @importFrom dplyr mutate case_when
 #'
 #' @examples
+#' library(SummarizedExperiment)
 #' # Load multiAssayExperiment object
 #' data("dda_example")
 #' # Get SummarizedExperiment object
 #' se <- dda_example[["Proteome"]]
-#' SummarizedExperiment::colData(se) <- SummarizedExperiment::colData(dda_example)
+#' colData(se) <- colData(dda_example)
 #' # Preprocess the proteome assay
 #' result <- preprocessProteome(se, normalize = TRUE)
 #' # Call the function to perform differential expression analyis
@@ -212,12 +214,12 @@ plotVolcano <- function(tableDE, pFilter = 0.05, fcFilter = 0.5) {
   return(v)
 }
 
-#' @name plotBox
+#' @name intensityBoxPlot
 #'
 #' @title Plot Boxplot of Intensity Data
 #'
 #' @description
-#' \code{plotBox} creates a boxplot for the Intensity data of a given gene or feature, with optional subject-specific lines.
+#' \code{intensityBoxPlot} creates a boxplot for the Intensity data of a given gene or feature, with optional subject-specific lines.
 #'
 #' @param se A \code{SummarizedExperiment} object containing the data.
 #' @param id \code{Character}. The identifier of the gene or feature to plot.
@@ -238,20 +240,21 @@ plotVolcano <- function(tableDE, pFilter = 0.05, fcFilter = 0.5) {
 #' @importFrom SummarizedExperiment assays
 #'
 #' @examples
+#' library(SummarizedExperiment)
 #' # Load multiAssayExperiment object
 #' data("dda_example")
 #' # Get SummarizedExperiment object
 #' se <- dda_example[["Proteome"]]
-#' SummarizedExperiment::colData(se) <- SummarizedExperiment::colData(dda_example)
+#' colData(se) <- colData(dda_example)
 #' # Preprocess the proteome assay
 #' result <- preprocessProteome(se, normalize = TRUE)
 #' # Call the function to perform differential expression analyis
 #' de <- performDifferentialExp(se = result, assay = "Intensity", method = "limma", reference = "1stCrtl", target = "EGF", condition = "treatment")
 #' # Plot the box plot for the given id and symbol
-#' plotBox(de$seSub, "p99", "PPP6C")
+#' intensityBoxPlot(de$seSub, "p99", "PPP6C")
 #'
 #' @export
-plotBox <- function(se, id, symbol) {
+intensityBoxPlot <- function(se, id, symbol) {
 
   exprMat <- assays(se)[["Intensity"]]
 

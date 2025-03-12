@@ -96,7 +96,7 @@ generateInputTable_DIA <- function(rawFolder) {
 
     # Create a unique experimental ID
     id <- c()
-    for (i in 1: length(sumFile$Sample.Type)) {
+    for (i in seq_len(sumFile$Sample.Type)) {
         id <- c(id, paste(sumFile$Sample.Type[i], sumFile$treatment[i],
                           sumFile$timepoint[i], sumFile$replicate[i], sep = "_"))
     }
