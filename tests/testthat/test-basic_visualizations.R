@@ -1,22 +1,22 @@
 # Helper function to create a mock SummarizedExperiment
 create_mock_se <- function() {
-  
+
   # Create assay data
   assay_data <- matrix(rnorm(1000), nrow = 100, ncol = 10)
   colnames(assay_data) <- paste0("Sample", 1:10)
   rownames(assay_data) <- paste0("Gene", 1:100)
-  
+
   # Create sample annotations
   sample_data <- data.frame(sample = colnames(assay_data), group = rep(c("A", "B"), each = 5), type = rep(c("X", "Y"), 5))
   rownames(sample_data) <- colnames(assay_data)
-  
+
   # Create gene metadata
   gene_data <- data.frame(Gene = rownames(assay_data), stat = runif(100), ID = paste0("Gene", 1:100))
   rownames(gene_data) <- rownames(assay_data)
-  
+
   # Create SummarizedExperiment object
   se <- SummarizedExperiment(assays = list(imputed = assay_data), colData = sample_data, rowData = gene_data)
-  
+
   return(se)
 }
 
@@ -75,7 +75,7 @@ test_that("plotMissing handles SummarizedExperiment with all missing values", {
 test_that("plotIntensity handles missing values correctly", {
   se <- create_mock_se()
 
-  plot <- plotIntensity(se, color = "none")
+  plot <- plotIntensity(se, colorByCol = "none")
 
   # Extract data used in the plot
   plot_data <- ggplot2::ggplot_build(plot)$data[[1]]
@@ -87,7 +87,7 @@ test_that("plotIntensity handles missing values correctly", {
 test_that("plotIntensity generates the correct ggplot object", {
   se <- create_mock_se()
 
-  plot <- plotIntensity(se, color = "none")
+  plot <- plotIntensity(se, colorByCol = "none")
 
   # Check if the returned object is a ggplot object
   expect_s3_class(plot, "ggplot")
@@ -105,7 +105,7 @@ test_that("plotIntensity generates the correct ggplot object", {
 test_that("plotIntensity applies coloring correctly", {
   se <- create_mock_se()
 
-  plot <- plotIntensity(se, color = "group")
+  plot <- plotIntensity(se, colorByCol = "group")
 
   # Check if the fill aesthetic is set correctly
   expect_true("colour" %in% names(plot$labels))
@@ -115,7 +115,7 @@ test_that("plotIntensity applies coloring correctly", {
 test_that("plotIntensity works correctly with color set to 'none'", {
   se <- create_mock_se()
 
-  plot <- plotIntensity(se, color = "none")
+  plot <- plotIntensity(se, colorByCol = "none")
 
   # Check if the fill aesthetic is not set
   expect_false("fill" %in% names(plot$labels))
@@ -130,7 +130,7 @@ test_that("plotIntensity handles SummarizedExperiment with all non-missing value
 
   se <- SummarizedExperiment(assays = list(counts = assay_data), colData = sample_data)
 
-  plot <- plotIntensity(se, color = "none")
+  plot <- plotIntensity(se, colorByCol = "none")
   plot_data <- ggplot2::ggplot_build(plot)$data[[1]]
 
   # Expect no missing values in the plot data
@@ -146,7 +146,7 @@ test_that("plotIntensity handles SummarizedExperiment with all missing values", 
 
   se <- SummarizedExperiment(assays = list(counts = assay_data), colData = sample_data)
 
-  plot <- plotIntensity(se, color = "none")
+  plot <- plotIntensity(se, colorByCol = "none")
   plot_data <- ggplot2::ggplot_build(plot)$data[[1]]
 
   # Expect no data in the plot since all values are missing
@@ -252,9 +252,9 @@ test_that("plotPCA works correctly with shape set to 'none' and color specified"
 
 test_that("plotHeatmap generates a pheatmap object", {
   se <- create_mock_se()
-  
+
   heatmap <- plotHeatmap("Top variant", se, top = 50, title = "Top Variants Heatmap", annotationCol = NULL)
-  
+
   # Check if the returned object is a pheatmap object
   expect_true(inherits(heatmap, "pheatmap"))
 })

@@ -22,11 +22,11 @@ getDecouplerNetwork <- function(speciesRef = "Homo sapiens") {
 
   # load network of kinase-substrate interaction from omnipathR_kinase_network folder
   if (speciesRef == "Homo sapiens") {
-    data("Homo_sapiens")
-    return(Homo_sapiens)
+    data("Homo_sapien_kinase_substrate_network")
+    return(Homo_sapien_kinase_substrate_network)
   } else if (speciesRef == "Mus musculus") {
-    data("Mus_musculus")
-    return(Mus_musculus)
+    data("Mus_musculus_kinase_substrate_network")
+    return(Mus_musculus_kinase_substrate_network)
   }
 }
 

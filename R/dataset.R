@@ -13,33 +13,33 @@
 "swissProt"
 
 
-#' Homo_sapiens
+#' Homo_sapien_kinase_substrate_network
 #'
 #' A prior knowledge database about the known kinase-phosphosite interactions for Homo sapiens
 #'
 #' @docType data
-#' @usage data(Homo_sapiens)
+#' @usage data(Homo_sapien_kinase_substrate_network)
 #' @format a data.frame object
 #' @examples
-#' data(Homo_sapiens)
-"Homo_sapiens"
+#' data(Homo_sapien_kinase_substrate_network)
+"Homo_sapien_kinase_substrate_network"
 
 
-#' Mus_musculus
+#' Mus_musculus_kinase_substrate_network
 #'
 #' A prior knowledge database about the known kinase-phosphosite interactions for Homo sapiens
 #'
 #' @docType data
-#' @usage data(Mus_musculus)
+#' @usage data(Mus_musculus_kinase_substrate_network)
 #' @format a data.frame object
 #' @examples
-#' data(Mus_musculus)
-"Mus_musculus"
+#' data(Mus_musculus_kinase_substrate_network)
+"Mus_musculus_kinase_substrate_network"
 
 
 #' dda_example
 #'
-#' A sample of Data Dependent Acquisition (DDA) mass spectrometry data from Max Quant. 
+#' A sample of Data Dependent Acquisition (DDA) mass spectrometry data from Max Quant.
 #'
 #' @docType data
 #' @usage data(dda_example)
@@ -51,7 +51,7 @@
 
 #' dia_example
 #'
-#' A sample of Data Independent Acquisition (DIA) mass spectrometry data from Spectronaut. 
+#' A sample of Data Independent Acquisition (DIA) mass spectrometry data from Spectronaut.
 #'
 #' @docType data
 #' @usage data(dia_example)

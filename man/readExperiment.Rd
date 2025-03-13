@@ -12,7 +12,8 @@ readExperiment(
   scoreCut = 10,
   pepNumCut = 1,
   ifLFQ = TRUE,
-  annotation_col = c()
+  annotation_col = c(),
+  verbose = FALSE
 )
 }
 \arguments{
@@ -31,6 +32,8 @@ readExperiment(
 \item{ifLFQ}{\code{Logical}, whether to use LFQ quantification for proteomic data. Default is \code{TRUE}.}
 
 \item{annotation_col}{A \code{character} vector specifying additional columns to be included in the sample annotation. Default is an empty vector.}
+
+\item{verbose}{\code{Logical} value indicating whether to print detailed information. Default is \code{FALSE}.}
 }
 \value{
 A \code{MultiAssayExperiment} object containing the processed phosphoproteomic and proteomic data from a DDA experiment.

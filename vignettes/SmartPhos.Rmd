@@ -90,7 +90,7 @@ newSE <- preprocessPhos(seData = se, transform = "log2", normalize = TRUE,
 
 Plot the boxplot of assay intensities:
 ```{r}
-plotIntensity(newSE, color = "replicate")
+plotIntensity(newSE, colorByCol = "replicate")
 ```
 
 Plot the completeness (percentage of non-missing) for each sample:

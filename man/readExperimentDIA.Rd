@@ -9,7 +9,8 @@ readExperimentDIA(
   localProbCut = 0.75,
   annotation_col = c(),
   onlyReviewed = TRUE,
-  normalizeByProtein = FALSE
+  normalizeByProtein = FALSE,
+  verbose = FALSE
 )
 }
 \arguments{
@@ -22,6 +23,8 @@ readExperimentDIA(
 \item{onlyReviewed}{A \code{logical} value indicating whether to include only reviewed proteins. Default is \code{TRUE}.}
 
 \item{normalizeByProtein}{\code{Logical}, whether to normalize the data by protein. Default is \code{FALSE}.}
+
+\item{verbose}{\code{Logical} value indicating whether to print detailed information. Default is \code{FALSE}.}
 }
 \value{
 A \code{MultiAssayExperiment} object containing the processed phosphoproteome and proteome data.

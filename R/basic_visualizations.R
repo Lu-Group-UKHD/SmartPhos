@@ -57,7 +57,7 @@ plotMissing <- function(se) {
 #' \code{plotIntensity} generates boxplots of assay intensities for each sample in a \code{SummarizedExperiment} object. Optionally, the boxplots can be colored based on a specified metadata column. The function handles missing values by filtering them out before plotting.
 #'
 #' @param se A \code{SummarizedExperiment} object containing the assay data and metadata.
-#' @param color A \code{character} string specifying the metadata column to use for coloring the boxplots. Default is "none".
+#' @param colorByCol A \code{character} string specifying the metadata column to use for coloring the boxplots. Default is "none".
 #'
 #' @return A \code{ggplot2} object showing boxplots of intensities for each sample.
 #'
@@ -77,10 +77,10 @@ plotMissing <- function(se) {
 #' # Preprocess the phosphoproteome assay
 #' result <- preprocessPhos(seData = se, normalize = TRUE, impute = "QRILC")
 #' # Call the plotting function
-#' plotIntensity(result, color = "replicate")
+#' plotIntensity(result, colorByCol = "replicate")
 #'
 #' @export
-plotIntensity <- function(se, color = "none") {
+plotIntensity <- function(se, colorByCol = "none") {
 
   # Extract the assay data from the SummarizedExperiment object
   countMat <- assay(se)
@@ -102,11 +102,11 @@ plotIntensity <- function(se, color = "none") {
           plot.title = element_text(hjust = 0.5, face = "bold"))
 
   # Add color to the boxplots if a valid metadata column is specified
-  if (color == "none"){
+  if (colorByCol == "none"){
     g <- g + geom_boxplot()
   }
   else {
-    g <- g + geom_boxplot(aes(color = !!sym(color)))
+    g <- g + geom_boxplot(aes(color = !!sym(colorByCol)))
   }
 
   return(g)

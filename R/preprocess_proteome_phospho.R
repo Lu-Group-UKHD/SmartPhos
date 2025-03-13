@@ -167,7 +167,7 @@ preprocessProteome <- function(seData, filterList = NULL, missCut = 50,
     rowData(fpeSub)$ID <- NULL
     if (verbose) {
       # Show number of samples and features
-      print("Number of proteins and samples:")
+      message("Number of proteins and samples:")
       print(dim(fpeSub))
     }
   }
@@ -345,7 +345,7 @@ preprocessPhos <- function(seData, filterList = NULL, missCut = 50,
     rowData(ppeSub)$ID <- NULL
     # Show number of samples and features
     if (verbose) {
-      print("Number of proteins and samples:")
+      message("Number of proteins and samples:")
       print(dim(ppeSub))
     }
   }

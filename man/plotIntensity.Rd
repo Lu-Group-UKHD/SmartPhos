@@ -4,12 +4,12 @@
 \alias{plotIntensity}
 \title{Plot Intensity Boxplots}
 \usage{
-plotIntensity(se, color = "none")
+plotIntensity(se, colorByCol = "none")
 }
 \arguments{
 \item{se}{A \code{SummarizedExperiment} object containing the assay data and metadata.}
 
-\item{color}{A \code{character} string specifying the metadata column to use for coloring the boxplots. Default is "none".}
+\item{colorByCol}{A \code{character} string specifying the metadata column to use for coloring the boxplots. Default is "none".}
 }
 \value{
 A \code{ggplot2} object showing boxplots of intensities for each sample.
@@ -27,6 +27,6 @@ colData(se) <- colData(dia_example)
 # Preprocess the phosphoproteome assay
 result <- preprocessPhos(seData = se, normalize = TRUE, impute = "QRILC")
 # Call the plotting function
-plotIntensity(result, color = "replicate")
+plotIntensity(result, colorByCol = "replicate")
 
 }

@@ -140,6 +140,7 @@ generateInputTable_DIA <- function(rawFolder) {
 #' @param pepNumCut \code{Numeric}, peptide number cutoff for filtering proteomic data. Default is 1.
 #' @param ifLFQ \code{Logical}, whether to use LFQ quantification for proteomic data. Default is \code{TRUE}.
 #' @param annotation_col A \code{character} vector specifying additional columns to be included in the sample annotation. Default is an empty vector.
+#' @param verbose \code{Logical} value indicating whether to print detailed information. Default is \code{FALSE}.
 #'
 #' @return A \code{MultiAssayExperiment} object containing the processed phosphoproteomic and proteomic data from a DDA experiment.
 #'
@@ -168,14 +169,25 @@ generateInputTable_DIA <- function(rawFolder) {
 #'
 #' @import MultiAssayExperiment
 #' @export
-readExperiment <- function(fileTable, localProbCut = 0.75, scoreDiffCut = 5, fdrCut =0.1, scoreCut = 10, pepNumCut = 1, ifLFQ = TRUE, annotation_col = c()) {
-    # Read phosphoproteomic data
-    print("Processing phosphoproteomic data")
-    ppe <- readPhosphoExperiment(fileTable, localProbCut, scoreDiffCut)
+readExperiment <- function(fileTable, localProbCut = 0.75, scoreDiffCut = 5, fdrCut =0.1, scoreCut = 10, pepNumCut = 1, ifLFQ = TRUE, annotation_col = c(), verbose = FALSE) {
 
-    # Read full proteome data
-    print("Processing proteomic data")
-    fpe <- readProteomeExperiment(fileTable, fdrCut, scoreCut, pepNumCut, ifLFQ)
+    if (verbose) {
+        # Read phosphoproteomic data
+        message("Processing phosphoproteomic data")
+        ppe <- readPhosphoExperiment(fileTable, localProbCut, scoreDiffCut)
+        message("Successful!!")
+        # Read full proteome data
+        message("Processing proteomic data")
+        fpe <- readProteomeExperiment(fileTable, fdrCut, scoreCut, pepNumCut, ifLFQ)
+        message("Successful!!")
+    }
+    else {
+        # Read phosphoproteomic data
+        ppe <- readPhosphoExperiment(fileTable, localProbCut, scoreDiffCut)
+        # Read full proteome data
+        fpe <- readProteomeExperiment(fileTable, fdrCut, scoreCut, pepNumCut, ifLFQ)
+    }
+
 
     # Prepare sample annotation
     if ("batch" %in% colnames(fileTable)) annotation_col <- c(annotation_col,"batch")
@@ -211,6 +223,8 @@ readExperiment <- function(fileTable, localProbCut = 0.75, scoreDiffCut = 5, fdr
 #' @param annotation_col A \code{character} vector specifying the columns in fileTable to be used for sample annotation.
 #' @param onlyReviewed A \code{logical} value indicating whether to include only reviewed proteins. Default is \code{TRUE}.
 #' @param normalizeByProtein \code{Logical}, whether to normalize the data by protein. Default is \code{FALSE}.
+#' @param verbose \code{Logical} value indicating whether to print detailed information. Default is \code{FALSE}.
+#'
 #' @return A \code{MultiAssayExperiment} object containing the processed phosphoproteome and proteome data.
 #' @details
 #' The function performs the following steps:
@@ -238,17 +252,25 @@ readExperiment <- function(fileTable, localProbCut = 0.75, scoreDiffCut = 5, fdr
 #'
 #' @import MultiAssayExperiment
 #' @export
-readExperimentDIA <- function(fileTable, localProbCut = 0.75, annotation_col = c(), onlyReviewed = TRUE, normalizeByProtein=FALSE) {
+readExperimentDIA <- function(fileTable, localProbCut = 0.75, annotation_col = c(), onlyReviewed = TRUE, normalizeByProtein=FALSE, verbose = FALSE) {
 
-    # Read phospho data
-    print("Processing phosphoproteomic data")
-    ppe <- readPhosphoExperimentDIA(fileTable, localProbCut, onlyReviewed)
-    print("Successful!!")
+    if (verbose) {
+        # Read phospho data
+        message("Processing phosphoproteomic data")
+        ppe <- readPhosphoExperimentDIA(fileTable, localProbCut, onlyReviewed)
+        message("Successful!!")
+        # Read full proteome data
+        message("Processing proteomic data")
+        fpe <- readProteomeExperimentDIA(fileTable)
+        message("Successful!!")
+    }
+    else {
+        # Read phospho data
+        ppe <- readPhosphoExperimentDIA(fileTable, localProbCut, onlyReviewed)
+        # Read full proteome data
+        fpe <- readProteomeExperimentDIA(fileTable)
+    }
 
-    # Read full proteome data
-    print("Processing proteomic data")
-    fpe <- readProteomeExperimentDIA(fileTable)
-    print("Successful!!")
 
     # Use user-specified output sample ID if available
     if("outputID" %in% colnames(fileTable)) {
