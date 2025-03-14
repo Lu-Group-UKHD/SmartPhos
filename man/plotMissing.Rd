@@ -28,5 +28,4 @@ colData(se) <- colData(dda_example)
 # Call the function
 plotMissing(se)
 
-
 }

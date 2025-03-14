@@ -37,7 +37,7 @@ SummarizedExperiment::colData(se) <- SummarizedExperiment::colData(dia_example)
 # Generate the imputed assay
 result <- preprocessPhos(seData = se, normalize = TRUE, impute = "QRILC")
 # Perform PCA
-pcaResult <- stats::prcomp(t(SummarizedExperiment::assays(result)[["imputed"]]), center = TRUE, scale.=TRUE)
+pcaResult <- stats::prcomp(t(SummarizedExperiment::assays(result)[["imputed"]]), center = TRUE, scale. = TRUE)
 # Plot PCA results
 plotPCA(pca = pcaResult, se = result, color = "treatment")
 

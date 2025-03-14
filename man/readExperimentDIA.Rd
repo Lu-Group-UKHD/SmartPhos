@@ -48,10 +48,10 @@ file1 <- system.file("extdata", "phosDIA_1.xls", package = "SmartPhos")
 file2 <- system.file("extdata", "proteomeDIA_1.xls", package = "SmartPhos")
 # Create fileTable
 fileTable <- data.frame(
-   searchType = c("phosphoproteome", "proteome", "proteome"),
-   fileName = c(file1, file2, file2),
-   id = c("Sample_1", "sample1", "sample2"),
-   outputID = c("s1", "s2", "s3")
+  searchType = c("phosphoproteome", "proteome", "proteome"),
+  fileName = c(file1, file2, file2),
+  id = c("Sample_1", "sample1", "sample2"),
+  outputID = c("s1", "s2", "s3")
 )
 # Call the function
 readExperimentDIA(fileTable, localProbCut = 0.75, annotation_col = c("id"), onlyReviewed = FALSE, normalizeByProtein = FALSE)

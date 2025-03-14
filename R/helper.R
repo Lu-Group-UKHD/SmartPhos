@@ -28,10 +28,9 @@ readOnePhos <- function(inputTab, sampleName, localProbCut = 0.75, scoreDiffCut 
     (!is.na(inputTab[[colSele[2]]]) & inputTab[[colSele[2]]] >= scoreDiffCut) &
     (!is.na(inputTab[[colSele[3]]]) & inputTab[[colSele[3]]]>0)
 
-  # If no rows pass the filter, return a warning and NULL
+  # If no rows pass the filter, call stop
   if (all(!keepRow)) {
-    warning(sprintf("sample %s does not contain any records after filtering",sampleName))
-    return(NULL)
+    stop(paste0("Sample ", sampleName, " does not contain any records after filtering"))
   }
 
   # Subset the input table based on the filtered rows and select relevant columns
@@ -213,8 +212,7 @@ readOnePhosDIA <- function(inputTab, sampleName, localProbCut = 0.75, removeDup 
 
   # Check if any rows remain after filtering
   if (all(!keepRow)) {
-    warning(sprintf("sample %s does not contain any records after filtering", sampleName))
-    return(NULL)
+      stop(paste0("Sample ", sampleName, " does not contain any records after filtering"))
   }
 
   # Subset the table based on the filters
@@ -343,7 +341,9 @@ readPhosphoExperimentDIA <- function(fileTable, localProbCut = 0.75, onlyReviewe
 
     # Include only reviewed proteins if specified
     if (onlyReviewed) {
-      data("swissProt")
+      data_env <- new.env(parent = emptyenv())
+      data("swissProt", envir = data_env, package = "SmartPhos")
+      swissProt <- data_env[["swissProt"]]
       inputTab <- inputTab[inputTab$PTM.ProteinId %in% swissProt$Entry,]
     }
 
@@ -437,10 +437,9 @@ readOneProteom <- function(inputTab, sampleName, pepNumCut = 1, ifLFQ = TRUE) {
   # Peptide count filtering, based on Razor plus unique peptides
   keepRow <- inputTab[[colSele[3]]] >= pepNumCut
 
-  # If no records pass the peptide count filter, return NULL with a warning
+  # If no records pass the peptide count filter, stop with a message
   if (all(!keepRow)) {
-    warning(sprintf("sample %s does not contain any records after filtering",sampleName))
-    return(NULL)
+      stop(paste0("Sample ", sampleName, " does not contain any records after filtering"))
   }
 
   # Determine whether to use LFQ quantification
@@ -617,8 +616,7 @@ readOneProteomDIA <- function(inputTab, sampleName) {
 
   # Check if any rows remain after filtering
   if (all(!keepRow)) {
-    warning(sprintf("sample %s does not contain any records after filtering",sampleName))
-    return(NULL)
+      stop(paste0("Sample ", sampleName, " does not contain any records after filtering"))
   }
 
   # Output useful information

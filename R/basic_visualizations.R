@@ -26,24 +26,26 @@
 #' # Call the function
 #' plotMissing(se)
 #'
-#'
 #' @export
 plotMissing <- function(se) {
-
   # Extract the assay data from the SummarizedExperiment object
   countMat <- assay(se)
 
   # Create a table with sample names and their corresponding percentage of non-missing values
-  plotTab <- tibble(sample = se$sample,
-                    perNA = colSums(is.na(countMat))/nrow(countMat))
+  plotTab <- tibble(
+    sample = se$sample,
+    perNA = colSums(is.na(countMat)) / nrow(countMat)
+  )
 
   # Generate the bar plot using ggplot2
-  missPlot <- ggplot(plotTab, aes(x = sample, y = 1-perNA)) +
+  missPlot <- ggplot(plotTab, aes(x = sample, y = 1 - perNA)) +
     geom_bar(stat = "identity") +
     ggtitle("Percentage of sample completeness") +
     ylab("completeness") +
-    theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust=0),
-          plot.title = element_text(hjust = 0.5, face = "bold"))
+    theme(
+      axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0),
+      plot.title = element_text(hjust = 0.5, face = "bold")
+    )
 
   return(missPlot)
 }
@@ -81,31 +83,32 @@ plotMissing <- function(se) {
 #'
 #' @export
 plotIntensity <- function(se, colorByCol = "none") {
-
   # Extract the assay data from the SummarizedExperiment object
   countMat <- assay(se)
 
   # Convert the assay data to a tibble, pivot to long format, and filter out missing values
-  countTab <- countMat %>% as_tibble(rownames = "id") %>%
+  countTab <- countMat %>%
+    as_tibble(rownames = "id") %>%
     pivot_longer(-id) %>%
     filter(!is.na(value))
 
   # Extract metadata from the SummarizedExperiment object
   meta <- as.data.frame(colData(se))
   # Join the count data with metadata
-  countTabmeta <- left_join(countTab, meta, by = c('name' = 'sample'))
+  countTabmeta <- left_join(countTab, meta, by = c("name" = "sample"))
 
   # Create the ggplot object with boxplots of intensities
   g <- ggplot(countTabmeta, aes(x = name, y = value)) +
     ggtitle("Boxplot of intensities") +
-    theme(axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0),
-          plot.title = element_text(hjust = 0.5, face = "bold"))
+    theme(
+      axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0),
+      plot.title = element_text(hjust = 0.5, face = "bold")
+    )
 
   # Add color to the boxplots if a valid metadata column is specified
-  if (colorByCol == "none"){
+  if (colorByCol == "none") {
     g <- g + geom_boxplot()
-  }
-  else {
+  } else {
     g <- g + geom_boxplot(aes(color = !!sym(colorByCol)))
   }
 
@@ -146,48 +149,58 @@ plotIntensity <- function(se, colorByCol = "none") {
 #' # Generate the imputed assay
 #' result <- preprocessPhos(seData = se, normalize = TRUE, impute = "QRILC")
 #' # Perform PCA
-#' pcaResult <- stats::prcomp(t(SummarizedExperiment::assays(result)[["imputed"]]), center = TRUE, scale.=TRUE)
+#' pcaResult <- stats::prcomp(t(SummarizedExperiment::assays(result)[["imputed"]]), center = TRUE, scale. = TRUE)
 #' # Plot PCA results
 #' plotPCA(pca = pcaResult, se = result, color = "treatment")
 #'
 #' @export
 plotPCA <- function(pca, se, xaxis = "PC1", yaxis = "PC2", color = "none", shape = "none") {
-
   # Calculate the proportion of variance explained by each principal component
-  varExplained <- pca$sdev^2/sum(pca$sdev^2)
+  varExplained <- pca$sdev^2 / sum(pca$sdev^2)
   # Convert the PCA result to a data frame
   pcaDf <- as.data.frame(pca[["x"]])
   # Convert the metadata to a data frame
   meta <- as.data.frame(colData(se))
   # Join the PCA scores with the metadata
   pcaMeta <- left_join(rownames_to_column(pcaDf),
-                       meta, by = c("rowname" = "sample"))
+    meta,
+    by = c("rowname" = "sample")
+  )
 
   # Create the initial ggplot object with labels for variance explained
-  g <- ggplot(pcaMeta, aes(x = !!sym(xaxis), y = !!sym(yaxis),
-                           text = paste("sample:", meta$sample))) +
+  g <- ggplot(pcaMeta, aes(
+    x = !!sym(xaxis), y = !!sym(yaxis),
+    text = paste("sample:", meta$sample)
+  )) +
     theme_bw() +
-    theme(legend.position="top") +
-    labs(x=paste0(xaxis,": ",
-                  round(varExplained[as.numeric(strsplit(xaxis, "PC")[[1]][2])]*100, 1), "%"),
-         y=paste0(yaxis,": ",
-                  round(varExplained[as.numeric(strsplit(yaxis, "PC")[[1]][2])]*100, 1), "%")) +
+    theme(legend.position = "top") +
+    labs(
+      x = paste0(
+        xaxis, ": ",
+        round(varExplained[as.numeric(strsplit(xaxis, "PC")[[1]][2])] * 100, 1), "%"
+      ),
+      y = paste0(
+        yaxis, ": ",
+        round(varExplained[as.numeric(strsplit(yaxis, "PC")[[1]][2])] * 100, 1), "%"
+      )
+    ) +
     scale_shape(solid = FALSE)
 
   # Add points to the plot with optional color and shape aesthetics
   if (color == "none" & shape == "none") {
     g <- g + geom_point(size = 2)
-  }
-  else if (color == "none") {
+  } else if (color == "none") {
     g <- g + geom_point(aes(shape = !!sym(shape)), size = 2)
-  }
-  else if (shape == "none") {
+  } else if (shape == "none") {
     g <- g + geom_point(aes(color = !!sym(color)), size = 2)
-  }
-  else {
-    g <- g + geom_point(aes(color = !!sym(color),
-                                   shape = !!sym(shape)),
-                        size = 2)
+  } else {
+    g <- g + geom_point(
+      aes(
+        color = !!sym(color),
+        shape = !!sym(shape)
+      ),
+      size = 2
+    )
   }
 }
 
@@ -236,44 +249,39 @@ plotPCA <- function(pca, se, xaxis = "PC1", yaxis = "PC2", color = "none", shape
 #'
 #' @export
 plotHeatmap <- function(type, se, data = NULL, top = 100, cutCol = 1, cutRow = 1, clustCol = TRUE, clustRow = TRUE, annotationCol = NULL, title = NULL) {
-
   # Select the appropriate intensity assay and gene IDs based on the type of heatmap
   if (type == "Top variant") {
     exprMat <- assays(se)[["imputed"]]
     sds <- apply(exprMat, 1, sd)
     orderID <- names(sort(sds, decreasing = TRUE))
     geneIDs <- orderID[seq(1, as.integer(top))]
-    exprMat <- exprMat[geneIDs,]
-    geneSymbol <- rowData(se[match(geneIDs, rownames(se)),])$Gene
-  }
-  else if (type == "Differentially expressed") {
-    if(!is.null(data)) {
+    exprMat <- exprMat[geneIDs, ]
+    geneSymbol <- rowData(se[match(geneIDs, rownames(se)), ])$Gene
+  } else if (type == "Differentially expressed") {
+    if (!is.null(data)) {
       geneIDs <- arrange(data, stat)$ID
-      exprMat <- assays(se)[["imputed"]][geneIDs,]
-      geneSymbol <- data[match(geneIDs, data$ID),]$Gene
-    }
-    else {
+      exprMat <- assays(se)[["imputed"]][geneIDs, ]
+      geneSymbol <- data[match(geneIDs, data$ID), ]$Gene
+    } else {
       print("Please give data argument")
     }
-  }
-  else if (type == "Selected time series cluster") {
-    if(!is.null(data)) {
+  } else if (type == "Selected time series cluster") {
+    if (!is.null(data)) {
       geneIDs <- unique(data$ID)
-      exprMat <- assays(se)[["imputed"]][geneIDs,]
-      geneSymbol <- data[match(geneIDs, data$ID),]$Gene
-    }
-    else {
+      exprMat <- assays(se)[["imputed"]][geneIDs, ]
+      geneSymbol <- data[match(geneIDs, data$ID), ]$Gene
+    } else {
       print("Please give data argument")
     }
   }
 
   # Prepare column annotations from the metadata
   cd <- as.data.frame(colData(se))
-  annCol <- cd[row.names(cd) %in% colnames(exprMat),][c(annotationCol)]
+  annCol <- cd[row.names(cd) %in% colnames(exprMat), ][c(annotationCol)]
   row.names(annCol) <- colnames(exprMat)
 
   # Prepare the title of heatmap if Null
-  if (is.null(title)) title = type
+  if (is.null(title)) title <- type
 
   # Prepare color scale for the heatmap
   color <- colorRampPalette(c("navy", "white", "firebrick"))(100)
@@ -286,44 +294,49 @@ plotHeatmap <- function(type, se, data = NULL, top = 100, cutCol = 1, cutRow = 1
   # Plot the heatmap based on the type and whether annotations are provided
   if (type == "Top variant") {
     if (is.null(annotationCol)) {
-      p <- pheatmap(exprMat, color = color,
-                    labels_row = geneSymbol,
-                    treeheight_row = 0, treeheight_col = 0,
-                    main = title,
-                    cutree_cols = cutCol,
-                    cutree_rows = cutRow)
+      p <- pheatmap(exprMat,
+        color = color,
+        labels_row = geneSymbol,
+        treeheight_row = 0, treeheight_col = 0,
+        main = title,
+        cutree_cols = cutCol,
+        cutree_rows = cutRow
+      )
+    } else {
+      p <- pheatmap(exprMat,
+        color = color,
+        labels_row = geneSymbol,
+        treeheight_row = 0, treeheight_col = 0,
+        main = title,
+        cutree_cols = cutCol,
+        cutree_rows = cutRow,
+        annotation_col = annCol
+      )
     }
-    else {
-      p <- pheatmap(exprMat, color = color,
-                    labels_row = geneSymbol,
-                    treeheight_row = 0, treeheight_col = 0,
-                    main = title,
-                    cutree_cols = cutCol,
-                    cutree_rows = cutRow,
-                    annotation_col = annCol)
-    }
-  }
-  else {
+  } else {
     # Sort the columns by their names before plotting
     exprMat <- exprMat[, sort(colnames(exprMat))]
     if (is.null(annotationCol)) {
-      p <- pheatmap(exprMat, color = color,
-                    labels_row = geneSymbol,
-                    treeheight_row = 0, treeheight_col = 0,
-                    main = title,
-                    cluster_rows = clustRow, cluster_cols = clustCol,
-                    cutree_cols = cutCol,
-                    cutree_rows = cutRow)
-    }
-    else {
-      p <- pheatmap(exprMat, color = color,
-                    labels_row = geneSymbol,
-                    treeheight_row = 0, treeheight_col = 0,
-                    main = title,
-                    cluster_rows = clustRow, cluster_cols = clustCol,
-                    cutree_cols = cutCol,
-                    cutree_rows = cutRow,
-                    annotation_col = annCol)
+      p <- pheatmap(exprMat,
+        color = color,
+        labels_row = geneSymbol,
+        treeheight_row = 0, treeheight_col = 0,
+        main = title,
+        cluster_rows = clustRow, cluster_cols = clustCol,
+        cutree_cols = cutCol,
+        cutree_rows = cutRow
+      )
+    } else {
+      p <- pheatmap(exprMat,
+        color = color,
+        labels_row = geneSymbol,
+        treeheight_row = 0, treeheight_col = 0,
+        main = title,
+        cluster_rows = clustRow, cluster_cols = clustCol,
+        cutree_cols = cutCol,
+        cutree_rows = cutRow,
+        annotation_col = annCol
+      )
     }
   }
   return(p)

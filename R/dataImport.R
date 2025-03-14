@@ -21,49 +21,48 @@
 #' @importFrom utils read.delim
 #' @export
 generateInputTable <- function(rawFolder, batchAsFolder = FALSE) {
+  if (batchAsFolder) {
+    # Get all subdirectories in the rawFolder
+    allFolder <- list.dirs(rawFolder, full.names = FALSE)
+    # Remove any empty or NA values from the list of folders
+    allFolder <- allFolder[!allFolder %in% c(NA, "")]
+  } else {
+    allFolder <- ""
+  }
 
-    if (batchAsFolder) {
-        # Get all subdirectories in the rawFolder
-        allFolder <- list.dirs(rawFolder, full.names = FALSE)
-        # Remove any empty or NA values from the list of folders
-        allFolder <- allFolder[!allFolder %in% c(NA,"")]
-    } else {
-        allFolder <- ""
-    }
+  # Process each folder
+  inputTab <- lapply(allFolder, function(eachFolder) {
+    folderPath <- file.path(rawFolder, eachFolder)
+    # Read summary file
+    sumFile <- read.delim(file.path(folderPath, "summary.txt"))
+    # Get unique sample names from the summary file
+    sampleName <- unique(sumFile$Experiment)
+    # Replace special characters in sample names
+    sampleName <- gsub("[+]", ".", sampleName)
+    # Remove any empty or NA sample names
+    sampleName <- sampleName[!sampleName %in% c(NA, "")]
 
-    # Process each folder
-    inputTab <- lapply(allFolder, function(eachFolder) {
-        folderPath <- file.path(rawFolder, eachFolder)
-        # Read summary file
-        sumFile <- read.delim(file.path(folderPath,"summary.txt"))
-        # Get unique sample names from the summary file
-        sampleName <- unique(sumFile$Experiment)
-        # Replace special characters in sample names
-        sampleName <- gsub("[+]", ".", sampleName)
-        # Remove any empty or NA sample names
-        sampleName <- sampleName[!sampleName %in% c(NA,"")]
+    # Create a data frame for full proteome files
+    fullTab <- data.frame(fileName = rep(file.path(folderPath, "proteinGroups.txt"), length(sampleName)))
+    fullTab$sample <- sampleName
+    fullTab$searchType <- "proteome"
 
-        # Create a data frame for full proteome files
-        fullTab <- data.frame(fileName = rep(file.path(folderPath,"proteinGroups.txt"),length(sampleName)))
-        fullTab$sample <- sampleName
-        fullTab$searchType <- "proteome"
+    # Create a data frame for phosphoproteome files
+    phosphoTab <- data.frame(fileName = rep(file.path(folderPath, "Phospho(STY)Sites.txt"), length(sampleName)))
+    phosphoTab$sample <- sampleName
+    phosphoTab$searchType <- "phosphoproteome"
 
-        # Create a data frame for phosphoproteome files
-        phosphoTab <- data.frame(fileName = rep(file.path(folderPath,"Phospho(STY)Sites.txt"),length(sampleName)))
-        phosphoTab$sample <- sampleName
-        phosphoTab$searchType <- "phosphoproteome"
+    # Combine the full proteome and phosphoproteome tables
+    inputTab <- rbind(fullTab, phosphoTab)
+    inputTab$batch <- eachFolder
+    # Create a unique experimental ID
+    inputTab$id <- paste0(inputTab$batch, "_", inputTab$sample)
+    inputTab
+  })
+  # Combine all the input tables from each folder into one
+  inputTab <- do.call(rbind, inputTab)
 
-        # Combine the full proteome and phosphoproteome tables
-        inputTab <- rbind(fullTab, phosphoTab)
-        inputTab$batch <- eachFolder
-        # Create a unique experimental ID
-        inputTab$id <- paste0(inputTab$batch,"_",inputTab$sample)
-        inputTab
-    })
-    # Combine all the input tables from each folder into one
-    inputTab <- do.call(rbind, inputTab)
-
-    return(inputTab)
+  return(inputTab)
 }
 
 
@@ -88,40 +87,42 @@ generateInputTable <- function(rawFolder, batchAsFolder = FALSE) {
 #' @importFrom utils read.delim
 #' @export
 generateInputTable_DIA <- function(rawFolder) {
-    # List all files in the rawFolder with pattern "*Labels.txt"
-    getFile <- list.files(rawFolder, pattern = "*Labels.txt")
+  # List all files in the rawFolder with pattern "*Labels.txt"
+  getFile <- list.files(rawFolder, pattern = "*Labels.txt")
 
-    # Read the summary file containing information about the experiments
-    sumFile <- read.delim(file.path(rawFolder, getFile))
+  # Read the summary file containing information about the experiments
+  sumFile <- read.delim(file.path(rawFolder, getFile))
 
-    # Create a unique experimental ID
-    id <- c()
-    for (i in seq_len(sumFile$Sample.Type)) {
-        id <- c(id, paste(sumFile$Sample.Type[i], sumFile$treatment[i],
-                          sumFile$timepoint[i], sumFile$replicate[i], sep = "_"))
-    }
+  # Create a unique experimental ID
+  id <- c()
+  for (i in seq_len(sumFile$Sample.Type)) {
+    id <- c(id, paste(sumFile$Sample.Type[i], sumFile$treatment[i],
+      sumFile$timepoint[i], sumFile$replicate[i],
+      sep = "_"
+    ))
+  }
 
-    # Replace special characters in IDs
-    id <- gsub("[+]", ".", id)
+  # Replace special characters in IDs
+  id <- gsub("[+]", ".", id)
 
-    # List all files in the rawFolder with pattern "*Protein Report.xls"
-    getFileFP <- list.files(rawFolder, pattern = "*Protein Report.xls")
-    # Create a data frame for full proteome files
-    fullTab <- data.frame(fileName = rep(file.path(rawFolder, getFileFP), length(id)))
-    fullTab$searchType <- "proteome"
-    fullTab$id <- id
+  # List all files in the rawFolder with pattern "*Protein Report.xls"
+  getFileFP <- list.files(rawFolder, pattern = "*Protein Report.xls")
+  # Create a data frame for full proteome files
+  fullTab <- data.frame(fileName = rep(file.path(rawFolder, getFileFP), length(id)))
+  fullTab$searchType <- "proteome"
+  fullTab$id <- id
 
-    # List all files in the rawFolder with pattern "*PTM Report2.xls"
-    getFilePhospho <- list.files(rawFolder, pattern = "*PTM Report2.xls")
-    # Create a data frame for phosphoproteome files
-    phosphoTab <- data.frame(fileName = rep(file.path(rawFolder, getFilePhospho), length(id)))
-    phosphoTab$searchType <- "phosphoproteome"
-    phosphoTab$id <- id
+  # List all files in the rawFolder with pattern "*PTM Report2.xls"
+  getFilePhospho <- list.files(rawFolder, pattern = "*PTM Report2.xls")
+  # Create a data frame for phosphoproteome files
+  phosphoTab <- data.frame(fileName = rep(file.path(rawFolder, getFilePhospho), length(id)))
+  phosphoTab$searchType <- "phosphoproteome"
+  phosphoTab$id <- id
 
-    # Combine the full proteome and phosphoproteome tables into a single input table
-    inputTab <- rbind(fullTab, phosphoTab)
+  # Combine the full proteome and phosphoproteome tables into a single input table
+  inputTab <- rbind(fullTab, phosphoTab)
 
-    return(inputTab)
+  return(inputTab)
 }
 
 
@@ -159,55 +160,53 @@ generateInputTable_DIA <- function(rawFolder) {
 #' file2 <- system.file("extdata", "proteomeDDA_1.xls", package = "SmartPhos")
 #' # Create fileTable
 #' fileTable <- data.frame(
-#'    searchType = c("phosphoproteome", "proteome"),
-#'    fileName = c(file1, file2),
-#'    sample = c("Sample1", "sample1"),
-#'    id = c("s1", "s2")
+#'   searchType = c("phosphoproteome", "proteome"),
+#'   fileName = c(file1, file2),
+#'   sample = c("Sample1", "sample1"),
+#'   id = c("s1", "s2")
 #' )
 #' # Call the function
 #' readExperiment(fileTable, localProbCut = 0.75, scoreDiffCut = 5, fdrCut = 0.1, scoreCut = 10, pepNumCut = 1, ifLFQ = TRUE, annotation_col = c("id"))
 #'
 #' @import MultiAssayExperiment
 #' @export
-readExperiment <- function(fileTable, localProbCut = 0.75, scoreDiffCut = 5, fdrCut =0.1, scoreCut = 10, pepNumCut = 1, ifLFQ = TRUE, annotation_col = c(), verbose = FALSE) {
-
-    if (verbose) {
-        # Read phosphoproteomic data
-        message("Processing phosphoproteomic data")
-        ppe <- readPhosphoExperiment(fileTable, localProbCut, scoreDiffCut)
-        message("Successful!!")
-        # Read full proteome data
-        message("Processing proteomic data")
-        fpe <- readProteomeExperiment(fileTable, fdrCut, scoreCut, pepNumCut, ifLFQ)
-        message("Successful!!")
-    }
-    else {
-        # Read phosphoproteomic data
-        ppe <- readPhosphoExperiment(fileTable, localProbCut, scoreDiffCut)
-        # Read full proteome data
-        fpe <- readProteomeExperiment(fileTable, fdrCut, scoreCut, pepNumCut, ifLFQ)
-    }
+readExperiment <- function(fileTable, localProbCut = 0.75, scoreDiffCut = 5, fdrCut = 0.1, scoreCut = 10, pepNumCut = 1, ifLFQ = TRUE, annotation_col = c(), verbose = FALSE) {
+  if (verbose) {
+    # Read phosphoproteomic data
+    message("Processing phosphoproteomic data")
+    ppe <- readPhosphoExperiment(fileTable, localProbCut, scoreDiffCut)
+    message("Successful!!")
+    # Read full proteome data
+    message("Processing proteomic data")
+    fpe <- readProteomeExperiment(fileTable, fdrCut, scoreCut, pepNumCut, ifLFQ)
+    message("Successful!!")
+  } else {
+    # Read phosphoproteomic data
+    ppe <- readPhosphoExperiment(fileTable, localProbCut, scoreDiffCut)
+    # Read full proteome data
+    fpe <- readProteomeExperiment(fileTable, fdrCut, scoreCut, pepNumCut, ifLFQ)
+  }
 
 
-    # Prepare sample annotation
-    if ("batch" %in% colnames(fileTable)) annotation_col <- c(annotation_col,"batch")
-    sampleTab <- fileTable[,c("id","sample", annotation_col)]
-    sampleTab <- sampleTab[!duplicated(sampleTab$id),]
-    rownames(sampleTab) <- sampleTab$id
-    sampleTab$id <- NULL
+  # Prepare sample annotation
+  if ("batch" %in% colnames(fileTable)) annotation_col <- c(annotation_col, "batch")
+  sampleTab <- fileTable[, c("id", "sample", annotation_col)]
+  sampleTab <- sampleTab[!duplicated(sampleTab$id), ]
+  rownames(sampleTab) <- sampleTab$id
+  sampleTab$id <- NULL
 
-    # Construct MultiAssayExperiment object
-    if (!is.null(ppe) & !is.null(fpe)) {
-      mae <- MultiAssayExperiment(list(Phosphoproteome = ppe, Proteome = fpe),
-                                  sampleTab)
-    }
-    else if (is.null(ppe)) {
-      mae <- MultiAssayExperiment(list(Proteome = fpe), sampleTab)
-    }
-    else {
-      mae <- MultiAssayExperiment(list(Phosphoproteome = ppe), sampleTab)
-    }
-    return(mae)
+  # Construct MultiAssayExperiment object
+  if (!is.null(ppe) & !is.null(fpe)) {
+    mae <- MultiAssayExperiment(
+      list(Phosphoproteome = ppe, Proteome = fpe),
+      sampleTab
+    )
+  } else if (is.null(ppe)) {
+    mae <- MultiAssayExperiment(list(Proteome = fpe), sampleTab)
+  } else {
+    mae <- MultiAssayExperiment(list(Phosphoproteome = ppe), sampleTab)
+  }
+  return(mae)
 }
 
 
@@ -242,64 +241,62 @@ readExperiment <- function(fileTable, localProbCut = 0.75, scoreDiffCut = 5, fdr
 #' file2 <- system.file("extdata", "proteomeDIA_1.xls", package = "SmartPhos")
 #' # Create fileTable
 #' fileTable <- data.frame(
-#'    searchType = c("phosphoproteome", "proteome", "proteome"),
-#'    fileName = c(file1, file2, file2),
-#'    id = c("Sample_1", "sample1", "sample2"),
-#'    outputID = c("s1", "s2", "s3")
+#'   searchType = c("phosphoproteome", "proteome", "proteome"),
+#'   fileName = c(file1, file2, file2),
+#'   id = c("Sample_1", "sample1", "sample2"),
+#'   outputID = c("s1", "s2", "s3")
 #' )
 #' # Call the function
 #' readExperimentDIA(fileTable, localProbCut = 0.75, annotation_col = c("id"), onlyReviewed = FALSE, normalizeByProtein = FALSE)
 #'
 #' @import MultiAssayExperiment
 #' @export
-readExperimentDIA <- function(fileTable, localProbCut = 0.75, annotation_col = c(), onlyReviewed = TRUE, normalizeByProtein=FALSE, verbose = FALSE) {
-
-    if (verbose) {
-        # Read phospho data
-        message("Processing phosphoproteomic data")
-        ppe <- readPhosphoExperimentDIA(fileTable, localProbCut, onlyReviewed)
-        message("Successful!!")
-        # Read full proteome data
-        message("Processing proteomic data")
-        fpe <- readProteomeExperimentDIA(fileTable)
-        message("Successful!!")
-    }
-    else {
-        # Read phospho data
-        ppe <- readPhosphoExperimentDIA(fileTable, localProbCut, onlyReviewed)
-        # Read full proteome data
-        fpe <- readProteomeExperimentDIA(fileTable)
-    }
+readExperimentDIA <- function(fileTable, localProbCut = 0.75, annotation_col = c(), onlyReviewed = TRUE, normalizeByProtein = FALSE, verbose = FALSE) {
+  if (verbose) {
+    # Read phospho data
+    message("Processing phosphoproteomic data")
+    ppe <- readPhosphoExperimentDIA(fileTable, localProbCut, onlyReviewed)
+    message("Successful!!")
+    # Read full proteome data
+    message("Processing proteomic data")
+    fpe <- readProteomeExperimentDIA(fileTable)
+    message("Successful!!")
+  } else {
+    # Read phospho data
+    ppe <- readPhosphoExperimentDIA(fileTable, localProbCut, onlyReviewed)
+    # Read full proteome data
+    fpe <- readProteomeExperimentDIA(fileTable)
+  }
 
 
-    # Use user-specified output sample ID if available
-    if("outputID" %in% colnames(fileTable)) {
-       fileTable$id <- fileTable$outputID
-    }
+  # Use user-specified output sample ID if available
+  if ("outputID" %in% colnames(fileTable)) {
+    fileTable$id <- fileTable$outputID
+  }
 
-    # Prepare sample annotation
-    sampleTab <- fileTable[,c("id", annotation_col),drop=FALSE]
-    sampleTab <- sampleTab[!duplicated(sampleTab$id),,drop=FALSE]
+  # Prepare sample annotation
+  sampleTab <- fileTable[, c("id", annotation_col), drop = FALSE]
+  sampleTab <- sampleTab[!duplicated(sampleTab$id), , drop = FALSE]
 
-    # Convert sample table to data frame
-    sampleTab <- as.data.frame(sampleTab)
-    rownames(sampleTab) <- sampleTab$id
-    sampleTab$sample <- sampleTab$id
-    sampleTab$id <- NULL
+  # Convert sample table to data frame
+  sampleTab <- as.data.frame(sampleTab)
+  rownames(sampleTab) <- sampleTab$id
+  sampleTab$sample <- sampleTab$id
+  sampleTab$id <- NULL
 
-    # Get sample name without prefix or suffix
-    sampleTab$sampleName <- removePreSuffix(sampleTab$sample)
+  # Get sample name without prefix or suffix
+  sampleTab$sampleName <- removePreSuffix(sampleTab$sample)
 
-    # Construct MultiAssayExperiment object
-    if (!is.null(ppe) & !is.null(fpe)) {
-      mae <- MultiAssayExperiment(list(Phosphoproteome = ppe, Proteome = fpe), sampleTab)
-    } else if (is.null(ppe)) {
-      mae <- MultiAssayExperiment(list(Proteome = fpe), sampleTab)
-    } else {
-      mae <- MultiAssayExperiment(list(Phosphoproteome = ppe), sampleTab)
-    }
+  # Construct MultiAssayExperiment object
+  if (!is.null(ppe) & !is.null(fpe)) {
+    mae <- MultiAssayExperiment(list(Phosphoproteome = ppe, Proteome = fpe), sampleTab)
+  } else if (is.null(ppe)) {
+    mae <- MultiAssayExperiment(list(Proteome = fpe), sampleTab)
+  } else {
+    mae <- MultiAssayExperiment(list(Phosphoproteome = ppe), sampleTab)
+  }
 
-    return(mae)
+  return(mae)
 }
 
 
@@ -333,58 +330,60 @@ readExperimentDIA <- function(fileTable, localProbCut = 0.75, annotation_col = c
 #' @import MultiAssayExperiment
 #' @export
 normByFullProteome <- function(mae, replace = TRUE) {
+  # Check if both Phosphoproteome and Proteome assays are present
+  if (!all(c("Phosphoproteome", "Proteome") %in% names(assays(mae)))) {
+    stop("Both Phosphoproteome and Proteome assays should be present in the MultiAssayExperiment object")
+  }
 
-    # Check if both Phosphoproteome and Proteome assays are present
-    if (!all(c("Phosphoproteome","Proteome") %in% names(assays(mae)))) {
-        stop("Both Phosphoproteome and Proteome assays should be present in the MultiAssayExperiment object")
-    }
+  # Extract phosphoproteome and proteome assays
+  ppe <- mae[["Phosphoproteome"]]
+  fpe <- mae[["Proteome"]]
+  sampleTab <- colData(mae)
+  sampleTab.pp <- sampleTab[sampleTab$sampleType %in% c("Phospho", "PP"), ]
+  sampleTab.fp <- sampleTab[sampleTab$sampleType %in% c("FullProteome", "FP"), ]
 
-    # Extract phosphoproteome and proteome assays
-    ppe <- mae[["Phosphoproteome"]]
-    fpe <- mae[["Proteome"]]
-    sampleTab <- colData(mae)
-    sampleTab.pp <- sampleTab[sampleTab$sampleType %in% c("Phospho","PP"),]
-    sampleTab.fp <- sampleTab[sampleTab$sampleType %in% c("FullProteome","FP"),]
+  # Check if proteome assay for the unenriched samples is present
+  if (nrow(sampleTab.fp) == 0) {
+    stop("Proteome assay for the unenriched samples i.e., sampleType with FullProteome should be present")
+  }
 
-    # Check if proteome assay for the unenriched samples is present
-    if (nrow(sampleTab.fp) ==0 ) {
-        stop("Proteome assay for the unenriched samples i.e., sampleType with FullProteome should be present")
-    }
+  # Extract assay data for phosphoproteome and proteome
+  ppMat <- assay(ppe[, colnames(ppe) %in% rownames(sampleTab.pp)])
+  fpMat <- assay(fpe[, colnames(fpe) %in% rownames(sampleTab.fp)])
 
-    # Extract assay data for phosphoproteome and proteome
-    ppMat <- assay(ppe[,colnames(ppe) %in% rownames(sampleTab.pp)])
-    fpMat <- assay(fpe[,colnames(fpe) %in% rownames(sampleTab.fp)])
+  # Find the full proteome (non-enriched) counterparts of the phosphoproteome (enriched) samples
+  ppSampleName <- sampleTab.pp[colnames(ppMat), ]$sampleName
+  fpSampleID <- rownames(sampleTab.fp)[match(ppSampleName, sampleTab.fp$sampleName)]
 
-    # Find the full proteome (non-enriched) counterparts of the phosphoproteome (enriched) samples
-    ppSampleName <- sampleTab.pp[colnames(ppMat),]$sampleName
-    fpSampleID <- rownames(sampleTab.fp)[match(ppSampleName, sampleTab.fp$sampleName)]
+  # Handle the situation where not every phosphoproteome sample has a full proteome counterpart
+  ppMat <- ppMat[, !is.na(fpSampleID)]
+  fpSampleID <- fpSampleID[!is.na(fpSampleID)]
 
-    # Handle the situation where not every phosphoproteome sample has a full proteome counterpart
-    ppMat <- ppMat[,!is.na(fpSampleID)]
-    fpSampleID <- fpSampleID[!is.na(fpSampleID)]
+  # Get the full proteomic measurement of the corresponding proteins and samples
+  fpMat <- fpMat[match(rowData(ppe)$UniprotID, rowData(fpe)$UniprotID), fpSampleID]
 
-    # Get the full proteomic measurement of the corresponding proteins and samples
-    fpMat <- fpMat[match(rowData(ppe)$UniprotID, rowData(fpe)$UniprotID),fpSampleID]
+  # Ensure the samples match
+  stopifnot(all(sampleTab[(colnames(fpMat)), ]$sampleName == sampleTab[(colnames(ppMat)), ]$sampleName))
 
-    # Ensure the samples match
-    stopifnot(all(sampleTab[(colnames(fpMat)),]$sampleName == sampleTab[(colnames(ppMat)),]$sampleName))
+  # Normalize phosphoproteome data by the full proteome data
+  ppMat.norm <- ppMat / fpMat
+  ppMat.norm <- ppMat.norm[rowSums(!is.na(ppMat.norm)) > 0, ]
+  ppe.norm <- ppe[rownames(ppMat.norm), colnames(ppMat.norm)]
+  assay(ppe.norm) <- ppMat.norm
 
-    # Normalize phosphoproteome data by the full proteome data
-    ppMat.norm <- ppMat/fpMat
-    ppMat.norm <- ppMat.norm[rowSums(!is.na(ppMat.norm))>0,]
-    ppe.norm <- ppe[rownames(ppMat.norm),colnames(ppMat.norm)]
-    assay(ppe.norm) <- ppMat.norm
+  # Replace or add the normalized phosphoproteome data to the MultiAssayExperiment object
+  if (replace) {
+    mae[["Phosphoproteome"]] <- ppe.norm
+  } else {
+    mae <- MultiAssayExperiment(
+      list(
+        Phosphoproteome = mae[["Phosphoproteome"]],
+        Proteome = mae[["Proteome"]],
+        PhosphoRatio = ppe.norm
+      ),
+      colData = colData(mae)
+    )
+  }
 
-    # Replace or add the normalized phosphoproteome data to the MultiAssayExperiment object
-    if (replace) {
-        mae[["Phosphoproteome"]] <- ppe.norm
-    } else {
-        mae <- MultiAssayExperiment(list(Phosphoproteome = mae[["Phosphoproteome"]],
-                                             Proteome = mae[["Proteome"]],
-                                             PhosphoRatio = ppe.norm),
-                                             colData = colData(mae))
-    }
-
-    return(mae)
+  return(mae)
 }
-

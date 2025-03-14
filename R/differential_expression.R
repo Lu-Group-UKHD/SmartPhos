@@ -59,7 +59,6 @@
 #'
 #' @export
 performDifferentialExp <- function(se, assay, method = "limma", condition = NULL, reference, target, refTime = NULL, targetTime = NULL, pairedTtest = FALSE) {
-
   # Stop if method is other than limma or proDA
   if (!(method %in% c("limma", "ProDA"))) stop("Invalid method!! Provide either limma or ProDA")
 
@@ -71,15 +70,13 @@ performDifferentialExp <- function(se, assay, method = "limma", condition = NULL
   # Identify samples based on condition and time points if provided
   if (!is.null(condition)) {
     if (!is.null(refTime)) {
-      referenceID <- se[,se[[condition]] %in% reference & se$timepoint %in% refTime]$sample
-      targetID <- se[,se[[condition]] %in% target & se$timepoint %in% targetTime]$sample
+      referenceID <- se[, se[[condition]] %in% reference & se$timepoint %in% refTime]$sample
+      targetID <- se[, se[[condition]] %in% target & se$timepoint %in% targetTime]$sample
+    } else {
+      referenceID <- se[, se[[condition]] %in% reference]$sample
+      targetID <- se[, se[[condition]] %in% target]$sample
     }
-    else {
-      referenceID <- se[,se[[condition]] %in% reference]$sample
-      targetID <- se[,se[[condition]] %in% target]$sample
-    }
-  }
-  else {
+  } else {
     referenceID <- reference
     targetID <- target
   }
@@ -87,7 +84,7 @@ performDifferentialExp <- function(se, assay, method = "limma", condition = NULL
   # Subset the SummarizedExperiment object to the selected samples
   seSub <- se[, se$sample %in% c(referenceID, targetID)]
   # Create a comparison column indicating reference and target samples
-  seSub$comparison <-  ifelse(seSub$sample %in% referenceID, "reference", "target")
+  seSub$comparison <- ifelse(seSub$sample %in% referenceID, "reference", "target")
   seSub$comparison <- factor(seSub$comparison, levels = c("reference", "target"))
 
   # Extract the expression matrix and colData
@@ -96,10 +93,10 @@ performDifferentialExp <- function(se, assay, method = "limma", condition = NULL
   colData <- data.frame(colData(seqMat))
 
   # Create the design matrix for the differential expression analysis
-  if(!is.null(seSub$subjectID) && pairedTtest) {
+  if (!is.null(seSub$subjectID) && pairedTtest) {
     design <- model.matrix(~ subjectID + comparison, data = colData)
   } else {
-    design <- model.matrix(~ comparison, data = colData)
+    design <- model.matrix(~comparison, data = colData)
   }
   # Get the names of the design matrix columns
   resNames <- colnames(design)
@@ -110,26 +107,29 @@ performDifferentialExp <- function(se, assay, method = "limma", condition = NULL
   if (method == "limma") {
     fit <- limma::lmFit(exprMat, design = design)
     fit2 <- eBayes(fit)
-    resDE <- topTable(fit2, number = Inf, coef=resNames[length(resNames)])
+    resDE <- topTable(fit2, number = Inf, coef = resNames[length(resNames)])
     # Merge the results with metadata and format the results
-    resDE <- merge(resDE, meta, by=0, all=TRUE)
+    resDE <- merge(resDE, meta, by = 0, all = TRUE)
     resDE <- as_tibble(resDE) %>%
-      dplyr::rename(log2FC = logFC, stat = t,
-                    pvalue = P.Value, padj = adj.P.Val, ID = Row.names) %>%
+      dplyr::rename(
+        log2FC = logFC, stat = t,
+        pvalue = P.Value, padj = adj.P.Val, ID = Row.names
+      ) %>%
       select(-c(B, AveExpr)) %>%
       filter(!is.na(padj)) %>%
       arrange(pvalue)
-  }
-  else if (method == "ProDA") {
+  } else if (method == "ProDA") {
     fit <- proDA::proDA(exprMat, design = design)
     resDE <- proDA::test_diff(fit, contrast = resNames[length(resNames)])
     # Merge the results with metadata and format the results
-    rownames(resDE) <- resDE[,1]
-    resDE[,1] <- NULL
-    resDE <- merge(resDE, meta, by=0, all=TRUE)
+    rownames(resDE) <- resDE[, 1]
+    resDE[, 1] <- NULL
+    resDE <- merge(resDE, meta, by = 0, all = TRUE)
     resDE <- as_tibble(resDE) %>%
-      dplyr::rename(log2FC = diff, stat = t_statistic,
-                    pvalue = pval, padj = adj_pval, ID = Row.names) %>%
+      dplyr::rename(
+        log2FC = diff, stat = t_statistic,
+        pvalue = pval, padj = adj_pval, ID = Row.names
+      ) %>%
       select(-c(se, df, avg_abundance, n_approx, n_obs)) %>%
       filter(!is.na(padj)) %>%
       arrange(pvalue)
@@ -137,7 +137,6 @@ performDifferentialExp <- function(se, assay, method = "limma", condition = NULL
 
   # Return the results and the subsetted SummarizedExperiment object
   return(list(resDE = resDE, seSub = seSub))
-
 }
 
 
@@ -176,7 +175,6 @@ performDifferentialExp <- function(se, assay, method = "limma", condition = NULL
 #'
 #' @export
 plotVolcano <- function(tableDE, pFilter = 0.05, fcFilter = 0.5) {
-
   if (!("log2FC" %in% colnames(tableDE))) stop("column 'log2FC' not found")
   if (!("pvalue" %in% colnames(tableDE))) stop("column 'pvalue' not found")
   if (!("Gene" %in% colnames(tableDE))) stop("column 'Gene' not found")
@@ -200,17 +198,21 @@ plotVolcano <- function(tableDE, pFilter = 0.05, fcFilter = 0.5) {
     geom_vline(xintercept = -as.numeric(fcFilter), color = "darkgrey", linetype = "dashed") +
     # Add horizontal lines for p-value thresholds
     geom_hline(yintercept = -log10(as.numeric(pFilter)), color = "darkgrey", linetype = "dashed") +
-    annotate(x = 5.0, y = -log10(as.numeric(pFilter))-0.1, label = paste("P-value = ", as.numeric(pFilter)),
-             geom = "text", size = 3, color = "darkgrey") +
-    geom_hline(yintercept = -log10(0.25), color="darkgrey", linetype = "dashed") +
-    annotate(x = 5.0, y = 0.5, label = paste("P-value = ", 0.25),
-             geom = "text", size=3, color="darkgrey") +
+    annotate(
+      x = 5.0, y = -log10(as.numeric(pFilter)) - 0.1, label = paste("P-value = ", as.numeric(pFilter)),
+      geom = "text", size = 3, color = "darkgrey"
+    ) +
+    geom_hline(yintercept = -log10(0.25), color = "darkgrey", linetype = "dashed") +
+    annotate(
+      x = 5.0, y = 0.5, label = paste("P-value = ", 0.25),
+      geom = "text", size = 3, color = "darkgrey"
+    ) +
     # Plot the points and color them based on their expression status
     geom_point(aes(color = expression), size = 0.9) +
     scale_color_manual(values = c("Up" = "firebrick3", "Down" = "navy", "Not Sig" = "darkgrey")) +
     xlab("absolute log2(Quantity) difference") +
     ggtitle("Volcano plot") +
-    theme(plot.title = element_text(hjust=0.5))
+    theme(plot.title = element_text(hjust = 0.5))
   return(v)
 }
 
@@ -255,35 +257,41 @@ plotVolcano <- function(tableDE, pFilter = 0.05, fcFilter = 0.5) {
 #'
 #' @export
 intensityBoxPlot <- function(se, id, symbol) {
-
   exprMat <- assays(se)[["Intensity"]]
 
   # Check if the SE object contains subject-specific data
-  if(is.null(se$subjectID)) {
+  if (is.null(se$subjectID)) {
     # Prepare data frame for plotting without subject-specific information
-    plotTab <- data.frame(group = se$comparison,
-                          value = exprMat[id,])
-    p <- ggplot(plotTab, aes(x= group, y = value))
+    plotTab <- data.frame(
+      group = se$comparison,
+      value = exprMat[id, ]
+    )
+    p <- ggplot(plotTab, aes(x = group, y = value))
   } else {
     # Prepare data frame for plotting with subject-specific information
-    plotTab <- data.frame(group = se$comparison,
-                          value = exprMat[id,],
-                          subjectID = se$subjectID)
-    p <- ggplot(plotTab, aes(x= group, y = value)) +
+    plotTab <- data.frame(
+      group = se$comparison,
+      value = exprMat[id, ],
+      subjectID = se$subjectID
+    )
+    p <- ggplot(plotTab, aes(x = group, y = value)) +
       geom_line(aes(group = subjectID), linetype = "dotted", color = "grey50")
   }
 
   # Create the boxplot with additional formatting
   p <- p + geom_boxplot(aes(fill = group),
-                        width = 0.5, alpha = 0.5,
-                        outlier.shape = NA) +
+    width = 0.5, alpha = 0.5,
+    outlier.shape = NA
+  ) +
     geom_point() +
     ylab("Normalized Intensities") + xlab("") +
     ggtitle(symbol) + theme_bw() +
-    theme(text=element_text(size=15),
-          plot.title = element_text(hjust = 0.5),
-          legend.position = "none",
-          axis.text.x = element_text(angle = 45, hjust = 1, vjust = 0.5, size = 15))
+    theme(
+      text = element_text(size = 15),
+      plot.title = element_text(hjust = 0.5),
+      legend.position = "none",
+      axis.text.x = element_text(angle = 45, hjust = 1, vjust = 0.5, size = 15)
+    )
 
   return(p)
 }

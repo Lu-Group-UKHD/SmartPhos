@@ -23,10 +23,10 @@ test_that("readOnePhosDIA processes data correctly", {
 })
 
 test_that("readOnePhosDIA handles no rows passing filters", {
-  expect_warning(result <- readOnePhosDIA(inputTab, "Sample_1",
-                                          localProbCut = 0.95,
-                                          removeDup = FALSE))
-  expect_null(result)
+  expect_error(readOnePhosDIA(inputTab, "Sample_1",
+                              localProbCut = 0.95,
+                              removeDup = FALSE),
+               paste0("Sample Sample_1 does not contain any records after filtering"))
 })
 
 test_that("readOnePhosDIA handles removeDup correctly", {
@@ -114,8 +114,7 @@ test_that("readPhosphoExperimentDIA handles no rows passing filters", {
 
   expect_error(readPhosphoExperimentDIA(fileTable, localProbCut = 0.95,
                                         onlyReviewed = FALSE,
-                                        showProgressBar = FALSE),
-    "No phosphorylation site could pass the specified threshold in any sample!"
+                                        showProgressBar = FALSE)
   )
 })
 
@@ -210,8 +209,7 @@ test_that("readOneProteomDIA returns NULL and issues a warning when all rows are
     PG.Genes = c("Gene1", "Gene2", "Gene3")
   )
 
-  expect_warning(result <- readOneProteomDIA(inputTab, "Sample1"))
-  expect_null(result)
+  expect_error(readOneProteomDIA(inputTab, "Sample1"))
 })
 
 test_that("readOneProteomDIA ensures unique identifiers with no duplicates", {
@@ -253,9 +251,7 @@ test_that("readProteomeExperimentDIA correctly filters and processes the input d
 test_that("readProteomeExperimentDIA returns NULL when no proteome data is present", {
   fileTable <- data.table::data.table(searchType = "phosphoproteome", mfileName = file, id = "sample1")
 
-  result <- readProteomeExperimentDIA(fileTable)
-
-  expect_null(result)
+  expect_null(readProteomeExperimentDIA(fileTable))
 })
 
 test_that("readProteomeExperimentDIA throws an error when no proteins pass the threshold", {
@@ -264,7 +260,6 @@ test_that("readProteomeExperimentDIA throws an error when no proteins pass the t
 
   fileTable <- data.table::data.table(searchType = "proteome", fileName = file, id = "sample1")
 
-  expect_error(readProteomeExperimentDIA(fileTable),
-               "No proteins could pass the specified threshold in any sample!")
+  expect_error(readProteomeExperimentDIA(fileTable))
 })
 
