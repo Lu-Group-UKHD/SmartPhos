@@ -263,7 +263,7 @@ plotHeatmap <- function(type, se, data = NULL, top = 100, cutCol = 1, cutRow = 1
       exprMat <- assays(se)[["imputed"]][geneIDs, ]
       geneSymbol <- data[match(geneIDs, data$ID), ]$Gene
     } else {
-      print("Please give data argument")
+      message("Please give data argument")
     }
   } else if (type == "Selected time series cluster") {
     if (!is.null(data)) {
@@ -271,14 +271,19 @@ plotHeatmap <- function(type, se, data = NULL, top = 100, cutCol = 1, cutRow = 1
       exprMat <- assays(se)[["imputed"]][geneIDs, ]
       geneSymbol <- data[match(geneIDs, data$ID), ]$Gene
     } else {
-      print("Please give data argument")
+      message("Please give data argument")
     }
   }
 
   # Prepare column annotations from the metadata
-  cd <- as.data.frame(colData(se))
-  annCol <- cd[row.names(cd) %in% colnames(exprMat), ][c(annotationCol)]
-  row.names(annCol) <- colnames(exprMat)
+  if (!is.null(annotationCol)) {
+      cd <- as.data.frame(colData(se))
+      annCol <- cd[row.names(cd) %in% colnames(exprMat), ][c(annotationCol)]
+      row.names(annCol) <- colnames(exprMat)
+  } else {
+      annCol <- NA
+  }
+
 
   # Prepare the title of heatmap if Null
   if (is.null(title)) title <- type
@@ -293,51 +298,25 @@ plotHeatmap <- function(type, se, data = NULL, top = 100, cutCol = 1, cutRow = 1
 
   # Plot the heatmap based on the type and whether annotations are provided
   if (type == "Top variant") {
-    if (is.null(annotationCol)) {
       p <- pheatmap(exprMat,
-        color = color,
-        labels_row = geneSymbol,
-        treeheight_row = 0, treeheight_col = 0,
-        main = title,
-        cutree_cols = cutCol,
-        cutree_rows = cutRow
-      )
-    } else {
-      p <- pheatmap(exprMat,
-        color = color,
-        labels_row = geneSymbol,
-        treeheight_row = 0, treeheight_col = 0,
-        main = title,
-        cutree_cols = cutCol,
-        cutree_rows = cutRow,
-        annotation_col = annCol
-      )
-    }
+                    color = color,
+                    labels_row = geneSymbol,
+                    treeheight_row = 0, treeheight_col = 0,
+                    main = title,
+                    cutree_cols = cutCol,
+                    cutree_rows = cutRow,
+                    annotation_col = annCol)
   } else {
     # Sort the columns by their names before plotting
-    exprMat <- exprMat[, sort(colnames(exprMat))]
-    if (is.null(annotationCol)) {
       p <- pheatmap(exprMat,
-        color = color,
-        labels_row = geneSymbol,
-        treeheight_row = 0, treeheight_col = 0,
-        main = title,
-        cluster_rows = clustRow, cluster_cols = clustCol,
-        cutree_cols = cutCol,
-        cutree_rows = cutRow
-      )
-    } else {
-      p <- pheatmap(exprMat,
-        color = color,
-        labels_row = geneSymbol,
-        treeheight_row = 0, treeheight_col = 0,
-        main = title,
-        cluster_rows = clustRow, cluster_cols = clustCol,
-        cutree_cols = cutCol,
-        cutree_rows = cutRow,
-        annotation_col = annCol
-      )
-    }
+                    color = color,
+                    labels_row = geneSymbol,
+                    treeheight_row = 0, treeheight_col = 0,
+                    main = title,
+                    cluster_rows = clustRow, cluster_cols = clustCol,
+                    cutree_cols = cutCol,
+                    cutree_rows = cutRow,
+                    annotation_col = annCol)
   }
   return(p)
 }
