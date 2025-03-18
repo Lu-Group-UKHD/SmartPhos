@@ -37,6 +37,7 @@
 #' @importFrom dplyr filter group_by ungroup mutate bind_rows arrange tibble n
 #' @importFrom tidyr separate
 #' @importFrom stats fisher.test p.adjust
+#'
 #' @export
 runFisher <- function (genes, reference, inputSet, ptm = FALSE) {
 
@@ -301,9 +302,10 @@ enrichDifferential <- function(dea, type, gsaMethod, geneSet, ptmSet, statType, 
 #' clusterEnrich(clust$cluster, seProcess, inGMT)
 #'
 #' @importFrom dplyr filter mutate group_by summarise ungroup bind_rows arrange n
-#' @importFrom ggplot2 ggplot geom_point aes scale_fill_gradient xlab ylab theme element_text
 #' @importFrom tidyr separate
 #' @importFrom stats p.adjust
+#' @import ggplot2
+#'
 #' @export
 clusterEnrich <- function(clusterTab, se, inputSet, reference = NULL, ptm = FALSE, adj = "BH", filterP = 0.05, ifFDR = FALSE) {
 
@@ -384,6 +386,7 @@ clusterEnrich <- function(clusterTab, se, inputSet, reference = NULL, ptm = FALS
 #' @importFrom dplyr mutate rename filter count tibble as_tibble group_by ungroup arrange bind_rows
 #' @importFrom tidyr separate
 #' @importFrom stats p.adjust
+#'
 #' @export
 runGSEAforPhospho <- function(geneStat, ptmSetDb, nPerm, weight = 1, correl.type = "rank",
                               statistic = "Kolmogorov-Smirnov", min.overlap = 5) {

@@ -291,6 +291,7 @@ readOnePhosDIA <- function(inputTab, sampleName, localProbCut = 0.75, removeDup 
 #' @import SummarizedExperiment
 #' @importFrom data.table fread rbindlist
 #' @importFrom utils data
+#'
 #' @examples
 #' file <- system.file("extdata", "phosDIA_1.xls", package = "SmartPhos")
 #' fileTable <- data.frame(searchType = "phosphoproteome", fileName = file, id = c("Sample_1"))
@@ -667,6 +668,7 @@ readOneProteomDIA <- function(inputTab, sampleName) {
 #' @import BiocParallel
 #' @import SummarizedExperiment
 #' @importFrom data.table fread rbindlist
+#'
 #' @export
 readProteomeExperimentDIA <- function(fileTable, showProgressBar = FALSE) {
   # Select proteomics entries

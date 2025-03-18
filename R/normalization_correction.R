@@ -173,7 +173,7 @@ getRatioMatrix <- function(maeData, normalization = FALSE, getAdjustedPP = FALSE
 #' @importFrom tibble as_tibble
 #' @importFrom tidyr pivot_longer
 #' @importFrom dplyr filter mutate
-#' @importFrom ggplot2 ggplot aes geom_boxplot ggtitle xlab ylab geom_hline theme element_text
+#' @import ggplot2
 #' @export
 plotLogRatio <- function(maeData, normalization = FALSE) {
 
@@ -288,6 +288,7 @@ checkRatioMat <- function(ratioMat, minOverlap = 3) {
 #' @importFrom stats optim
 #' @importFrom parallel makeCluster setDefaultCluster stopCluster
 #' @importFrom utils combn
+#'
 #' @export
 runPhosphoAdjustment <- function(maeData, normalization = FALSE, minOverlap = 3, completeness = 0, ncore = 1 ) {
 
@@ -360,7 +361,7 @@ runPhosphoAdjustment <- function(maeData, normalization = FALSE, minOverlap = 3,
 #' @importFrom MultiAssayExperiment assay assays colData
 #' @importFrom dplyr bind_rows filter group_by mutate summarise
 #' @importFrom tidyr pivot_longer
-#' @importFrom ggplot2 aes facet_wrap geom_boxplot geom_hline geom_line geom_point ggplot ggtitle theme xlab ylab
+#' @import ggplot2
 #' @export
 plotAdjustmentResults <- function(maeData, normalization = FALSE) {
   # Check if the adjustment factor has been applied

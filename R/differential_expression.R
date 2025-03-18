@@ -156,8 +156,8 @@ performDifferentialExp <- function(se, assay, method = "limma", condition = NULL
 #' @details
 #' This function creates a volcano plot where differentially expressed genes are categorized as 'Up', 'Down', or 'Not Sig' based on the provided p-value and log2 fold-change thresholds. Points on the plot are color-coded to indicate their expression status.
 #'
-#' @importFrom ggplot2 ggplot aes geom_vline geom_hline geom_point annotate scale_color_manual xlab ggtitle theme
 #' @importFrom dplyr mutate case_when
+#' @import ggplot2
 #'
 #' @examples
 #' library(SummarizedExperiment)
@@ -238,8 +238,8 @@ plotVolcano <- function(tableDE, pFilter = 0.05, fcFilter = 0.5) {
 #'
 #' The \code{boxplot} is customized with various aesthetic elements, such as box width, transparency, point size, axis labels, and title formatting.
 #'
-#' @importFrom ggplot2 ggplot aes geom_boxplot geom_point geom_line ylab xlab ggtitle theme_bw theme element_text
 #' @importFrom SummarizedExperiment assays
+#' @import ggplot2
 #'
 #' @examples
 #' library(SummarizedExperiment)

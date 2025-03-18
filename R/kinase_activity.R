@@ -17,6 +17,7 @@
 #' getDecouplerNetwork("Mus musculus")
 #'
 #' @importFrom utils read.table data
+#'
 #' @export
 getDecouplerNetwork <- function(speciesRef = "Homo sapiens") {
 
@@ -153,7 +154,8 @@ calcKinaseScore <- function(resTab, decoupler_network, corrThreshold = 0.9, stat
 #'
 #' @importFrom dplyr mutate filter group_by slice_max
 #' @importFrom stats reorder
-#' @importFrom ggplot2 ggplot aes geom_bar scale_fill_manual theme_linedraw theme element_text unit coord_flip ggtitle xlab ylab element_blank
+#' @import ggplot2
+#'
 #' @export
 plotKinaseDE <- function(scoreTab, nTop = 10, pCut = 0.05) {
   plotTab <- scoreTab %>% mutate(significance = ifelse(p_value <= pCut, paste0("p <= ",pCut), paste0("p > ",pCut)),
@@ -219,7 +221,7 @@ plotKinaseDE <- function(scoreTab, nTop = 10, pCut = 0.05) {
 #' plotKinaseTimeSeries(scoreTab)
 #'
 #' @importFrom dplyr mutate rename
-#' @importFrom ggplot2 ggplot aes geom_tile geom_text scale_fill_gradient2 scale_x_discrete scale_y_discrete theme_bw ylab xlab ggtitle theme element_text unit
+#' @import ggplot2
 #' @export
 plotKinaseTimeSeries <- function(scoreTab, pCut = 0.05, clusterName = "cluster1") {
 

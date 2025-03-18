@@ -1,7 +1,7 @@
 ---
 title: "SmartPhos Explorer: a one-stop data analysis platform for proteomic and phosphoproteomic data"
 author: "Shubham Agrawal, Cong Quan Ta, Junyan Lu"
-date: "2024-08-30"
+date: "2025-03-17"
 output:
   BiocStyle::html_document:
     toc_float: true
@@ -15,9 +15,27 @@ vignette: >
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
+```{r style, echo=FALSE, results='asis'}
+BiocStyle::markdown()
+```
+
 # Introduction
 
-SmartPhos Explorer is an R Shiny app for streamlined analysis of *proteomics* and *phosphoproteomics*, featuring data preprocessing, exploratory data analysis, hypothesis testing, time-series analysis and functional interpretation. 
+SmartPhos Explorer is an R Shiny app for streamlined analysis of *proteomics* and *phosphoproteomics*, featuring data preprocessing, exploratory data analysis, hypothesis testing, time-series analysis and functional interpretation. There are two ways to run the SmartPhos Explorer shiny app:
+
+Calling the function after loading the SmartPhos package. 
+
+```{r, eval=FALSE}
+#library("SmartPhos")
+runSmartPhos()
+```
+
+Users can make an independent directory for the SmartPhos Explorer app and open any of the script (server.R, ui.R) in RStudio and clicking on *Run App* button.
+
+```{r, eval=FALSE}
+library("SmartPhos")
+makeSmartPhosDirectory(path = "shinyApp")
+```
 
 The front page of the Shiny app looks as below:
 

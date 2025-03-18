@@ -1,7 +1,7 @@
 ---
 title: "SmartPhos: a pipline for processing and analysis of phosphoproteome data"
 author: "Shubham Agrawal, Junyan Lu"
-date: "2024-12-10"
+date: "2025-03-17"
 output:
   BiocStyle::html_document:
     toc_float: true

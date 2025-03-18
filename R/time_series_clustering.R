@@ -40,6 +40,7 @@
 #'
 #' @importFrom stats median sd
 #' @importFrom matrixStats rowMads
+#'
 #' @export
 mscale <- function(x, center = TRUE, scale = TRUE, censor = NULL, useMad = FALSE){
 
@@ -190,11 +191,11 @@ addZeroTime <- function(data, condition, treat, zeroTreat, timeRange) {
 #' @importFrom e1071 cmeans
 #' @importFrom dplyr filter left_join mutate arrange group_by ungroup
 #' @importFrom tidyr pivot_longer separate
-#' @importFrom ggplot2 ggplot aes geom_line scale_color_gradient facet_wrap theme_bw theme element_text unit
 #' @importFrom tibble as_tibble tibble
 #' @importFrom stringr str_extract str_split
 #' @importFrom magrittr %>%
 #' @importFrom Biobase rowMax
+#' @import ggplot2
 #'
 #' @export
 clusterTS <- function(x, k = 5, pCut = NULL, twoCondition = FALSE) {
@@ -351,6 +352,7 @@ clusterTS <- function(x, k = 5, pCut = NULL, twoCondition = FALSE) {
 #' @importFrom dplyr filter as_tibble
 #' @importFrom stringr str_ends
 #' @importFrom tibble rownames_to_column
+#'
 splineFilter <- function(exprMat, subjectID = NULL, time, df, pCut = 0.5, ifFDR = FALSE, treatment = NULL, refTreatment = NULL) {
   # Convert time points from minutes to hours if both units are present
   if ((all(str_ends(time,"h|min"))) & (!all(str_ends(time,"h"))) & (!all(str_ends(time,"min")))) {
@@ -455,7 +457,7 @@ splineFilter <- function(exprMat, subjectID = NULL, time, df, pCut = 0.5, ifFDR 
 #'
 #' The x-axis represents time, and the y-axis represents the selected metric (normalized expression or logFC). The plot is customized with various aesthetic elements, such as point size, line type, axis labels, and title formatting.
 #'
-#' @importFrom ggplot2 ggplot aes geom_point stat_summary geom_line ylab xlab ggtitle theme_bw theme element_text
+#' @import ggplot2
 #' @importFrom SummarizedExperiment assays
 #' @importFrom dplyr %>% bind_cols filter
 #' @importFrom stringr str_extract

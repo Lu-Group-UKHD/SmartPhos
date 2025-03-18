@@ -67,6 +67,7 @@ getOneSymbol <- function(Gene) {
 #' @importFrom missForest missForest
 #' @importFrom doParallel registerDoParallel
 #' @importFrom doRNG registerDoRNG
+#'
 #' @export
 preprocessProteome <- function(seData, filterList = NULL, missCut = 50,
                                transform = "log2", normalize = FALSE, getPP = FALSE,
@@ -236,6 +237,7 @@ preprocessProteome <- function(seData, filterList = NULL, missCut = 50,
 #' @importFrom missForest missForest
 #' @importFrom doParallel registerDoParallel
 #' @importFrom doRNG registerDoRNG
+#'
 #' @export
 preprocessPhos <- function(seData, filterList = NULL, missCut = 50,
                            transform="log2", normalize = FALSE, getFP = FALSE,

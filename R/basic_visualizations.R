@@ -13,8 +13,8 @@
 #' This function calculates the percentage of non-missing values for each sample in the provided \code{SummarizedExperiment} object. It then generates a bar plot where each bar represents a sample, and the height of the bar corresponds to the completeness (percentage of non-missing values) of that sample.
 #'
 #' @importFrom SummarizedExperiment assay
-#' @importFrom ggplot2 ggplot aes geom_bar ggtitle ylab theme element_text
 #' @importFrom tibble tibble
+#' @import ggplot2
 #'
 #' @examples
 #' library(SummarizedExperiment)
@@ -64,10 +64,10 @@ plotMissing <- function(se) {
 #' @return A \code{ggplot2} object showing boxplots of intensities for each sample.
 #'
 #' @importFrom SummarizedExperiment assay colData
-#' @importFrom ggplot2 ggplot aes geom_boxplot ggtitle theme element_text
 #' @importFrom dplyr filter left_join
 #' @importFrom tidyr pivot_longer
 #' @importFrom tibble as_tibble
+#' @import ggplot2
 #'
 #' @examples
 #' library(SummarizedExperiment)
@@ -135,10 +135,10 @@ plotIntensity <- function(se, colorByCol = "none") {
 #' This function creates a PCA plot using the scores from a PCA result object and metadata from a \code{SummarizedExperiment} object. The x-axis and y-axis can be customized to display different principal components, and the points can be optionally colored and shaped based on specified metadata columns.
 #'
 #' @importFrom SummarizedExperiment colData
-#' @importFrom ggplot2 ggplot aes geom_point theme_bw theme labs scale_shape
 #' @importFrom dplyr left_join
 #' @importFrom tibble rownames_to_column
 #' @importFrom rlang sym
+#' @import ggplot2
 #'
 #' @examples
 #' # Load multiAssayExperiment object
@@ -228,12 +228,12 @@ plotPCA <- function(pca, se, xaxis = "PC1", yaxis = "PC2", color = "none", shape
 #' This function creates a heatmap using the Intensity assay from a \code{SummarizedExperiment} object. The heatmap can show the top variants based on standard deviation, differentially expressed genes, or selected time series clusters. Row normalization is performed, and the heatmap can include annotations based on specified metadata columns.
 #'
 #' @importFrom SummarizedExperiment assays colData rowData
-#' @importFrom ggplot2 ggplot aes geom_point theme_bw theme labs scale_shape
 #' @importFrom dplyr arrange left_join
 #' @importFrom pheatmap pheatmap
 #' @importFrom tibble rownames_to_column
 #' @importFrom grDevices colorRampPalette
 #' @importFrom rlang sym
+#' @import ggplot2
 #'
 #' @examples
 #' library(SummarizedExperiment)
