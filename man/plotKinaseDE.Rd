@@ -7,17 +7,21 @@
 plotKinaseDE(scoreTab, nTop = 10, pCut = 0.05)
 }
 \arguments{
-\item{scoreTab}{A \code{data frame} containing kinase scores with columns source, score, and p_value.}
+\item{scoreTab}{A \code{data frame} containing kinase scores with columns
+source, score, and p_value.}
 
-\item{nTop}{A \code{numeric} value specifying the number of top kinases to plot for each direction. Default is 10.}
+\item{nTop}{A \code{numeric} value specifying the number of top kinases to
+plot for each direction. Default is 10.}
 
-\item{pCut}{A \code{numeric} value specifying the p-value cutoff for significance. Default is 0.05.}
+\item{pCut}{A \code{numeric} value specifying the p-value cutoff for
+significance. Default is 0.05.}
 }
 \value{
 A \code{ggplot2} object representing the bar plot of kinase score.
 }
 \description{
-`plotKinaseDE` generates a \code{bar plot} of the top kinases associated with the differentially expressed genes based on their scores.
+`plotKinaseDE` generates a \code{bar plot} of the top kinases associated
+with the differentially expressed genes based on their scores.
 }
 \details{
 The function performs the following steps:
@@ -25,7 +29,8 @@ The function performs the following steps:
   \item Adds a column for significance based on the p-value cutoff.
   \item Adds a column for the sign of the score.
   \item Filters out kinases with a score of 0.
-  \item Selects the top \code{nTop} kinases by absolute score for each sign of the score.
+  \item Selects the top \code{nTop} kinases by absolute score for each sign
+  of the score.
   \item Creates a bar plot with the selected kinases.
 }
 }

@@ -11,18 +11,25 @@ runFisher(genes, reference, inputSet, ptm = FALSE)
 
 \item{reference}{A \code{character} vector of reference genes.}
 
-\item{inputSet}{A \code{list} containing gene set collections. If ptm is \code{TRUE}, this should be a data frame with specific columns.}
+\item{inputSet}{A \code{list} containing gene set collections. If ptm is
+\code{TRUE}, this should be a data frame with specific columns.}
 
-\item{ptm}{\code{Logical}. If \code{TRUE}, perform the test on post-translational modification (PTM) gene sets. Default is \code{FALSE}.}
+\item{ptm}{\code{Logical}. If \code{TRUE}, perform the test on
+post-translational modification (PTM) gene sets. Default is \code{FALSE}.}
 }
 \value{
-A \code{data frame} with the results of the Fisher's Exact Test, including the gene set name, the number of genes in the set, set size, p-value, adjusted p-value, and the genes in the set.
+A \code{data frame} with the results of the Fisher's Exact Test,
+including the gene set name, the number of genes in the set, set size,
+p-value, adjusted p-value, and the genes in the set.
 }
 \description{
-\code{runFisher} performs Fisher's Exact Test to determine the enrichment of a set of genes within reference gene sets.
+\code{runFisher} performs Fisher's Exact Test to determine the enrichment of
+a set of genes within reference gene sets.
 }
 \details{
-The function can operate in two modes: standard gene sets and PTM-specific gene sets. For PTM-specific gene sets, additional filtering and processing are performed.
+The function can operate in two modes: standard gene sets and PTM-specific
+gene sets. For PTM-specific gene sets, additional filtering and processing
+are performed.
 }
 \examples{
 library(SummarizedExperiment)
@@ -35,10 +42,13 @@ colData(se) <- colData(dda_example)
 # Preprocess the proteome assay
 result <- preprocessProteome(se, normalize = TRUE)
 # Call the function to perform differential expression analyis
-de <- performDifferentialExp(se = result, assay = "Intensity", method = "limma", reference = "1stCrtl", target = "EGF", condition = "treatment")
+de <- performDifferentialExp(se = result, assay = "Intensity",
+method = "limma", reference = "1stCrtl", target = "EGF",
+condition = "treatment")
 genesList <- unique(de$resDE$Gene)
 referenceList <- unique(SummarizedExperiment::rowData(result)$Gene)
-genesetPath <- appDir <- system.file("shiny-app/geneset", package = "SmartPhos")
+genesetPath <- appDir <- system.file("shiny-app/geneset",
+package = "SmartPhos")
 inGMT <- loadGSC(paste0(genesetPath,"/Cancer_Hallmark.gmt"),type="gmt")
 # Run the function
 runFisher(genes = genesList, reference = referenceList, inputSet = inGMT)

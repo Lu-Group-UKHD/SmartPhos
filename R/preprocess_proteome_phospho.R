@@ -3,14 +3,20 @@
 #' @title Extract the Last Gene Symbol from a Semicolon-Separated List
 #'
 #' @description
-#' \code{getOneSymbol} extracts the last gene symbol from a semicolon-separated list of gene symbols.
+#' \code{getOneSymbol} extracts the last gene symbol from a semicolon-separated
+#' list of gene symbols.
 #'
-#' @param Gene A \code{character} vector where each element is a semicolon-separated list of gene symbols.
+#' @param Gene A \code{character} vector where each element is a
+#' semicolon-separated list of gene symbols.
 #'
-#' @return A \code{character} vector containing the last gene symbol from each element of the input vector.
+#' @return A \code{character} vector containing the last gene symbol from each
+#' element of the input vector.
 #'
 #' @details
-#' This function processes a character vector where each element consists of gene symbols separated by semicolons. It splits each element by semicolons and extracts the last gene symbol from the resulting list. The output is a character vector of these last gene symbols.
+#' This function processes a character vector where each element consists of
+#' gene symbols separated by semicolons. It splits each element by semicolons
+#' and extracts the last gene symbol from the resulting list. The output is a
+#' character vector of these last gene symbols.
 #'
 #' @importFrom stringr str_split
 getOneSymbol <- function(Gene) {
@@ -32,19 +38,31 @@ getOneSymbol <- function(Gene) {
 #' @title Preprocess Proteome Data
 #'
 #' @description
-#' \code{preprocessProteome} preprocesses proteome data stored in a \code{SummarizedExperiment} object by performing filtering, transformation, normalization, imputation, and batch effect removal.
+#' \code{preprocessProteome} preprocesses proteome data stored in a
+#' \code{SummarizedExperiment} object by performing filtering, transformation,
+#' normalization, imputation, and batch effect removal.
 #'
 #' @param seData A \code{SummarizedExperiment} object containing proteome data.
-#' @param filterList A \code{list} of filters to apply on the samples. Default is \code{NULL}.
-#' @param missCut \code{Numeric} value specifying the missing value cutoff percentage for filtering features. Default is 50.
-#' @param transform \code{Character} string specifying the transformation method ("log2", "vst", "none"). Default is "log2".
-#' @param normalize \code{Logical} value indicating whether to normalize the data. Default is \code{FALSE}.
-#' @param getPP \code{Logical} value indicating whether to retrieve PP samples. Default is \code{FALSE}.
-#' @param removeOutlier \code{Character} vector of samples to be removed as outliers. Default is \code{NULL}.
-#' @param impute \code{Character} string specifying the imputation method ("QRILC", "MLE", "bpca", "missForest", "MinDet", "none"). Default is "none".
-#' @param batch \code{Character} vector specifying batch effects to remove. Default is \code{NULL}.
-#' @param verbose \code{Logical} value indicating whether to print detailed information. Default is \code{FALSE}.
-#' @param scaleFactorTab \code{Data frame} containing scale factors for normalization. Default is \code{NULL}.
+#' @param filterList A \code{list} of filters to apply on the samples. Default
+#' is \code{NULL}.
+#' @param missCut \code{Numeric} value specifying the missing value cutoff
+#' percentage for filtering features. Default is 50.
+#' @param transform \code{Character} string specifying the transformation
+#' method ("log2", "vst", "none"). Default is "log2".
+#' @param normalize \code{Logical} value indicating whether to normalize the
+#' data. Default is \code{FALSE}.
+#' @param getPP \code{Logical} value indicating whether to retrieve PP samples.
+#' Default is \code{FALSE}.
+#' @param removeOutlier \code{Character} vector of samples to be removed as
+#' outliers. Default is \code{NULL}.
+#' @param impute \code{Character} string specifying the imputation method
+#' ("QRILC", "MLE", "bpca", "missForest", "MinDet", "none"). Default is "none".
+#' @param batch \code{Character} vector specifying batch effects to remove.
+#' Default is \code{NULL}.
+#' @param verbose \code{Logical} value indicating whether to print detailed
+#' information. Default is \code{FALSE}.
+#' @param scaleFactorTab \code{Data frame} containing scale factors for
+#' normalization. Default is \code{NULL}.
 #'
 #' @return A \code{SummarizedExperiment} object with preprocessed proteome data.
 #'
@@ -70,9 +88,10 @@ getOneSymbol <- function(Gene) {
 #'
 #' @export
 preprocessProteome <- function(seData, filterList = NULL, missCut = 50,
-                               transform = "log2", normalize = FALSE, getPP = FALSE,
-                               removeOutlier = NULL, impute = "none", batch = NULL,
-                               verbose = FALSE, scaleFactorTab = NULL) {
+                               transform = "log2", normalize = FALSE,
+                               getPP = FALSE, removeOutlier = NULL,
+                               impute = "none", batch = NULL, verbose = FALSE,
+                               scaleFactorTab = NULL) {
 
   # Retrieve desired sample type
   if (getPP) {
@@ -122,7 +141,9 @@ preprocessProteome <- function(seData, filterList = NULL, missCut = 50,
       if (is.null(scaleFactorTab)) {
         assay(fpeSub) <- medianNorm(log2(assay(fpeSub)))
       } else {
-        assay(fpeSub) <- log2(t(t(assay(fpeSub))/scaleFactorTab[match(paste0(fpeSub$sample),scaleFactorTab$sample),]$scaleFactor))
+        assay(fpeSub) <- log2(t(t(assay(
+            fpeSub))/scaleFactorTab[match(paste0(fpeSub$sample),
+                                          scaleFactorTab$sample),]$scaleFactor))
       }
     } else {
       assay(fpeSub) <- log2(assay(fpeSub))
@@ -132,7 +153,9 @@ preprocessProteome <- function(seData, filterList = NULL, missCut = 50,
       if (is.null(scaleFactorTab)) {
         assay(fpeSub) <- vsn::justvsn(assay(fpeSub))
       } else {
-        normMat <- t(t(assay(fpeSub))/scaleFactorTab[match(paste0(fpeSub$sample),scaleFactorTab$sample),]$scaleFactor)
+        normMat <- t(t(assay(
+            fpeSub))/scaleFactorTab[match(paste0(fpeSub$sample),
+                                          scaleFactorTab$sample),]$scaleFactor)
         assay(fpeSub) <- vsn::justvsn(normMat, calib="none")
       }
     } else {
@@ -143,7 +166,9 @@ preprocessProteome <- function(seData, filterList = NULL, missCut = 50,
       if (is.null(scaleFactorTab)) {
         assay(fpeSub) <- medianNorm(assay(fpeSub))
       } else {
-        assay(fpeSub) <- t(t(assay(fpeSub))/scaleFactorTab[match(paste0(fpeSub$sample),scaleFactorTab$sample),]$scaleFactor)
+        assay(fpeSub) <- t(t(
+            assay(fpeSub))/scaleFactorTab[match(paste0(
+                fpeSub$sample),scaleFactorTab$sample),]$scaleFactor)
       }
     } else {
       assay(fpeSub) <- assay(fpeSub)
@@ -155,9 +180,12 @@ preprocessProteome <- function(seData, filterList = NULL, missCut = 50,
     rowData(fpeSub)$name <- rowData(fpeSub)$UniprotID
     rowData(fpeSub)$ID <- rowData(fpeSub)$UniprotID
     if (impute == "missForest") {
-        doParallel::registerDoParallel(cores = 6)  # set based on number of CPU cores
+        # set based on number of CPU cores
+        doParallel::registerDoParallel(cores = 6)
         doRNG::registerDoRNG(seed = 123)
-        mf <- missForest::missForest(t(assay(fpeSub)), parallelize = "forests", maxiter = 2, ntree = 50)
+        mf <- missForest::missForest(t(assay(fpeSub)),
+                                     parallelize = "forests",
+                                     maxiter = 2, ntree = 50)
         imp <- t(mf$ximp)
     }
     else {
@@ -183,8 +211,10 @@ preprocessProteome <- function(seData, filterList = NULL, missCut = 50,
     }
     else {
       remBatchImp <- limma::removeBatchEffect(assays(fpeSub)[["imputed"]],
-                                              batch = colData(fpeSub)[,batch[1]],
-                                              batch2 = colData(fpeSub)[,batch[2]])
+                                              batch = colData(
+                                                  fpeSub)[,batch[1]],
+                                              batch2 = colData(
+                                                  fpeSub)[,batch[2]])
       remBatch <- limma::removeBatchEffect(assay(fpeSub),
                                            batch = colData(fpeSub)[,batch[1]],
                                            batch2 = colData(fpeSub)[,batch[2]])
@@ -201,22 +231,37 @@ preprocessProteome <- function(seData, filterList = NULL, missCut = 50,
 #' @title Preprocess Phosphoproteome Data
 #'
 #' @description
-#' \code{preprocessPhos} preprocesses phosphoproteome data stored in a \code{SummarizedExperiment} object by performing filtering, transformation, normalization, imputation, and batch effect removal.
+#' \code{preprocessPhos} preprocesses phosphoproteome data stored in a
+#' \code{SummarizedExperiment} object by performing filtering, transformation,
+#' normalization, imputation, and batch effect removal.
 #'
-#' @param seData A \code{SummarizedExperiment} object containing phosphoproteome data.
-#' @param filterList A \code{list} of filters to apply on the samples. Default is \code{NULL}.
-#' @param missCut \code{Numeric} value specifying the missing value cutoff percentage for filtering features. Default is 50.
-#' @param transform \code{Character} string specifying the transformation method ("log2", "vst", "none"). Default is "log2".
-#' @param normalize \code{Logical} value indicating whether to normalize the data. Default is \code{FALSE}.
-#' @param getFP \code{Logical} value indicating whether to retrieve FP samples. Default is \code{FALSE}.
-#' @param removeOutlier \code{Character} vector of samples to be removed as outliers. Default is \code{NULL}.
-#' @param assayName \code{Character} string specifying the assay name in the SummarizedExperiment object. Default is \code{NULL}.
-#' @param batch \code{Character} vector specifying batch effects to remove. Default is \code{NULL}.
-#' @param scaleFactorTab \code{Data frame} containing scale factors for normalization. Default is \code{NULL}.
-#' @param impute \code{Character} string specifying the imputation method ("QRILC", "MLE", "bpca", "missForest", "MinDet", "none"). Default is "none".
-#' @param verbose \code{Logical} value indicating whether to print detailed information. Default is \code{FALSE}.
+#' @param seData A \code{SummarizedExperiment} object containing phosphoproteome
+#' data.
+#' @param filterList A \code{list} of filters to apply on the samples. Default
+#' is \code{NULL}.
+#' @param missCut \code{Numeric} value specifying the missing value cutoff
+#' percentage for filtering features. Default is 50.
+#' @param transform \code{Character} string specifying the transformation
+#' method ("log2", "vst", "none"). Default is "log2".
+#' @param normalize \code{Logical} value indicating whether to normalize the
+#' data. Default is \code{FALSE}.
+#' @param getFP \code{Logical} value indicating whether to retrieve FP samples.
+#' Default is \code{FALSE}.
+#' @param removeOutlier \code{Character} vector of samples to be removed as
+#' outliers. Default is \code{NULL}.
+#' @param assayName \code{Character} string specifying the assay name in the
+#' SummarizedExperiment object. Default is \code{NULL}.
+#' @param batch \code{Character} vector specifying batch effects to remove.
+#' Default is \code{NULL}.
+#' @param scaleFactorTab \code{Data frame} containing scale factors for
+#' normalization. Default is \code{NULL}.
+#' @param impute \code{Character} string specifying the imputation method
+#' ("QRILC", "MLE", "bpca", "missForest", "MinDet", "none"). Default is "none".
+#' @param verbose \code{Logical} value indicating whether to print detailed
+#' information. Default is \code{FALSE}.
 #'
-#' @return A \code{SummarizedExperiment} object with preprocessed phosphoproteome data.
+#' @return A \code{SummarizedExperiment} object with preprocessed
+#' phosphoproteome data.
 #'
 #' @examples
 #' library(SummarizedExperiment)
@@ -242,7 +287,8 @@ preprocessProteome <- function(seData, filterList = NULL, missCut = 50,
 preprocessPhos <- function(seData, filterList = NULL, missCut = 50,
                            transform="log2", normalize = FALSE, getFP = FALSE,
                            removeOutlier = NULL, assayName = NULL, batch = NULL,
-                           scaleFactorTab = NULL, impute = "none", verbose = FALSE) {
+                           scaleFactorTab = NULL, impute = "none",
+                           verbose = FALSE) {
 
   # Retrieve the desired sample type or specified assay
   if (is.null(assayName)) {
@@ -289,7 +335,8 @@ preprocessPhos <- function(seData, filterList = NULL, missCut = 50,
   # Remove features without gene symbols
   ppe <- ppe[!rowData(ppe)$Gene %in% c(NA,""),]
   # Rename phosphorylation sites
-  rowData(ppe)$site <- paste0(rowData(ppe)$Gene,"_",rowData(ppe)$Residue,rowData(ppe)$Position)
+  rowData(ppe)$site <- paste0(rowData(ppe)$Gene,"_",rowData(ppe)$Residue,
+                              rowData(ppe)$Position)
   # Filter features based on missing values
   countMat <- assay(ppe)
   missPer <- rowSums(is.na(countMat))/ncol(countMat)*100
@@ -301,7 +348,9 @@ preprocessPhos <- function(seData, filterList = NULL, missCut = 50,
       if (is.null(scaleFactorTab)) {
         assay(ppeSub) <- medianNorm(log2(assay(ppeSub)))
       } else {
-        assay(ppeSub) <- log2(t(t(assay(ppeSub))/scaleFactorTab[match(paste0(ppeSub$sample),scaleFactorTab$sample),]$scaleFactor))
+        assay(ppeSub) <- log2(t(t(
+            assay(ppeSub))/scaleFactorTab[match(paste0(
+                ppeSub$sample),scaleFactorTab$sample),]$scaleFactor))
       }
     } else {
       assay(ppeSub) <- log2(assay(ppeSub))
@@ -311,7 +360,9 @@ preprocessPhos <- function(seData, filterList = NULL, missCut = 50,
       if (is.null(scaleFactorTab)) {
         assay(ppeSub) <- vsn::justvsn(assay(ppeSub))
       } else {
-        normMat <- t(t(assay(ppeSub))/scaleFactorTab[match(paste0(ppeSub$sample),scaleFactorTab$sample),]$scaleFactor)
+        normMat <- t(t(
+            assay(ppeSub))/scaleFactorTab[match(paste0(
+                ppeSub$sample),scaleFactorTab$sample),]$scaleFactor)
         assay(ppeSub) <- vsn::justvsn(normMat, calib="none")
       }
     } else {
@@ -322,7 +373,9 @@ preprocessPhos <- function(seData, filterList = NULL, missCut = 50,
       if (is.null(scaleFactorTab)) {
         assay(ppeSub) <- medianNorm(assay(ppeSub))
       } else {
-        assay(ppeSub) <- t(t(assay(ppeSub))/scaleFactorTab[match(paste0(ppeSub$sample),scaleFactorTab$sample),]$scaleFactor)
+        assay(ppeSub) <- t(t(
+            assay(ppeSub))/scaleFactorTab[match(paste0(
+                ppeSub$sample),scaleFactorTab$sample),]$scaleFactor)
       }
     } else {
       assay(ppeSub) <- assay(ppeSub)
@@ -336,7 +389,8 @@ preprocessPhos <- function(seData, filterList = NULL, missCut = 50,
     if (impute == "missForest") {
         doParallel::registerDoParallel(cores = 6)  # Set number of CPU cores
         doRNG::registerDoRNG(seed = 123)
-        mf <- missForest::missForest(t(assay(ppeSub)), parallelize = "forests", maxiter = 2, ntree = 50)
+        mf <- missForest::missForest(t(assay(ppeSub)), parallelize = "forests",
+                                     maxiter = 2, ntree = 50)
         imp <- t(mf$ximp)
     }
     else {
@@ -362,8 +416,10 @@ preprocessPhos <- function(seData, filterList = NULL, missCut = 50,
     }
     else {
       remBatchImp <- limma::removeBatchEffect(assays(ppeSub)[["imputed"]],
-                                              batch = colData(ppeSub)[,batch[1]],
-                                              batch2 = colData(ppeSub)[,batch[2]])
+                                              batch = colData(
+                                                  ppeSub)[,batch[1]],
+                                              batch2 = colData(
+                                                  ppeSub)[,batch[2]])
       remBatch <- limma::removeBatchEffect(assay(ppeSub),
                                            batch = colData(ppeSub)[,batch[1]],
                                            batch2 = colData(ppeSub)[,batch[2]])

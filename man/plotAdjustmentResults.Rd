@@ -7,18 +7,24 @@
 plotAdjustmentResults(maeData, normalization = FALSE)
 }
 \arguments{
-\item{maeData}{A \code{MultiAssayExperiment} object containing phosphoproteome and full proteome data.}
+\item{maeData}{A \code{MultiAssayExperiment} object containing
+phosphoproteome and full proteome data.}
 
-\item{normalization}{A \code{logical} value indicating whether normalization was performed. Default is \code{FALSE}.}
+\item{normalization}{A \code{logical} value indicating whether normalization
+was performed. Default is \code{FALSE}.}
 }
 \value{
 A list containing:
-\item{ratioTrendPlot}{A \code{ggplot2} object showing the line plot of PP/FP ratios for features present in all samples.}
-\item{ratioBoxplot}{A \code{ggplot2} object showing the box plot of PP/FP ratios before and after adjustment.}
-\item{ppBoxplot}{A \code{ggplot2} object showing the box plot of phosphorylation intensities in PP samples before and after adjustment.}
+\item{ratioTrendPlot}{A \code{ggplot2} object showing the line plot of PP/FP
+ratios for features present in all samples.}
+\item{ratioBoxplot}{A \code{ggplot2} object showing the box plot of PP/FP
+ratios before and after adjustment.}
+\item{ppBoxplot}{A \code{ggplot2} object showing the box plot of
+phosphorylation intensities in PP samples before and after adjustment.}
 }
 \description{
-\code{plotAdjustmentResults} generates plots to visualize the results of phosphoproteome adjustment.
+\code{plotAdjustmentResults} generates plots to visualize the results of
+phosphoproteome adjustment.
 }
 \details{
 The function performs the following steps:
@@ -26,6 +32,7 @@ The function performs the following steps:
   \item Checks if the adjustment factor is present in the sample annotation.
   \item Calculates the ratio matrix before and after adjustment.
   \item Creates a trend line plot for features present in all samples.
-  \item Creates box plots of the PP/FP ratios and phosphorylation intensities before and after adjustment.
+  \item Creates box plots of the PP/FP ratios and phosphorylation intensities
+  before and after adjustment.
 }
 }

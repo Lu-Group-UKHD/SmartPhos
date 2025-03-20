@@ -10,13 +10,20 @@ plotMissing(se)
 \item{se}{A \code{SummarizedExperiment} object containing the assay data.}
 }
 \value{
-A \code{ggplot2} object showing the percentage of completeness for each sample.
+A \code{ggplot2} object showing the percentage of completeness for
+each sample.
 }
 \description{
-\code{plotMissing} generates a bar plot showing the completeness (percentage of non-missing values) for each sample in a \code{SummarizedExperiment} object.
+\code{plotMissing} generates a bar plot showing the completeness (percentage
+of non-missing values) for each sample in a \code{SummarizedExperiment}
+object.
 }
 \details{
-This function calculates the percentage of non-missing values for each sample in the provided \code{SummarizedExperiment} object. It then generates a bar plot where each bar represents a sample, and the height of the bar corresponds to the completeness (percentage of non-missing values) of that sample.
+This function calculates the percentage of non-missing values for each sample
+in the provided \code{SummarizedExperiment} object. It then generates a bar
+plot where each bar represents a sample, and the height of the bar
+corresponds to the completeness (percentage of non-missing values) of that
+sample.
 }
 \examples{
 library(SummarizedExperiment)

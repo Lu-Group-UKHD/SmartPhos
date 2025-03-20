@@ -7,18 +7,23 @@
 makeSmartPhosDirectory(path)
 }
 \arguments{
-\item{path}{A \code{character} string specifying the directory path where the SmartPhos folder should be created.}
+\item{path}{A \code{character} string specifying the directory path where the
+SmartPhos folder should be created.}
 }
 \value{
-None (invisible NULL). The function creates the necessary directories and copies files.
+None (invisible NULL). The function creates the necessary directories
+and copies files.
 }
 \description{
-\code{makeSmartPhosDirectory} creates a directory for the SmartPhos shiny app,
-and copies the necessary Shiny app files into the newly created directory.
+\code{makeSmartPhosDirectory} creates a directory for the SmartPhos shiny
+app, and copies the necessary Shiny app files into the newly created
+directory.
 }
 \details{
-The function first creates the main directory at the specified path and a subdirectory named `"save"` for storing \code{MultiAssayExperiment} object.
-It then locates the Shiny application files from the SmartPhos package and copies them into the new directory.
+The function first creates the main directory at the specified path and a
+subdirectory named `"save"` for storing \code{MultiAssayExperiment} object.
+It then locates the Shiny application files from the SmartPhos package and
+copies them into the new directory.
 }
 \examples{
 makeSmartPhosDirectory("shinyApp")

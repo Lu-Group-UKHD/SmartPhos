@@ -14,33 +14,50 @@ readExperimentDIA(
 )
 }
 \arguments{
-\item{fileTable}{A \code{data frame} containing metadata about the files to be read. Must contain columns searchType, fileName, id, and optionally outputID.}
+\item{fileTable}{A \code{data frame} containing metadata about the files to
+be read. Must contain columns searchType, fileName, id, and optionally
+outputID.}
 
-\item{localProbCut}{\code{Numeric}, the local probability cutoff for phosphoproteomic data. Default is 0.75.}
+\item{localProbCut}{\code{Numeric}, the local probability cutoff for
+phosphoproteomic data. Default is 0.75.}
 
-\item{annotation_col}{A \code{character} vector specifying the columns in fileTable to be used for sample annotation.}
+\item{annotation_col}{A \code{character} vector specifying the columns in
+fileTable to be used for sample annotation.}
 
-\item{onlyReviewed}{A \code{logical} value indicating whether to include only reviewed proteins. Default is \code{TRUE}.}
+\item{onlyReviewed}{A \code{logical} value indicating whether to include
+only reviewed proteins. Default is \code{TRUE}.}
 
-\item{normalizeByProtein}{\code{Logical}, whether to normalize the data by protein. Default is \code{FALSE}.}
+\item{normalizeByProtein}{\code{Logical}, whether to normalize the data by
+protein. Default is \code{FALSE}.}
 
-\item{verbose}{\code{Logical} value indicating whether to print detailed information. Default is \code{FALSE}.}
+\item{verbose}{\code{Logical} value indicating whether to print detailed
+information. Default is \code{FALSE}.}
 }
 \value{
-A \code{MultiAssayExperiment} object containing the processed phosphoproteome and proteome data.
+A \code{MultiAssayExperiment} object containing the processed
+phosphoproteome and proteome data.
 }
 \description{
-\code{readExperimentDIA} reads and processes DIA (Data-Independent Acquisition) data for both phosphoproteome and proteome experiments, and constructs a \code{MultiAssayExperiment} object.
+\code{readExperimentDIA} reads and processes DIA (Data-Independent
+Acquisition) data for both phosphoproteome and proteome experiments, and
+constructs a \code{MultiAssayExperiment} object.
 }
 \details{
 The function performs the following steps:
 \itemize{
-  \item Reads and processes phosphoproteomic data using \code{readPhosphoExperimentDIA}.
-  \item Reads and processes proteomic data using \code{readProteomeExperimentDIA}.
-  \item Prepares sample annotations based on the provided fileTable and annotation_col.
-  \item Constructs a \code{MultiAssayExperiment} object with the processed data and sample annotations.
+  \item Reads and processes phosphoproteomic data using
+  \code{readPhosphoExperimentDIA}.
+  \item Reads and processes proteomic data using
+  \code{readProteomeExperimentDIA}.
+  \item Prepares sample annotations based on the provided fileTable and
+  annotation_col.
+  \item Constructs a \code{MultiAssayExperiment} object with the processed
+  data and sample annotations.
 }
-The \code{readPhosphoExperimentDIA} and \code{readProteomeExperimentDIA} functions are used to read and filter the data for phosphoproteome and proteome experiments, respectively, and they must be available in the environment.
+The \code{readPhosphoExperimentDIA} and \code{readProteomeExperimentDIA}
+functions are used to read and filter the data for phosphoproteome and
+proteome experiments, respectively, and they must be available in the
+environment.
 }
 \examples{
 # Example usage:
@@ -54,6 +71,7 @@ fileTable <- data.frame(
   outputID = c("s1", "s2", "s3")
 )
 # Call the function
-readExperimentDIA(fileTable, localProbCut = 0.75, annotation_col = c("id"), onlyReviewed = FALSE, normalizeByProtein = FALSE)
+readExperimentDIA(fileTable, localProbCut = 0.75, annotation_col = c("id"),
+onlyReviewed = FALSE, normalizeByProtein = FALSE)
 
 }

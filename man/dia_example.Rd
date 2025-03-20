@@ -11,7 +11,8 @@ a class S4 object of MultiAssayExperiment
 data(dia_example)
 }
 \description{
-A sample of Data Independent Acquisition (DIA) mass spectrometry data from Spectronaut.
+A sample of Data Independent Acquisition (DIA) mass spectrometry data from
+Spectronaut.
 }
 \examples{
 data(dia_example)

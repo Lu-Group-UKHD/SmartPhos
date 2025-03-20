@@ -7,13 +7,17 @@
 clusterTS(x, k = 5, pCut = NULL, twoCondition = FALSE)
 }
 \arguments{
-\item{x}{A numeric \code{matrix} with rows as features and columns as time points.}
+\item{x}{A numeric \code{matrix} with rows as features and columns as time
+points.}
 
-\item{k}{A \code{numeric} value specifying the number of clusters. Default is 5.}
+\item{k}{A \code{numeric} value specifying the number of clusters. Default is
+5.}
 
-\item{pCut}{A \code{numeric} value specifying the probability cutoff for cluster membership. Default is \code{NULL}.}
+\item{pCut}{A \code{numeric} value specifying the probability cutoff for
+cluster membership. Default is \code{NULL}.}
 
-\item{twoCondition}{A \code{logical} value indicating if the data contains two conditions. Default is \code{FALSE}.}
+\item{twoCondition}{A \code{logical} value indicating if the data contains
+two conditions. Default is \code{FALSE}.}
 }
 \value{
 A list containing:
@@ -21,7 +25,8 @@ A list containing:
 \item{plot}{A \code{ggplot2} object for visualizing the clustering results.}
 }
 \description{
-\code{clusterTS} performs clustering on time-series data and generates plots for visualization.
+\code{clusterTS} performs clustering on time-series data and generates plots
+for visualization.
 }
 \details{
 The function performs the following steps:
@@ -41,7 +46,8 @@ data("dia_example")
 se <- dia_example[["Phosphoproteome"]]
 colData(se) <- colData(dia_example)
 seProcess <- preprocessPhos(seData = se, normalize = TRUE, impute = "QRILC")
-result <- addZeroTime(seProcess, condition = "treatment", treat = "EGF", zeroTreat = "1stCrtl", timeRange = c("20min","40min", "6h"))
+result <- addZeroTime(seProcess, condition = "treatment", treat = "EGF",
+zeroTreat = "1stCrtl", timeRange = c("20min","40min", "6h"))
 # Get the numeric matrix
 exprMat <- assay(result)
 # Call the function

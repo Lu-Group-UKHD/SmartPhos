@@ -7,14 +7,18 @@
 runSmartPhos()
 }
 \value{
-The function does not return a value; it starts the Shiny application for \code{SmartPhos}.
+The function does not return a value; it starts the Shiny application
+for \code{SmartPhos}.
 }
 \description{
-\code{runSmartPhos} launches the SmartPhos \code{Shiny} application, which provides an interactive interface for analyzing phosphoproteomic data.
+\code{runSmartPhos} launches the SmartPhos \code{Shiny} application,
+which provides an interactive interface for analyzing phosphoproteomic data.
 }
 \details{
-The \code{runSmartPhos} function locates the \code{Shiny} app directory within the \code{SmartPhos} package and launches the application.
-If the app directory cannot be found, the function will stop and prompt the user to re-install the \code{SmartPhos} package.
+The \code{runSmartPhos} function locates the \code{Shiny} app directory
+within the \code{SmartPhos} package and launches the application.
+If the app directory cannot be found, the function will stop and prompt the
+user to re-install the \code{SmartPhos} package.
 }
 \examples{
 # To run the SmartPhos Shiny application, simply call:

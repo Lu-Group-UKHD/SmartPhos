@@ -11,22 +11,32 @@ intensityBoxPlot(se, id, symbol)
 
 \item{id}{\code{Character}. The identifier of the gene or feature to plot.}
 
-\item{symbol}{\code{Character}. The symbol or name of the gene or feature to use as the plot title.}
+\item{symbol}{\code{Character}. The symbol or name of the gene or feature
+to use as the plot title.}
 }
 \value{
-A \code{ggplot2} object representing the boxplot of the intensity data.
+A \code{ggplot2} object representing the boxplot of the intensity
+data.
 }
 \description{
-\code{intensityBoxPlot} creates a boxplot for the Intensity data of a given gene or feature, with optional subject-specific lines.
+\code{intensityBoxPlot} creates a boxplot for the Intensity data of a given
+gene or feature, with optional subject-specific lines.
 }
 \details{
-This function generates a boxplot for the intensity data of a specified gene or feature from a \code{SummarizedExperiment} (SE) object. The plot shows the distribution of normalized intensities across different groups specified in the \code{comparison} column of the SE object.
+This function generates a boxplot for the intensity data of a specified gene
+or feature from a \code{SummarizedExperiment} (SE) object. The plot shows the
+distribution of normalized intensities across different groups specified in
+the \code{comparison} column of the SE object.
 
 The function can handle both grouped data and repeated measures:
-- If the SE object does not contain a \code{subjectID} column, the function plots a standard boxplot grouped by the \code{comparison} column.
-- If the SE object contains a \code{subjectID} column, the function adds lines connecting the points for each subject across the groups, providing a visual indication of subject-specific changes.
+- If the SE object does not contain a \code{subjectID} column, the function
+plots a standard boxplot grouped by the \code{comparison} column.
+- If the SE object contains a \code{subjectID} column, the function adds
+lines connecting the points for each subject across the groups, providing a
+visual indication of subject-specific changes.
 
-The \code{boxplot} is customized with various aesthetic elements, such as box width, transparency, point size, axis labels, and title formatting.
+The \code{boxplot} is customized with various aesthetic elements, such as box
+width, transparency, point size, axis labels, and title formatting.
 }
 \examples{
 library(SummarizedExperiment)
@@ -38,7 +48,9 @@ colData(se) <- colData(dda_example)
 # Preprocess the proteome assay
 result <- preprocessProteome(se, normalize = TRUE)
 # Call the function to perform differential expression analyis
-de <- performDifferentialExp(se = result, assay = "Intensity", method = "limma", reference = "1stCrtl", target = "EGF", condition = "treatment")
+de <- performDifferentialExp(se = result, assay = "Intensity",
+method = "limma", reference = "1stCrtl", target = "EGF",
+condition = "treatment")
 # Plot the box plot for the given id and symbol
 intensityBoxPlot(de$seSub, "p99", "PPP6C")
 

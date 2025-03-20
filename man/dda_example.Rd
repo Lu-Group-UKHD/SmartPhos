@@ -11,7 +11,8 @@ a class S4 object of MultiAssayExperiment
 data(dda_example)
 }
 \description{
-A sample of Data Dependent Acquisition (DDA) mass spectrometry data from Max Quant.
+A sample of Data Dependent Acquisition (DDA) mass spectrometry data from
+Max Quant.
 }
 \examples{
 data(dda_example)

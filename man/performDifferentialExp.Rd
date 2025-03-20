@@ -19,48 +19,83 @@ performDifferentialExp(
 \arguments{
 \item{se}{A \code{SummarizedExperiment} object containing the data.}
 
-\item{assay}{A \code{character} string specifying the assay to use for the analysis.}
+\item{assay}{A \code{character} string specifying the assay to use for the
+analysis.}
 
-\item{method}{A \code{character} string specifying the method to use for differential expression analysis ("limma" or "ProDA"). Default is "limma".}
+\item{method}{A \code{character} string specifying the method to use for
+differential expression analysis ("limma" or "ProDA"). Default is "limma".}
 
-\item{condition}{A \code{character} string specifying the condition column in colData(se). Default is \code{NULL}.}
+\item{condition}{A \code{character} string specifying the condition column in
+colData(se). Default is \code{NULL}.}
 
-\item{reference}{A \code{character} string or vector specifying the reference group.}
+\item{reference}{A \code{character} string or vector specifying the reference
+group.}
 
-\item{target}{A \code{character} string or vector specifying the target group.}
+\item{target}{A \code{character} string or vector specifying the target
+group.}
 
-\item{refTime}{A \code{character} string or vector specifying the reference time points. Default is \code{NULL}.}
+\item{refTime}{A \code{character} string or vector specifying the reference
+time points. Default is \code{NULL}.}
 
-\item{targetTime}{A \code{character} string or vector specifying the target time points. Default is \code{NULL}.}
+\item{targetTime}{A \code{character} string or vector specifying the target
+time points. Default is \code{NULL}.}
 
-\item{pairedTtest}{A \code{logical} value specifying to perform paired t-test or not. Default is \code{FALSE}.}
+\item{pairedTtest}{A \code{logical} value specifying to perform paired t-test
+or not. Default is \code{FALSE}.}
 }
 \value{
 A list containing:
 \item{resDE}{A \code{tibble} with the differential expression results.}
-\item{seSub}{A \code{SummarizedExperiment} object subset to the samples used in the analysis.}
+\item{seSub}{A \code{SummarizedExperiment} object subset to the samples used
+in the analysis.}
 }
 \description{
-\code{performDifferentialExp} performs differential expression analysis on a given \code{SummarizedExperiment} object using either the \code{limma} or \code{ProDA} method.
+\code{performDifferentialExp} performs differential expression analysis on a
+given \code{SummarizedExperiment} object using either the \code{limma} or
+\code{ProDA} method.
 }
 \details{
-This function is designed to facilitate differential expression analysis on a \code{SummarizedExperiment} (SE) object. The function allows users to specify various parameters to tailor the analysis to their specific experimental setup.
+This function is designed to facilitate differential expression analysis on
+a \code{SummarizedExperiment} (SE) object. The function allows users to
+specify various parameters to tailor the analysis to their specific
+experimental setup.
 
 The main steps of the function are as follows:
 
-1. Sample Selection: Based on the provided \code{condition}, \code{reference}, and \code{target} arguments, the function identifies the relevant samples for the analysis. If time points (\code{refTime} and \code{targetTime}) are provided, it further refines the sample selection.
+1. Sample Selection: Based on the provided \code{condition},
+\code{reference}, and \code{target} arguments, the function identifies the
+relevant samples for the analysis. If time points (\code{refTime} and
+\code{targetTime}) are provided, it further refines the sample selection.
 
-2. Subsetting the SE Object: The SE object is subsetted to include only the selected samples. A new column \code{comparison} is added to the \code{colData}, indicating whether each sample belongs to the reference or target group.
+2. Subsetting the SE Object: The SE object is subsetted to include only the
+selected samples. A new column \code{comparison} is added to the
+\code{colData}, indicating whether each sample belongs to the reference or
+target group.
 
-3. Design Matrix Construction: The function constructs a design matrix for the differential expression analysis. If the SE object contains a \code{subjectID} column, this is included in the design to account for repeated measures or paired samples.
+3. Design Matrix Construction: The function constructs a design matrix for
+the differential expression analysis. If the SE object contains a
+\code{subjectID} column, this is included in the design to account for
+repeated measures or paired samples.
 
-4. Differential Expression Analysis: Depending on the specified \code{method}, the function performs the differential expression analysis using either the \code{limma} or \code{ProDA} package:
-    - \code{Limma}: The function fits a linear model to the expression data and applies empirical Bayes moderation to the standard errors. The results are then extracted and formatted.
-    - \code{ProDA}: The function fits a probabilistic dropout model to the expression data and tests for differential expression. The results are then extracted and formatted.
+4. Differential Expression Analysis: Depending on the specified
+\code{method}, the function performs the differential expression analysis
+using either the \code{limma} or \code{ProDA} package:
+    - \code{Limma}: The function fits a linear model to the expression data
+    and applies empirical Bayes moderation to the standard errors. The
+    results are then extracted and formatted.
+    - \code{ProDA}: The function fits a probabilistic dropout model to the
+    expression data and tests for differential expression. The results are
+    then extracted and formatted.
 
-5. Result Formatting: The differential expression results are merged with the metadata from the SE object, and the resulting table is formatted into a tibble. The table includes columns for log2 fold change (log2FC), test statistic (stat), p-value (pvalue), adjusted p-value (padj), and gene/feature ID (ID).
+5. Result Formatting: The differential expression results are merged with
+the metadata from the SE object, and the resulting table is formatted into a
+tibble. The table includes columns for log2 fold change (log2FC), test
+statistic (stat), p-value (pvalue), adjusted p-value (padj), and gene/feature
+ID (ID).
 
-The function returns a \code{list} containing the formatted differential expression results and the subsetted SE object. This allows users to further explore or visualize the results as needed.
+The function returns a \code{list} containing the formatted differential
+expression results and the subsetted SE object. This allows users to further
+explore or visualize the results as needed.
 }
 \examples{
 library(SummarizedExperiment)
@@ -72,6 +107,7 @@ colData(se) <- colData(dda_example)
 # Preprocess the proteome assay
 result <- preprocessProteome(se, normalize = TRUE)
 # Call the function to perform differential expression analyis
-performDifferentialExp(se = result, assay = "Intensity", method = "limma", reference = "1stCrtl", target = "EGF", condition = "treatment")
+performDifferentialExp(se = result, assay = "Intensity", method = "limma",
+reference = "1stCrtl", target = "EGF", condition = "treatment")
 
 }

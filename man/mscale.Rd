@@ -7,33 +7,49 @@
 mscale(x, center = TRUE, scale = TRUE, censor = NULL, useMad = FALSE)
 }
 \arguments{
-\item{x}{A \code{numeric} matrix where rows are features and columns are samples.}
+\item{x}{A \code{numeric} matrix where rows are features and columns are
+samples.}
 
-\item{center}{\code{Logical}. If \code{TRUE}, the rows are centered by subtracting the mean or median. Default is \code{TRUE}.}
+\item{center}{\code{Logical}. If \code{TRUE}, the rows are centered by
+subtracting the mean or median. Default is \code{TRUE}.}
 
-\item{scale}{\code{Logical}. If \code{TRUE}, the rows are scaled by dividing by the standard deviation or mean absolute deviation. Default is \code{TRUE}.}
+\item{scale}{\code{Logical}. If \code{TRUE}, the rows are scaled by dividing
+by the standard deviation or mean absolute deviation. Default is \code{TRUE}.}
 
-\item{censor}{A \code{numeric} vector of length one or two for censoring the scaled values.
-If length one, values are censored symmetrically at positive and negative values.
-If length two, the first value is the lower limit and the second value is the upper limit. Default is \code{NULL}.}
+\item{censor}{A \code{numeric} vector of length one or two for censoring the
+scaled values.
+If length one, values are censored symmetrically at positive and negative
+values.
+If length two, the first value is the lower limit and the second value is the
+upper limit. Default is \code{NULL}.}
 
-\item{useMad}{\code{Logical}. If \code{TRUE}, the mean absolute deviation is used for scaling instead of the standard deviation. Default is \code{FALSE}.}
+\item{useMad}{\code{Logical}. If \code{TRUE}, the mean absolute deviation is
+used for scaling instead of the standard deviation. Default is \code{FALSE}.}
 }
 \value{
-A scaled and centered numeric \code{matrix} with the same dimensions as the input \code{matrix} `x`.
+A scaled and centered numeric \code{matrix} with the same dimensions
+as the input \code{matrix} `x`.
 }
 \description{
-\code{mscale} scales and centers each row of a matrix, with options for using mean or median, standard deviation or mean absolute deviation, and censoring extreme values.
+\code{mscale} scales and centers each row of a matrix, with options for using
+mean or median, standard deviation or mean absolute deviation, and censoring
+extreme values.
 }
 \details{
-The function allows for flexible scaling and centering of the rows of a \code{matrix}:
+The function allows for flexible scaling and centering of the rows of a
+\code{matrix}:
 \itemize{
-  \item If both \code{center} and \code{scale} are \code{TRUE}, rows are centered and scaled.
-  \item If only \code{center} is \code{TRUE}, rows are centered but not scaled.
-  \item If only \code{scale} is \code{TRUE}, rows are scaled but not centered.
-  \item If neither \code{center} nor \code{scale} is \code{TRUE}, the original \code{matrix} is returned.
+  \item If both \code{center} and \code{scale} are \code{TRUE}, rows are
+  centered and scaled.
+  \item If only \code{center} is \code{TRUE}, rows are centered but not
+  scaled.
+  \item If only \code{scale} is \code{TRUE}, rows are scaled but not
+  centered.
+  \item If neither \code{center} nor \code{scale} is \code{TRUE}, the
+  original \code{matrix} is returned.
 }
-The function can also censor extreme values, either symmetrically or asymmetrically, based on the \code{censor} parameter.
+The function can also censor extreme values, either symmetrically or
+asymmetrically, based on the \code{censor} parameter.
 }
 \examples{
 # Create a sample matrix (3 rows by 5 columns)

@@ -16,35 +16,50 @@ splineFilter(
 )
 }
 \arguments{
-\item{exprMat}{A \code{numeric} matrix of expression data, where rows are features and columns are samples.}
+\item{exprMat}{A \code{numeric} matrix of expression data, where rows are
+features and columns are samples.}
 
-\item{subjectID}{\code{Character}. An optional vector of subject IDs corresponding to columns in exprMat. Default is \code{NULL}.}
+\item{subjectID}{\code{Character}. An optional vector of subject IDs
+corresponding to columns in exprMat. Default is \code{NULL}.}
 
-\item{time}{A \code{numeric} vector representing the time points corresponding to columns in exprMat.}
+\item{time}{A \code{numeric} vector representing the time points
+corresponding to columns in exprMat.}
 
-\item{df}{A \code{numeric} value specifying the degrees of freedom for the spline basis.}
+\item{df}{A \code{numeric} value specifying the degrees of freedom for the
+spline basis.}
 
-\item{pCut}{A \code{numeric} value for the p-value cutoff to filter significant features. Default is 0.05.}
+\item{pCut}{A \code{numeric} value for the p-value cutoff to filter
+significant features. Default is 0.05.}
 
-\item{ifFDR}{A \code{logical} value indicating if the false discovery rate (FDR) should be used for filtering. If \code{FALSE}, raw p-values are used. Default is \code{FALSE}.}
+\item{ifFDR}{A \code{logical} value indicating if the false discovery rate
+(FDR) should be used for filtering. If \code{FALSE}, raw p-values are used.
+Default is \code{FALSE}.}
 
-\item{treatment}{\code{Character}. An optional vector of treatment labels corresponding to columns in exprMat. Default is \code{NULL}.}
+\item{treatment}{\code{Character}. An optional vector of treatment labels
+corresponding to columns in exprMat. Default is \code{NULL}.}
 
-\item{refTreatment}{\code{Character}. An optional reference treatment label for the treatment vector. Default is \code{NULL}.}
+\item{refTreatment}{\code{Character}. An optional reference treatment label
+for the treatment vector. Default is \code{NULL}.}
 }
 \value{
-A filtered expression \code{matrix} containing only the features that meet the significance criteria.
+A filtered expression \code{matrix} containing only the features that
+meet the significance criteria.
 }
 \description{
-\code{splineFilter} filters an expression \code{matrix} based on spline models fitted to time-series data, optionally considering treatment and subject ID.
+\code{splineFilter} filters an expression \code{matrix} based on spline
+models fitted to time-series data, optionally considering treatment and
+subject ID.
 }
 \details{
 The function performs the following steps:
 \enumerate{
   \item Converts time points from minutes to hours if both units are present.
   \item Removes rows with missing values from the expression \code{matrix}.
-  \item Constructs a design matrix for the spline model, optionally including subject IDs and treatments.
-  \item Fits a linear model using the design matrix and performs empirical Bayes moderation.
-  \item Extracts significant features based on the specified p-value or FDR cutoff.
+  \item Constructs a design matrix for the spline model, optionally including
+  subject IDs and treatments.
+  \item Fits a linear model using the design matrix and performs empirical
+  Bayes moderation.
+  \item Extracts significant features based on the specified p-value or FDR
+  cutoff.
 }
 }

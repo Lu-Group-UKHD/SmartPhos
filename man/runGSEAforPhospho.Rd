@@ -15,26 +15,39 @@ runGSEAforPhospho(
 )
 }
 \arguments{
-\item{geneStat}{A \code{data frame} containing gene statistics, with gene names as row names and a column named 'stat' for the statistics.}
+\item{geneStat}{A \code{data frame} containing gene statistics, with gene
+names as row names and a column named 'stat' for the statistics.}
 
-\item{ptmSetDb}{A \code{data frame} of post-translational modification (PTM) signature sets.}
+\item{ptmSetDb}{A \code{data frame} of post-translational modification (PTM)
+signature sets.}
 
-\item{nPerm}{A \code{numeric} value specifying the number of permutations for the null distribution.}
+\item{nPerm}{A \code{numeric} value specifying the number of permutations for
+the null distribution.}
 
-\item{weight}{A \code{numeric} value for the weight parameter in the GSEA algorithm. If weight == 0 then the test statistics do not matter. Default is 1.}
+\item{weight}{A \code{numeric} value for the weight parameter in the GSEA
+algorithm. If weight == 0 then the test statistics do not matter. Default
+is 1.}
 
-\item{correl.type}{A \code{character} string specifying the correlation type. Options are "rank", "symm.rank", and "z.score". Default is "rank".}
+\item{correl.type}{A \code{character} string specifying the correlation type.
+Options are "rank", "symm.rank", and "z.score". Default is "rank".}
 
-\item{statistic}{A \code{character} string specifying the statistic to be used. Options are "Kolmogorov-Smirnov" and "area.under.RES". Default is "Kolmogorov-Smirnov".}
+\item{statistic}{A \code{character} string specifying the statistic to be
+used. Options are "Kolmogorov-Smirnov" and "area.under.RES". Default is
+"Kolmogorov-Smirnov".}
 
-\item{min.overlap}{A \code{numeric} specifying the minimum overlap required between gene sets and the input data. Default is 5.}
+\item{min.overlap}{A \code{numeric} specifying the minimum overlap required
+between gene sets and the input data. Default is 5.}
 }
 \value{
-A \code{tibble} with enrichment scores and associated statistics for each PTM set.
+A \code{tibble} with enrichment scores and associated statistics for
+each PTM set.
 }
 \description{
-\code{runGSEAforPhospho} performs Gene Set Enrichment Analysis (GSEA) for phosphorylation data.
+\code{runGSEAforPhospho} performs Gene Set Enrichment Analysis (GSEA) for
+phosphorylation data.
 }
 \details{
-This function runs GSEA on phosphorylation data to identify enriched PTM sets. It calculates enrichment scores and p-values for each set, normalizes the scores, and adjusts p-values for multiple testing.
+This function runs GSEA on phosphorylation data to identify enriched PTM
+sets. It calculates enrichment scores and p-values for each set, normalizes
+the scores, and adjusts p-values for multiple testing.
 }

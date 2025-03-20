@@ -7,31 +7,45 @@
 readProteomeExperimentDIA(fileTable, showProgressBar = FALSE)
 }
 \arguments{
-\item{fileTable}{A \code{data frame} containing metadata about the files to be read. Must contain columns searchType, fileName, id, and optionally outputID.}
+\item{fileTable}{A \code{data frame} containing metadata about the files to
+be read. Must contain columns searchType, fileName, id, and optionally
+outputID.}
 
-\item{showProgressBar}{\code{Logical}, whether to show a progress bar during processing. Default is \code{FALSE}.}
+\item{showProgressBar}{\code{Logical}, whether to show a progress bar during
+processing. Default is \code{FALSE}.}
 }
 \value{
-A \code{SummarizedExperiment} object containing the processed proteome data.
+A \code{SummarizedExperiment} object containing the processed
+proteome data.
 #' @details
 The function performs the following steps:
 \itemize{
-  \item Filters the `fileTable` to include only rows where `searchType` is "proteome".
-  \item For each file specified in `fileTable`, reads the data using `data.table::fread`.
+  \item Filters the `fileTable` to include only rows where `searchType` is
+  "proteome".
+  \item For each file specified in `fileTable`, reads the data using
+  `data.table::fread`.
   \item Removes rows where the `PG.ProteinGroups` column is NA or empty.
-  \item Processes each sample in parallel using `BiocParallel::bplapply`, applying the `readOneProteomDIA` function to filter and clean the data for each sample.
+  \item Processes each sample in parallel using `BiocParallel::bplapply`,
+  applying the `readOneProteomDIA` function to filter and clean the data for
+  each sample.
   \item Combines the processed data from all files.
-  \item Constructs a matrix of intensities with rows corresponding to proteins and columns corresponding to samples.
-  \item Constructs a `SummarizedExperiment` object with the intensity matrix and protein annotations.
+  \item Constructs a matrix of intensities with rows corresponding to
+  proteins and columns corresponding to samples.
+  \item Constructs a `SummarizedExperiment` object with the intensity matrix
+  and protein annotations.
 }
-The \code{readOneProteomDIA} function is used to read and filter the data for each individual sample, and it must be available in the environment.
+The \code{readOneProteomDIA} function is used to read and filter the data for
+each individual sample, and it must be available in the environment.
 }
 \description{
-\code{readProteomeExperimentDIA} reads and processes DIA (Data-Independent Acquisition) proteome data from multiple files and constructs a \code{SummarizedExperiment} object.
+\code{readProteomeExperimentDIA} reads and processes DIA (Data-Independent
+Acquisition) proteome data from multiple files and constructs a
+\code{SummarizedExperiment} object.
 }
 \examples{
 file <- system.file("extdata", "proteomeDIA_1.xls", package = "SmartPhos")
-fileTable <- data.frame(searchType = "proteome", fileName = file, id = c("sample1", "sample2"))
+fileTable <- data.frame(searchType = "proteome", fileName = file,
+id = c("sample1", "sample2"))
 readProteomeExperimentDIA(fileTable)
 
 }

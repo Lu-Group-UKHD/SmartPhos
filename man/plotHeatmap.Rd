@@ -18,34 +18,52 @@ plotHeatmap(
 )
 }
 \arguments{
-\item{type}{A \code{character} string specifying the type of heatmap to plot. Options are "Top variant", "Differentially expressed", and "Selected time series cluster".}
+\item{type}{A \code{character} string specifying the type of heatmap to plot.
+Options are "Top variant", "Differentially expressed", and "Selected time
+series cluster".}
 
-\item{se}{A \code{SummarizedExperiment} object containing the imputed intensity assay.}
+\item{se}{A \code{SummarizedExperiment} object containing the imputed
+intensity assay.}
 
-\item{data}{An optional \code{data frame} containing additional data for "Differentially expressed" and "Selected time series cluster" types. Default is \code{NULL}.}
+\item{data}{An optional \code{data frame} containing additional data for
+"Differentially expressed" and "Selected time series cluster" types. Default
+is \code{NULL}.}
 
-\item{top}{A \code{numeric} value specifying the number of top variants to plot. Default is 100.}
+\item{top}{A \code{numeric} value specifying the number of top variants to
+plot. Default is 100.}
 
-\item{cutCol}{A \code{numeric} value specifying the number of clusters for columns. Default is 1.}
+\item{cutCol}{A \code{numeric} value specifying the number of clusters for
+columns. Default is 1.}
 
-\item{cutRow}{A \code{numeric} value specifying the number of clusters for rows. Default is 1.}
+\item{cutRow}{A \code{numeric} value specifying the number of clusters for
+rows. Default is 1.}
 
-\item{clustCol}{A \code{logical} value indicating whether to cluster columns. Default is \code{TRUE}.}
+\item{clustCol}{A \code{logical} value indicating whether to cluster columns.
+Default is \code{TRUE}.}
 
-\item{clustRow}{A \code{logical} value indicating whether to cluster rows. Default is \code{TRUE}.}
+\item{clustRow}{A \code{logical} value indicating whether to cluster rows.
+Default is \code{TRUE}.}
 
-\item{annotationCol}{A \code{character} vector specifying the columns in the metadata to use for annotation. Default is \code{NULL}.}
+\item{annotationCol}{A \code{character} vector specifying the columns in the
+metadata to use for annotation. Default is \code{NULL}.}
 
-\item{title}{A \code{character} string specifying the title of the heatmap. Default is \code{NULL}.}
+\item{title}{A \code{character} string specifying the title of the heatmap.
+Default is \code{NULL}.}
 }
 \value{
 A \code{pheatmap} object showing the heatmap of Intensity data.
 }
 \description{
-\code{plotHeatmap} generates a heatmap for intensity assay for different conditions, including top variants, differentially expressed genes, and selected time series clusters.
+\code{plotHeatmap} generates a heatmap for intensity assay for different
+conditions, including top variants, differentially expressed genes, and
+selected time series clusters.
 }
 \details{
-This function creates a heatmap using the Intensity assay from a \code{SummarizedExperiment} object. The heatmap can show the top variants based on standard deviation, differentially expressed genes, or selected time series clusters. Row normalization is performed, and the heatmap can include annotations based on specified metadata columns.
+This function creates a heatmap using the Intensity assay from a
+\code{SummarizedExperiment} object. The heatmap can show the top variants
+based on standard deviation, differentially expressed genes, or selected time
+series clusters. Row normalization is performed, and the heatmap can include
+annotations based on specified metadata columns.
 }
 \examples{
 library(SummarizedExperiment)

@@ -7,20 +7,27 @@
 plotVolcano(tableDE, pFilter = 0.05, fcFilter = 0.5)
 }
 \arguments{
-\item{tableDE}{A \code{data frame} containing differential expression results with columns 'ID', 'log2FC', 'pvalue', and 'Gene'.}
+\item{tableDE}{A \code{data frame} containing differential expression results
+with columns 'ID', 'log2FC', 'pvalue', and 'Gene'.}
 
-\item{pFilter}{A \code{numeric} value specifying the p-value threshold for significance. Default is 0.05.}
+\item{pFilter}{A \code{numeric} value specifying the p-value threshold for
+significance. Default is 0.05.}
 
-\item{fcFilter}{A \code{numeric} value specifying the log2 fold-change threshold for significance. Default is 0.5.}
+\item{fcFilter}{A \code{numeric} value specifying the log2 fold-change
+threshold for significance. Default is 0.5.}
 }
 \value{
 A \code{ggplot2} object representing the volcano plot.
 }
 \description{
-\code{plotVolcano} generates a volcano plot to visualize differential expression results.
+\code{plotVolcano} generates a volcano plot to visualize differential
+expression results.
 }
 \details{
-This function creates a volcano plot where differentially expressed genes are categorized as 'Up', 'Down', or 'Not Sig' based on the provided p-value and log2 fold-change thresholds. Points on the plot are color-coded to indicate their expression status.
+This function creates a volcano plot where differentially expressed genes are
+categorized as 'Up', 'Down', or 'Not Sig' based on the provided p-value and
+log2 fold-change thresholds. Points on the plot are color-coded to indicate
+their expression status.
 }
 \examples{
 library(SummarizedExperiment)
@@ -32,7 +39,9 @@ colData(se) <- colData(dda_example)
 # Preprocess the proteome assay
 result <- preprocessProteome(se, normalize = TRUE)
 # Call the function to perform differential expression analyis
-de <- performDifferentialExp(se = result, assay = "Intensity", method = "limma", reference = "1stCrtl", target = "EGF", condition = "treatment")
+de <- performDifferentialExp(se = result, assay = "Intensity",
+method = "limma", reference = "1stCrtl", target = "EGF",
+condition = "treatment")
 # Plot the volcano plot from the result
 plotVolcano(de$resDE)
 

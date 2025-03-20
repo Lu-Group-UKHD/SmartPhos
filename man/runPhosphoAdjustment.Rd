@@ -13,31 +13,41 @@ runPhosphoAdjustment(
 )
 }
 \arguments{
-\item{maeData}{A \code{MultiAssayExperiment} object containing phosphoproteome and full proteome data.}
+\item{maeData}{A \code{MultiAssayExperiment} object containing
+phosphoproteome and full proteome data.}
 
-\item{normalization}{A \code{logical} value indicating whether to perform normalization. Default is \code{FALSE}.}
+\item{normalization}{A \code{logical} value indicating whether to perform
+normalization. Default is \code{FALSE}.}
 
-\item{minOverlap}{A \code{numeric} value specifying the minimum number of overlapping peptides required between samples. Default is 3.}
+\item{minOverlap}{A \code{numeric} value specifying the minimum number of
+overlapping peptides required between samples. Default is 3.}
 
-\item{completeness}{A \code{numeric} value indicating the required completeness of data for features to be included. Default is 0.}
+\item{completeness}{A \code{numeric} value indicating the required
+completeness of data for features to be included. Default is 0.}
 
-\item{ncore}{A \code{numeric} value specifying the number of cores to use for parallel processing. Default is 1.}
+\item{ncore}{A \code{numeric} value specifying the number of cores to use for
+parallel processing. Default is 1.}
 }
 \value{
-A \code{MultiAssayExperiment} object with adjusted phosphoproteome data.
+A \code{MultiAssayExperiment} object with adjusted phosphoproteome
+data.
 }
 \description{
-\code{runPhosphoAdjustment} performs phospho adjustment on a \code{MultiAssayExperiment} object to normalize the phosphoproteome data.
+\code{runPhosphoAdjustment} performs phospho adjustment on a
+\code{MultiAssayExperiment} object to normalize the phosphoproteome data.
 }
 \details{
 The function performs the following steps:
 \enumerate{
-  \item Defines an optimization function to minimize the sum of squared differences between pairs of samples.
+  \item Defines an optimization function to minimize the sum of squared
+  differences between pairs of samples.
   \item Calculates the ratio matrix of phosphoproteome to full proteome data.
   \item Subsets features based on completeness criteria.
   \item Performs a sanity check to identify and exclude problematic samples.
-  \item Sets initial values for the adjustment factor based on column medians.
+  \item Sets initial values for the adjustment factor based on column
+  medians.
   \item Estimates the adjustment factor using parallel optimization.
-  \item Adjusts the phosphoproteome measurements using the estimated adjustment factor.
+  \item Adjusts the phosphoproteome measurements using the estimated
+  adjustment factor.
 }
 }

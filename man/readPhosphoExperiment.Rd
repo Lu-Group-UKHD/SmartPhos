@@ -7,20 +7,32 @@
 readPhosphoExperiment(fileTable, localProbCut = 0.75, scoreDiffCut = 5)
 }
 \arguments{
-\item{fileTable}{A \code{data.table} or \code{data.frame} containing information about the files, including columns for file names, sample names, and other relevant metadata. It must include a column named "searchType" with value "phosphoproteome" for relevant entries.}
+\item{fileTable}{A \code{data.table} or \code{data.frame} containing
+information about the files, including columns for file names, sample names,
+and other relevant metadata. It must include a column named "searchType"
+with value "phosphoproteome" for relevant entries.}
 
-\item{localProbCut}{A \code{numeric} value specifying the cutoff for localization probability. Default is 0.75.}
+\item{localProbCut}{A \code{numeric} value specifying the cutoff for
+localization probability. Default is 0.75.}
 
-\item{scoreDiffCut}{A \code{numeric} value specifying the cutoff for score difference. Default is 5.}
+\item{scoreDiffCut}{A \code{numeric} value specifying the cutoff for score
+difference. Default is 5.}
 }
 \value{
-A \code{SummarizedExperiment} object containing the processed phosphorylation data.
+A \code{SummarizedExperiment} object containing the processed
+phosphorylation data.
 }
 \description{
-\code{readPhosphoExperiment} reads and processes phosphorylation experiment data from multiple files, filtering based on localization probability and score difference, and constructs a \code{SummarizedExperiment} object.
+\code{readPhosphoExperiment} reads and processes phosphorylation experiment
+data from multiple files, filtering based on localization probability and
+score difference, and constructs a \code{SummarizedExperiment} object.
 }
 \details{
-This function reads phosphorylation data from multiple files as specified in fileTable, filters the data based on localization probability and score difference, and removes reverse and potential contaminant entries. It constructs an intensity matrix and annotation data, which are then used to create a \code{SummarizedExperiment} object.
+This function reads phosphorylation data from multiple files as specified in
+fileTable, filters the data based on localization probability and score
+difference, and removes reverse and potential contaminant entries. It
+constructs an intensity matrix and annotation data, which are then used to
+create a \code{SummarizedExperiment} object.
 }
 \examples{
 file1 <- system.file("extdata", "phosDDA_1.xls", package = "SmartPhos")

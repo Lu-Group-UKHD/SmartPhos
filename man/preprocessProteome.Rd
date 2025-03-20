@@ -21,31 +21,43 @@ preprocessProteome(
 \arguments{
 \item{seData}{A \code{SummarizedExperiment} object containing proteome data.}
 
-\item{filterList}{A \code{list} of filters to apply on the samples. Default is \code{NULL}.}
+\item{filterList}{A \code{list} of filters to apply on the samples. Default
+is \code{NULL}.}
 
-\item{missCut}{\code{Numeric} value specifying the missing value cutoff percentage for filtering features. Default is 50.}
+\item{missCut}{\code{Numeric} value specifying the missing value cutoff
+percentage for filtering features. Default is 50.}
 
-\item{transform}{\code{Character} string specifying the transformation method ("log2", "vst", "none"). Default is "log2".}
+\item{transform}{\code{Character} string specifying the transformation
+method ("log2", "vst", "none"). Default is "log2".}
 
-\item{normalize}{\code{Logical} value indicating whether to normalize the data. Default is \code{FALSE}.}
+\item{normalize}{\code{Logical} value indicating whether to normalize the
+data. Default is \code{FALSE}.}
 
-\item{getPP}{\code{Logical} value indicating whether to retrieve PP samples. Default is \code{FALSE}.}
+\item{getPP}{\code{Logical} value indicating whether to retrieve PP samples.
+Default is \code{FALSE}.}
 
-\item{removeOutlier}{\code{Character} vector of samples to be removed as outliers. Default is \code{NULL}.}
+\item{removeOutlier}{\code{Character} vector of samples to be removed as
+outliers. Default is \code{NULL}.}
 
-\item{impute}{\code{Character} string specifying the imputation method ("QRILC", "MLE", "bpca", "missForest", "MinDet", "none"). Default is "none".}
+\item{impute}{\code{Character} string specifying the imputation method
+("QRILC", "MLE", "bpca", "missForest", "MinDet", "none"). Default is "none".}
 
-\item{batch}{\code{Character} vector specifying batch effects to remove. Default is \code{NULL}.}
+\item{batch}{\code{Character} vector specifying batch effects to remove.
+Default is \code{NULL}.}
 
-\item{verbose}{\code{Logical} value indicating whether to print detailed information. Default is \code{FALSE}.}
+\item{verbose}{\code{Logical} value indicating whether to print detailed
+information. Default is \code{FALSE}.}
 
-\item{scaleFactorTab}{\code{Data frame} containing scale factors for normalization. Default is \code{NULL}.}
+\item{scaleFactorTab}{\code{Data frame} containing scale factors for
+normalization. Default is \code{NULL}.}
 }
 \value{
 A \code{SummarizedExperiment} object with preprocessed proteome data.
 }
 \description{
-\code{preprocessProteome} preprocesses proteome data stored in a \code{SummarizedExperiment} object by performing filtering, transformation, normalization, imputation, and batch effect removal.
+\code{preprocessProteome} preprocesses proteome data stored in a
+\code{SummarizedExperiment} object by performing filtering, transformation,
+normalization, imputation, and batch effect removal.
 }
 \examples{
 library(SummarizedExperiment)

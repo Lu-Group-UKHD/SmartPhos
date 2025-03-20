@@ -9,20 +9,25 @@ medianNorm(x, method = "median")
 \arguments{
 \item{x}{A \code{numeric} matrix to be normalized.}
 
-\item{method}{A \code{character} string specifying the normalization method. Options are "median" or "mean". Default is "median".}
+\item{method}{A \code{character} string specifying the normalization method.
+Options are "median" or "mean". Default is "median".}
 }
 \value{
 A \code{numeric} \code{matrix} with normalized columns.
 }
 \description{
-\code{medianNorm} normalizes the columns of a matrix by either the median or the mean.
+\code{medianNorm} normalizes the columns of a matrix by either the median or
+the mean.
 }
 \details{
 The function performs the following steps:
 \enumerate{
-  \item If the \code{method} is "median", it calculates the median of each column and adjusts by the overall median of these medians.
-  \item If the \code{method} is "mean", it calculates the mean of each column and adjusts by the overall mean of these means.
-  \item It constructs a matrix of these adjusted values and subtracts it from the original matrix to normalize the columns.
+  \item If the \code{method} is "median", it calculates the median of each
+  column and adjusts by the overall median of these medians.
+  \item If the \code{method} is "mean", it calculates the mean of each column
+  and adjusts by the overall mean of these means.
+  \item It constructs a matrix of these adjusted values and subtracts it from
+  the original matrix to normalize the columns.
 }
 }
 \examples{

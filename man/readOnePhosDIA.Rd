@@ -7,20 +7,29 @@
 readOnePhosDIA(inputTab, sampleName, localProbCut = 0.75, removeDup = FALSE)
 }
 \arguments{
-\item{inputTab}{A \code{data.table} or \code{data.frame} containing phosphorylation data.}
+\item{inputTab}{A \code{data.table} or \code{data.frame} containing
+phosphorylation data.}
 
 \item{sampleName}{A \code{character} string specifying the sample name.}
 
-\item{localProbCut}{A \code{numeric} value specifying the cutoff for localization probability. Default is 0.75.}
+\item{localProbCut}{A \code{numeric} value specifying the cutoff for
+localization probability. Default is 0.75.}
 
-\item{removeDup}{A \code{logical} value indicating whether to remove duplicate entries based on UniprotID and intensity. Default is \code{FALSE}.}
+\item{removeDup}{A \code{logical} value indicating whether to remove
+duplicate entries based on UniprotID and intensity. Default is \code{FALSE}.}
 }
 \value{
-A \code{data.table} containing the processed phosphorylation data for the specified sample.
+A \code{data.table} containing the processed phosphorylation data
+for the specified sample.
 }
 \description{
-\code{readOnePhosDIA} reads and processes phosphorylation data for a single sample from a DIA experiment, applying filters for localization probability and removing duplicates if specified.
+\code{readOnePhosDIA} reads and processes phosphorylation data for a single
+sample from a DIA experiment, applying filters for localization probability
+and removing duplicates if specified.
 }
 \details{
-This function processes phosphorylation data for a single sample by filtering based on localization probability and non-zero intensity. It handles multiplicity by summarizing intensities and optionally removes duplicates. The resulting data is returned as a data.table with unique identifiers.
+This function processes phosphorylation data for a single sample by filtering
+based on localization probability and non-zero intensity. It handles
+multiplicity by summarizing intensities and optionally removes duplicates.
+The resulting data is returned as a data.table with unique identifiers.
 }

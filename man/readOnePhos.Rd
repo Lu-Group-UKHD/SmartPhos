@@ -13,22 +13,37 @@ readOnePhos(
 )
 }
 \arguments{
-\item{inputTab}{A \code{data.table} or \code{data.frame} containing phosphorylation data with columns for localization probability, score difference, and intensity for various samples.}
+\item{inputTab}{A \code{data.table} or \code{data.frame} containing
+phosphorylation data with columns for localization probability, score
+difference, and intensity for various samples.}
 
-\item{sampleName}{A \code{character} string specifying the sample name to filter data for.}
+\item{sampleName}{A \code{character} string specifying the sample name to
+filter data for.}
 
-\item{localProbCut}{A \code{numeric} value specifying the cutoff for localization probability. Default is 0.75.}
+\item{localProbCut}{A \code{numeric} value specifying the cutoff for
+localization probability. Default is 0.75.}
 
-\item{scoreDiffCut}{A \code{numeric} value specifying the cutoff for score difference. Default is 5.}
+\item{scoreDiffCut}{A \code{numeric} value specifying the cutoff for score
+difference. Default is 5.}
 
-\item{multiMap}{A \code{logical} value indicating whether to allow multiple mapping (not used in this function but could be relevant for further extensions).}
+\item{multiMap}{A \code{logical} value indicating whether to allow multiple
+mapping (not used in this function but could be relevant for
+further extensions).}
 }
 \value{
-A \code{data.frame} containing the filtered phosphorylation data for the specified sample, with columns for intensity, Uniprot ID, gene name, position within proteins, amino acid residue, and sequence window.
+A \code{data.frame} containing the filtered phosphorylation data for
+the specified sample, with columns for intensity, Uniprot ID, gene name,
+position within proteins, amino acid residue, and sequence window.
 }
 \description{
-\code{readOnePhos} reads phosphorylation data from an input table, filters it based on localization probability, score difference, and intensity, and returns the filtered data for a specific sample.
+\code{readOnePhos} reads phosphorylation data from an input table, filters it
+ based on localization probability, score difference, and intensity, and
+ returns the filtered data for a specific sample.
 }
 \details{
-The function filters the input phosphorylation data based on three criteria: localization probability, score difference, and intensity. Only rows that meet or exceed the specified cutoffs for these criteria and have non-zero intensity are retained. The filtered data is then returned with a unique identifier for each row.
+The function filters the input phosphorylation data based on three criteria:
+localization probability, score difference, and intensity.
+Only rows that meet or exceed the specified cutoffs for these criteria
+and have non-zero intensity are retained. The filtered data is then returned
+with a unique identifier for each row.
 }

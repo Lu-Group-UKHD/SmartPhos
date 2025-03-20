@@ -13,44 +13,61 @@ calcKinaseScore(
 )
 }
 \arguments{
-\item{resTab}{A \code{data frame} containing the input data with columns site, stat, and log2FC.}
+\item{resTab}{A \code{data frame} containing the input data with columns
+site, stat, and log2FC.}
 
-\item{decoupler_network}{A \code{data frame} representing the decoupleR network with columns source and target.}
+\item{decoupler_network}{A \code{data frame} representing the decoupleR
+network with columns source and target.}
 
-\item{corrThreshold}{A \code{numeric} value specifying the correlation threshold for filtering correlated regulons. Default is 0.9.}
+\item{corrThreshold}{A \code{numeric} value specifying the correlation
+threshold for filtering correlated regulons. Default is 0.9.}
 
-\item{statType}{A \code{character} string specifying the type of statistic to use. Options are "stat" or "log2FC". Default is "stat".}
+\item{statType}{A \code{character} string specifying the type of statistic
+to use. Options are "stat" or "log2FC". Default is "stat".}
 
-\item{nPerm}{A \code{numeric} value specifying the number of permutations for the null distribution. Default is 100.}
+\item{nPerm}{A \code{numeric} value specifying the number of permutations
+for the null distribution. Default is 100.}
 }
 \value{
-A \code{data frame} with kinase activity scores, including columns for `source`, `score`, and `p_value`.
+A \code{data frame} with kinase activity scores, including columns
+for `source`, `score`, and `p_value`.
 }
 \description{
-\code{calcKinaseScore} calculates kinase activity scores based on input data and a specified network of regulatory relationships (\code{decoupler network}).
+\code{calcKinaseScore} calculates kinase activity scores based on input data
+and a specified network of regulatory relationships
+(\code{decoupler network}).
 }
 \details{
 The function performs the following steps:
 \enumerate{
   \item Removes duplicate rows based on the site column.
-  \item Filters the data to include only those sites present in the target column of the \code{decoupler network}.
+  \item Filters the data to include only those sites present in the target
+  column of the \code{decoupler network}.
   \item Prepares the input table based on the specified statType.
-  \item Intersects the input table with the \code{decoupler network} to find common regulons.
-  \item Checks for correlated regulons and filters out those exceeding the correlation threshold.
+  \item Intersects the input table with the \code{decoupler network} to find
+  common regulons.
+  \item Checks for correlated regulons and filters out those exceeding the
+  correlation threshold.
   \item Calculates kinase activity using a weighted mean approach.
   \item Processes the results to handle NA values and formats the output.
 }
 }
 \examples{
 resTab <- data.frame(
-site = c("EGFR_Y1172", "EGFR_Y1197", "EGFR_S1166", "ROCK2_S1374", "WASL_Y256", "GAB1_Y259", "ADD1_S586", "EPHA2_Y772", "PRKDC_T2638", "PRKDC_T2609", "PRKDC_S2612"),
-stat = c(-10.038770, -5.945562, 5.773384, -7.303834, 5.585326, 5.971104, 5.199119, -5.169500, 5.130228, 5.407387, 4.493933),
-log2FC = c(-2.6113343, -2.4858615, 1.0056629, -1.1561780, 1.6421145, 2.0296634, 1.3766283, -0.8531656, 1.0742881, 1.0042942, 1.0608129)
+site = c("EGFR_Y1172", "EGFR_Y1197", "EGFR_S1166", "ROCK2_S1374",
+"WASL_Y256", "GAB1_Y259", "ADD1_S586", "EPHA2_Y772", "PRKDC_T2638",
+"PRKDC_T2609", "PRKDC_S2612"),
+stat = c(-10.038770, -5.945562, 5.773384, -7.303834, 5.585326, 5.971104,
+5.199119, -5.169500, 5.130228, 5.407387, 4.493933),
+log2FC = c(-2.6113343, -2.4858615, 1.0056629, -1.1561780, 1.6421145,
+2.0296634, 1.3766283, -0.8531656, 1.0742881, 1.0042942, 1.0608129)
 )
 decoupler_network <- data.frame(
 source = c(rep("ABL1", 5), rep("CDK2", 6)),
 mor = c(rep(1, 11)),
-target = c("EGFR_Y1172", "EGFR_Y1197", "EGFR_S1166", "ROCK2_S1374", "WASL_Y256", "GAB1_Y259", "ADD1_S586", "EPHA2_Y772", "PRKDC_T2638", "PRKDC_T2609", "PRKDC_S2612"),
+target = c("EGFR_Y1172", "EGFR_Y1197", "EGFR_S1166", "ROCK2_S1374",
+"WASL_Y256", "GAB1_Y259", "ADD1_S586", "EPHA2_Y772", "PRKDC_T2638",
+"PRKDC_T2609", "PRKDC_S2612"),
 likelihood = c(rep(1, 11))
 )
 # Call the function

@@ -11,7 +11,8 @@ a data.frame object
 data(Homo_sapien_kinase_substrate_network)
 }
 \description{
-A prior knowledge database about the known kinase-phosphosite interactions for Homo sapiens
+A prior knowledge database about the known kinase-phosphosite interactions
+for Homo sapiens
 }
 \examples{
 data(Homo_sapien_kinase_substrate_network)

@@ -13,24 +13,35 @@ readProteomeExperiment(
 )
 }
 \arguments{
-\item{fileTable}{A \code{data.table} or \code{data.frame} containing the file information with columns for file names, sample names, and IDs.}
+\item{fileTable}{A \code{data.table} or \code{data.frame} containing the
+file information with columns for file names, sample names, and IDs.}
 
-\item{fdrCut}{A \code{numeric} value specifying the maximum false discovery rate (FDR) threshold. Default is 0.1.}
+\item{fdrCut}{A \code{numeric} value specifying the maximum false discovery
+rate (FDR) threshold. Default is 0.1.}
 
-\item{scoreCut}{A \code{numeric} value specifying the minimum score threshold. Default is 10.}
+\item{scoreCut}{A \code{numeric} value specifying the minimum score
+threshold. Default is 10.}
 
-\item{pepNumCut}{A \code{numeric} value specifying the minimum number of peptides required for a protein to be included. Default is 1.}
+\item{pepNumCut}{A \code{numeric} value specifying the minimum number of
+peptides required for a protein to be included. Default is 1.}
 
-\item{ifLFQ}{A \code{logical} value indicating whether to use LFQ quantification. Default is \code{TRUE}.}
+\item{ifLFQ}{A \code{logical} value indicating whether to use LFQ
+quantification. Default is \code{TRUE}.}
 }
 \value{
-A \code{SummarizedExperiment} object containing the processed proteomics data.
+A \code{SummarizedExperiment} object containing the processed
+proteomics data.
 }
 \description{
-\code{readProteomeExperiment} reads and processes proteomics data from multiple samples, applying various quality filters, and returns a \code{SummarizedExperiment} object.
+\code{readProteomeExperiment} reads and processes proteomics data from
+multiple samples, applying various quality filters, and returns a
+\code{SummarizedExperiment} object.
 }
 \details{
-This function processes proteomics data by filtering based on FDR, score, and peptide count, and optionally using LFQ quantification. It aggregates the data from multiple samples and constructs a \code{SummarizedExperiment} object.
+This function processes proteomics data by filtering based on FDR, score,
+and peptide count, and optionally using LFQ quantification. It aggregates
+the data from multiple samples and constructs a \code{SummarizedExperiment}
+object.
 }
 \examples{
 file1 <- system.file("extdata", "phosDDA_1.xls", package = "SmartPhos")
@@ -43,6 +54,7 @@ fileTable <- data.frame(
    id = c("s1", "s2")
 )
 # Call the function
-readProteomeExperiment(fileTable, fdrCut = 0.1, scoreCut = 10, pepNumCut = 1, ifLFQ = TRUE)
+readProteomeExperiment(fileTable, fdrCut = 0.1, scoreCut = 10,
+pepNumCut = 1, ifLFQ = TRUE)
 
 }

@@ -2,7 +2,8 @@
 % Please edit documentation in R/time_series_clustering.R
 \name{plotTimeSeries}
 \alias{plotTimeSeries}
-\title{Plot Time Series Data for a gene or phospho site from SummarizedExperiment object}
+\title{Plot Time Series Data for a gene or phospho site from
+SummarizedExperiment object}
 \usage{
 plotTimeSeries(
   se,
@@ -20,39 +21,58 @@ plotTimeSeries(
 \arguments{
 \item{se}{A \code{SummarizedExperiment} object containing the data.}
 
-\item{type}{\code{Character}. The type of plot to generate. Options are "expression", "logFC", or "two-condition expression".}
+\item{type}{\code{Character}. The type of plot to generate. Options are "
+expression", "logFC", or "two-condition expression".}
 
-\item{geneID}{\code{Character}. The identifier of the gene or feature to plot.}
+\item{geneID}{\code{Character}. The identifier of the gene or feature to
+plot.}
 
-\item{symbol}{\code{Character}. The symbol or name of the gene or feature to use as the plot title.}
+\item{symbol}{\code{Character}. The symbol or name of the gene or feature to
+use as the plot title.}
 
-\item{condition}{\code{Character}. The condition corresponds to one of the columns from the colData of SE object.}
+\item{condition}{\code{Character}. The condition corresponds to one of the
+columns from the colData of SE object.}
 
-\item{treatment}{\code{Character}. The treatment to use for filtering the data.}
+\item{treatment}{\code{Character}. The treatment to use for filtering the
+data.}
 
 \item{refTreat}{\code{Character}. The reference treatment to compare against.}
 
-\item{addZero}{\code{Logical}, whether to add a zero time point to the data. Default is \code{FALSE}.}
+\item{addZero}{\code{Logical}, whether to add a zero time point to the data.
+Default is \code{FALSE}.}
 
-\item{zeroTreat}{\code{Character}. The treatment to use for adding the zero time point. Default is \code{NULL}.}
+\item{zeroTreat}{\code{Character}. The treatment to use for adding the zero
+time point. Default is \code{NULL}.}
 
-\item{timerange}{\code{Character} vector.The range of time points to include in the plot.}
+\item{timerange}{\code{Character} vector.The range of time points to include
+in the plot.}
 }
 \value{
 A \code{ggplot2} object representing the time series plot.
 }
 \description{
-\code{plotTimeSeries} plots time series data for a given gene or phospho site from a given \code{SummarizedExperiment} object, allowing different types of plots such as expression, log fold change, or two-condition expression.
+\code{plotTimeSeries} plots time series data for a given gene or phospho site
+from a given \code{SummarizedExperiment} object, allowing different types of
+plots such as expression, log fold change, or two-condition expression.
 }
 \details{
-This function generates time series plots for a specified gene or feature from a \code{SummarizedExperiment} (SE) object. The type of plot can be one of the following:
+This function generates time series plots for a specified gene or feature
+from a \code{SummarizedExperiment} (SE) object. The type of plot can be one
+of the following:
 - "expression": Plots normalized expression levels over time.
-- "logFC": Plots log fold change (logFC) over time, comparing a treatment to a reference treatment.
-- "two-condition expression": Plots normalized expression levels over time for two conditions.
+- "logFC": Plots log fold change (logFC) over time, comparing a treatment to
+a reference treatment.
+- "two-condition expression": Plots normalized expression levels over time
+for two conditions.
 
-The function can add a zero time point if specified and handles data with and without subject-specific information. The plot includes points for each time point and a summary line representing the mean value.
+The function can add a zero time point if specified and handles data with
+and without subject-specific information. The plot includes points for each
+time point and a summary line representing the mean value.
 
-The x-axis represents time, and the y-axis represents the selected metric (normalized expression or logFC). The plot is customized with various aesthetic elements, such as point size, line type, axis labels, and title formatting.
+The x-axis represents time, and the y-axis represents the selected metric
+(normalized expression or logFC). The plot is customized with various
+aesthetic elements, such as point size, line type, axis labels, and title
+formatting.
 }
 \examples{
 library(SummarizedExperiment)
@@ -65,6 +85,8 @@ colData(se) <- colData(dda_example)
 result <- preprocessProteome(se, normalize = TRUE)
 # Plot a specific gene experssion over time
 timerange <- unique(se$timepoint)
-plotTimeSeries(result, type = "expression", geneID = "p18", symbol = "TMEM238", condition = "treatment", treatment = "EGF", timerange = timerange)
+plotTimeSeries(result, type = "expression", geneID = "p18",
+symbol = "TMEM238", condition = "treatment", treatment = "EGF",
+timerange = timerange)
 
 }

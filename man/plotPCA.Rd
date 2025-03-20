@@ -11,33 +11,45 @@ plotPCA(pca, se, xaxis = "PC1", yaxis = "PC2", color = "none", shape = "none")
 
 \item{se}{A \code{SummarizedExperiment} object containing the metadata.}
 
-\item{xaxis}{A \code{character} string specifying which principal component to use for the x-axis. Default is "PC1".}
+\item{xaxis}{A \code{character} string specifying which principal component
+to use for the x-axis. Default is "PC1".}
 
-\item{yaxis}{A \code{character} string specifying which principal component to use for the y-axis. Default is "PC2".}
+\item{yaxis}{A \code{character} string specifying which principal component
+to use for the y-axis. Default is "PC2".}
 
-\item{color}{A \code{character} string specifying the metadata column to use for coloring the points. Default is "none".}
+\item{color}{A \code{character} string specifying the metadata column to use
+for coloring the points. Default is "none".}
 
-\item{shape}{A \code{character} string specifying the metadata column to use for shaping the points. Default is "none".}
+\item{shape}{A \code{character} string specifying the metadata column to use
+for shaping the points. Default is "none".}
 }
 \value{
 A \code{ggplot2} object showing the PCA plot.
 }
 \description{
-\code{plotPCA} generates a PCA plot using the results from a PCA analysis and a \code{SummarizedExperiment} object. The points on the plot can be colored and shaped based on metadata.
+\code{plotPCA} generates a PCA plot using the results from a PCA analysis
+and a \code{SummarizedExperiment} object. The points on the plot can be
+colored and shaped based on metadata.
 }
 \details{
-This function creates a PCA plot using the scores from a PCA result object and metadata from a \code{SummarizedExperiment} object. The x-axis and y-axis can be customized to display different principal components, and the points can be optionally colored and shaped based on specified metadata columns.
+This function creates a PCA plot using the scores from a PCA result object
+and metadata from a \code{SummarizedExperiment} object. The x-axis and y-axis
+can be customized to display different principal components, and the points
+can be optionally colored and shaped based on specified metadata columns.
 }
 \examples{
 # Load multiAssayExperiment object
 data("dia_example")
 # Get SummarizedExperiment object
 se <- dia_example[["Phosphoproteome"]]
-SummarizedExperiment::colData(se) <- SummarizedExperiment::colData(dia_example)
+SummarizedExperiment::colData(se) <- SummarizedExperiment::colData(
+dia_example)
 # Generate the imputed assay
 result <- preprocessPhos(seData = se, normalize = TRUE, impute = "QRILC")
 # Perform PCA
-pcaResult <- stats::prcomp(t(SummarizedExperiment::assays(result)[["imputed"]]), center = TRUE, scale. = TRUE)
+pcaResult <- stats::prcomp(t(
+SummarizedExperiment::assays(result)[["imputed"]]),
+center = TRUE, scale. = TRUE)
 # Plot PCA results
 plotPCA(pca = pcaResult, se = result, color = "treatment")
 

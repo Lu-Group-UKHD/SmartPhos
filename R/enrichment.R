@@ -3,17 +3,24 @@
 #' @title Perform Fisher's Exact Test on Gene Sets
 #'
 #' @description
-#' \code{runFisher} performs Fisher's Exact Test to determine the enrichment of a set of genes within reference gene sets.
+#' \code{runFisher} performs Fisher's Exact Test to determine the enrichment of
+#' a set of genes within reference gene sets.
 #'
 #' @param genes A \code{character} vector of genes of interest.
 #' @param reference A \code{character} vector of reference genes.
-#' @param inputSet A \code{list} containing gene set collections. If ptm is \code{TRUE}, this should be a data frame with specific columns.
-#' @param ptm \code{Logical}. If \code{TRUE}, perform the test on post-translational modification (PTM) gene sets. Default is \code{FALSE}.
+#' @param inputSet A \code{list} containing gene set collections. If ptm is
+#' \code{TRUE}, this should be a data frame with specific columns.
+#' @param ptm \code{Logical}. If \code{TRUE}, perform the test on
+#' post-translational modification (PTM) gene sets. Default is \code{FALSE}.
 #'
-#' @return A \code{data frame} with the results of the Fisher's Exact Test, including the gene set name, the number of genes in the set, set size, p-value, adjusted p-value, and the genes in the set.
+#' @return A \code{data frame} with the results of the Fisher's Exact Test,
+#' including the gene set name, the number of genes in the set, set size,
+#' p-value, adjusted p-value, and the genes in the set.
 #'
 #' @details
-#' The function can operate in two modes: standard gene sets and PTM-specific gene sets. For PTM-specific gene sets, additional filtering and processing are performed.
+#' The function can operate in two modes: standard gene sets and PTM-specific
+#' gene sets. For PTM-specific gene sets, additional filtering and processing
+#' are performed.
 #'
 #' @examples
 #' library(SummarizedExperiment)
@@ -26,10 +33,13 @@
 #' # Preprocess the proteome assay
 #' result <- preprocessProteome(se, normalize = TRUE)
 #' # Call the function to perform differential expression analyis
-#' de <- performDifferentialExp(se = result, assay = "Intensity", method = "limma", reference = "1stCrtl", target = "EGF", condition = "treatment")
+#' de <- performDifferentialExp(se = result, assay = "Intensity",
+#' method = "limma", reference = "1stCrtl", target = "EGF",
+#' condition = "treatment")
 #' genesList <- unique(de$resDE$Gene)
 #' referenceList <- unique(SummarizedExperiment::rowData(result)$Gene)
-#' genesetPath <- appDir <- system.file("shiny-app/geneset", package = "SmartPhos")
+#' genesetPath <- appDir <- system.file("shiny-app/geneset",
+#' package = "SmartPhos")
 #' inGMT <- loadGSC(paste0(genesetPath,"/Cancer_Hallmark.gmt"),type="gmt")
 #' # Run the function
 #' runFisher(genes = genesList, reference = referenceList, inputSet = inGMT)
@@ -54,8 +64,11 @@ runFisher <- function (genes, reference, inputSet, ptm = FALSE) {
       group_by(signature) %>%
       filter(n() >= 5) %>%
       ungroup() %>%
-      mutate(signature = ifelse(site.direction == "u", paste0(signature,"_upregulated"), paste0(signature, "_downregulated"))) %>%
-      separate(site.annotation, sep =  ":", into = c("site", "PubMedID"), extra="merge", fill="right") %>%
+      mutate(signature = ifelse(site.direction == "u",
+                                paste0(signature,"_upregulated"),
+                                paste0(signature, "_downregulated"))) %>%
+      separate(site.annotation, sep =  ":", into = c("site", "PubMedID"),
+               extra="merge", fill="right") %>%
       as.data.frame()
 
     if(nrow(genesets) == 0) stop("Genesets empty. Check inputSet argument.")
@@ -107,32 +120,46 @@ runFisher <- function (genes, reference, inputSet, ptm = FALSE) {
 
 #' @name enrichDifferential
 #'
-#' @title Perform Enrichment analysis on differentially expressed genes or phospho-sites
+#' @title Perform Enrichment analysis on differentially expressed genes
+#' or phospho-sites
 #'
 #' @description
-#' \code{enrichDifferential} performs enrichment analysis on differentially expressed
-#' genes and phospho-sites for either pathway or phospho-specific enrichment, depending
-#' on the input parameters. It supports multiple statistical methods such as PAGE and
-#' GSEA for pathway enrichment and a Kolmogorov-Smirnov approach for phospho-enrichment.
+#' \code{enrichDifferential} performs enrichment analysis on differentially
+#' expressed genes and phospho-sites for either pathway or phospho-specific
+#' enrichment, depending on the input parameters. It supports multiple
+#' statistical methods such as PAGE and GSEA for pathway enrichment and a
+#' Kolmogorov-Smirnov approach for phospho-enrichment.
 #'
-#' @param dea A \code{data frame} containing the differential expression analysis results. It should include columns like
+#' @param dea A \code{data frame} containing the differential expression
+#' analysis results. It should include columns like
 #'   `pvalue`, `Gene` (or `site`), `stat`, and `log2FC`.
-#' @param type A \code{character} string indicating the type of enrichment. Options are `"Pathway enrichment"` or `"Phospho enrichment"`.
-#' @param gsaMethod A \code{character} string specifying the gene set analysis method for pathway enrichment. Options are `"PAGE"` or `"GSEA"`.
+#' @param type A \code{character} string indicating the type of enrichment.
+#' Options are `"Pathway enrichment"` or `"Phospho enrichment"`.
+#' @param gsaMethod A \code{character} string specifying the gene set analysis
+#' method for pathway enrichment. Options are `"PAGE"` or `"GSEA"`.
 #' @param geneSet A gene set collection to use for pathway enrichment.
-#' @param ptmSet A post-translational modification (PTM) set database for phospho-enrichment analysis.
-#' @param statType A \code{character} string specifying the statistic type to use. Options are `"stat"` or `"log2FC"`.
-#' @param nPerm A \code{numeric} specifying the number of permutations for GSEA. Default is 100.
-#' @param sigLevel A \code{numeric} value representing the significance threshold for filtering results. Ddefault is 0.05.
-#' @param ifFDR A \code{logical} value indicating whether to filter results using FDR-adjusted p-values. Default is `FALSE`.
+#' @param ptmSet A post-translational modification (PTM) set database for
+#' phospho-enrichment analysis.
+#' @param statType A \code{character} string specifying the statistic type to
+#' use. Options are `"stat"` or `"log2FC"`.
+#' @param nPerm A \code{numeric} specifying the number of permutations for GSEA.
+#' Default is 100.
+#' @param sigLevel A \code{numeric} value representing the significance
+#' threshold for filtering results. Ddefault is 0.05.
+#' @param ifFDR A \code{logical} value indicating whether to filter results
+#' using FDR-adjusted p-values. Default is `FALSE`.
 #'
-#' @return A data frame containing the results of the enrichment analysis, including columns such as the gene set name,
+#' @return A data frame containing the results of the enrichment analysis,
+#' including columns such as the gene set name,
 #'   statistical significance, and adjusted p-values.
 #'
 #' @details
-#' The `enrichDifferential` function performs either pathway enrichment or phospho-enrichment analysis based on the `type` parameter.
-#' For pathway enrichment, it uses either the PAGE or GSEA method with a provided gene set collection. For phospho-enrichment,
-#' it uses a Kolmogorov-Smirnov test with a PTM set database. Results can be filtered by significance level and optionally adjusted for FDR.
+#' The `enrichDifferential` function performs either pathway enrichment or
+#' phospho-enrichment analysis based on the `type` parameter.
+#' For pathway enrichment, it uses either the PAGE or GSEA method with a
+#' provided gene set collection. For phospho-enrichment,
+#' it uses a Kolmogorov-Smirnov test with a PTM set database. Results can be
+#' filtered by significance level and optionally adjusted for FDR.
 #'
 #' @examples
 #' library(SummarizedExperiment)
@@ -145,18 +172,24 @@ runFisher <- function (genes, reference, inputSet, ptm = FALSE) {
 #' # Preprocess the proteome assay
 #' result <- preprocessPhos(se, normalize = TRUE)
 #' # Call the function to perform differential expression analyis
-#' dea <- performDifferentialExp(se = result, assay = "Intensity", method = "limma", reference = "1stCrtl", target = "EGF", condition = "treatment")
+#' dea <- performDifferentialExp(se = result, assay = "Intensity",
+#' method = "limma", reference = "1stCrtl", target = "EGF",
+#' condition = "treatment")
 #' # Load the gene set
-#' genesetPath <- appDir <- system.file("shiny-app/geneset", package = "SmartPhos")
+#' genesetPath <- appDir <- system.file("shiny-app/geneset",
+#' package = "SmartPhos")
 #' inGMT <- loadGSC(paste0(genesetPath,"/Cancer_Hallmark.gmt"),type="gmt")
 #' # Call the function
-#' resTab <- enrichDifferential(dea = dea$resDE, type = "Pathway enrichment", gsaMethod = "PAGE", geneSet = inGMT, statType = "stat", nPerm = 200, sigLevel = 0.05, ifFDR = FALSE)
+#' resTab <- enrichDifferential(dea = dea$resDE, type = "Pathway enrichment",
+#' gsaMethod = "PAGE", geneSet = inGMT, statType = "stat", nPerm = 200,
+#' sigLevel = 0.05, ifFDR = FALSE)
 #'
 #' @importFrom dplyr filter arrange select
 #' @importFrom piano runGSA GSAsummaryTable
 #'
 #' @export
-enrichDifferential <- function(dea, type, gsaMethod, geneSet, ptmSet, statType, nPerm = 100, sigLevel = 0.05, ifFDR = FALSE) {
+enrichDifferential <- function(dea, type, gsaMethod, geneSet, ptmSet, statType,
+                               nPerm = 100, sigLevel = 0.05, ifFDR = FALSE) {
     if (type == "Pathway enrichment") {
         # Prepare data for pathway enrichment by filtering and sorting
         corTab <- dea %>%
@@ -195,8 +228,9 @@ enrichDifferential <- function(dea, type, gsaMethod, geneSet, ptmSet, statType, 
 
         # Summarize the results into a table
         resTab <- GSAsummaryTable(res)
-        colnames(resTab) <- c("Name", "Gene Number", "Stat", "p.up", "p.up.adj",
-                              "p.down", "p.down.adj", "Number up", "Number down")
+        colnames(resTab) <- c("Name", "Gene Number", "Stat", "p.up",
+                              "p.up.adj", "p.down", "p.down.adj", "Number up",
+                              "Number down")
 
         # Filter results based on significance threshold
         if(ifFDR) {
@@ -236,8 +270,9 @@ enrichDifferential <- function(dea, type, gsaMethod, geneSet, ptmSet, statType, 
             as.data.frame()
 
         # Rename columns for clarity
-        colnames(resTab) <- c("Name", "Site.number", "Stat", "Number.pSite.Db", "Number.PTM.site.Db",
-                              "pvalue", "Number.up", "Number.down", "padj")
+        colnames(resTab) <- c("Name", "Site.number", "Stat", "Number.pSite.Db",
+                              "Number.PTM.site.Db", "pvalue", "Number.up",
+                              "Number.down", "padj")
 
         # Rearrange columns in a specific order
         resTab <- resTab %>%
@@ -262,26 +297,44 @@ enrichDifferential <- function(dea, type, gsaMethod, geneSet, ptmSet, statType, 
 #' @title Perform Cluster Enrichment Analysis
 #'
 #' @description
-#' \code{clusterEnrich} performs enrichment analysis on gene clusters, using Fisher's Exact Test to determine the significance of enrichment for each cluster.
+#' \code{clusterEnrich} performs enrichment analysis on gene clusters, using
+#' Fisher's Exact Test to determine the significance of enrichment for each
+#' cluster.
 #'
-#' @param clusterTab A \code{data frame} containing cluster information, where each row corresponds to a gene and its assigned cluster.
-#' @param se A \code{SummarizedExperiment} object containing gene expression data and metadata.
-#' @param inputSet A \code{list} or \code{data frame} of gene sets to be used for enrichment analysis.
-#' @param reference A \code{character} vector of reference genes. If NULL, it will be extracted from se object. Default is \code{NULL}.
-#' @param ptm \code{Logical}. If \code{TRUE}, the function will perform enrichment analysis on post-translational modification (PTM) gene sets. Default is \code{FALSE}.
-#' @param adj \code{Character}. The method for adjusting p-values. Default is "BH".
-#' @param filterP \code{Numeric}. The p-value threshold for filtering significant results. Default is 0.05.
-#' @param ifFDR \code{Logical}. If \code{TRUE}, the function will use FDR-adjusted p-values for significance filtering. Default is \code{FALSE}.
+#' @param clusterTab A \code{data frame} containing cluster information, where
+#' each row corresponds to a gene and its assigned cluster.
+#' @param se A \code{SummarizedExperiment} object containing gene expression
+#' data and metadata.
+#' @param inputSet A \code{list} or \code{data frame} of gene sets to be used
+#' for enrichment analysis.
+#' @param reference A \code{character} vector of reference genes. If NULL, it
+#' will be extracted from se object. Default is \code{NULL}.
+#' @param ptm \code{Logical}. If \code{TRUE}, the function will perform
+#' enrichment analysis on post-translational modification (PTM) gene sets.
+#' Default is \code{FALSE}.
+#' @param adj \code{Character}. The method for adjusting p-values. Default is
+#' "BH".
+#' @param filterP \code{Numeric}. The p-value threshold for filtering
+#' significant results. Default is 0.05.
+#' @param ifFDR \code{Logical}. If \code{TRUE}, the function will use
+#' FDR-adjusted p-values for significance filtering. Default is \code{FALSE}.
 #'
 #' @return A \code{list} containing two elements:
 #' \itemize{
-#'   \item `table`: A \code{data frame} with enrichment results for each cluster and pathway.
-#'   \item `plot`: A \code{ggplot2} object showing the significance of enrichment for each pathway across clusters.
+#'   \item `table`: A \code{data frame} with enrichment results for each
+#'   cluster and pathway.
+#'   \item `plot`: A \code{ggplot2} object showing the significance of
+#'   enrichment for each pathway across clusters.
 #' }
 #'
 #' @details
-#' The function first retrieves or computes the reference set of genes or PTM sites. It then performs enrichment analysis for each cluster using the \code{runFisher} function.
-#' The results are filtered based on the p-value threshold and adjusted for multiple testing if \code{ifFDR} is \code{TRUE}. The function generates a dot plot where the size and color of the points represent the significance of enrichment.
+#' The function first retrieves or computes the reference set of genes or PTM
+#' sites. It then performs enrichment analysis for each cluster using the
+#' \code{runFisher} function.
+#' The results are filtered based on the p-value threshold and adjusted for
+#' multiple testing if \code{ifFDR} is \code{TRUE}. The function generates a
+#' dot plot where the size and color of the points represent the significance
+#' of enrichment.
 #'
 #' @examples
 #' library(SummarizedExperiment)
@@ -291,13 +344,16 @@ enrichDifferential <- function(dea, type, gsaMethod, geneSet, ptmSet, statType, 
 #' se <- dia_example[["Phosphoproteome"]]
 #' colData(se) <- colData(dia_example)
 #' seProcess <- preprocessPhos(seData = se, normalize = TRUE, impute = "QRILC")
-#' result <- addZeroTime(seProcess, condition = "treatment", treat = "EGF", zeroTreat = "1stCrtl", timeRange = c("20min","40min", "6h"))
+#' result <- addZeroTime(seProcess, condition = "treatment", treat = "EGF",
+#' zeroTreat = "1stCrtl", timeRange = c("20min","40min", "6h"))
 #' # Get the numeric matrix
 #' exprMat <- SummarizedExperiment::assay(result)
 #' # Call the clustering function
 #' clust <- clusterTS(x = exprMat, k = 3)
-#' genesetPath <- appDir <- system.file("shiny-app/geneset", package = "SmartPhos")
-#' inGMT <- piano::loadGSC(paste0(genesetPath,"/Cancer_Hallmark.gmt"),type="gmt")
+#' genesetPath <- appDir <- system.file("shiny-app/geneset",
+#' package = "SmartPhos")
+#' inGMT <- piano::loadGSC(paste0(genesetPath,
+#' "/Cancer_Hallmark.gmt"),type="gmt")
 #' # Call the function
 #' clusterEnrich(clust$cluster, seProcess, inGMT)
 #'
@@ -307,7 +363,9 @@ enrichDifferential <- function(dea, type, gsaMethod, geneSet, ptmSet, statType, 
 #' @import ggplot2
 #'
 #' @export
-clusterEnrich <- function(clusterTab, se, inputSet, reference = NULL, ptm = FALSE, adj = "BH", filterP = 0.05, ifFDR = FALSE) {
+clusterEnrich <- function(clusterTab, se, inputSet, reference = NULL,
+                          ptm = FALSE, adj = "BH", filterP = 0.05,
+                          ifFDR = FALSE) {
 
   # If reference is not provided, derive it from the SummarizedExperiment object
   if (is.null(reference)) {
@@ -352,8 +410,10 @@ clusterEnrich <- function(clusterTab, se, inputSet, reference = NULL, ptm = FALS
   }
 
   # Create a ggplot object for visualization of enrichment results
-  p <- ggplot(plotTab, aes(x=cluster, y=Name, customdata = cluster, key = Name)) +
-    geom_point(aes(size =-log10(pval),fill=-log10(pval)), shape = 21, color = "black") +
+  p <- ggplot(plotTab,
+              aes(x=cluster, y=Name, customdata = cluster, key = Name)) +
+    geom_point(aes(size =-log10(pval),fill=-log10(pval)), shape = 21,
+               color = "black") +
     scale_fill_gradient(low = "white", high = "red") +
     xlab("Cluster") +
     ylab("Pathway") +
@@ -368,32 +428,49 @@ clusterEnrich <- function(clusterTab, se, inputSet, reference = NULL, ptm = FALS
 #' @title Run GSEA for Phosphorylation Data
 #'
 #' @description
-#' \code{runGSEAforPhospho} performs Gene Set Enrichment Analysis (GSEA) for phosphorylation data.
+#' \code{runGSEAforPhospho} performs Gene Set Enrichment Analysis (GSEA) for
+#' phosphorylation data.
 #'
-#' @param geneStat A \code{data frame} containing gene statistics, with gene names as row names and a column named 'stat' for the statistics.
-#' @param ptmSetDb A \code{data frame} of post-translational modification (PTM) signature sets.
-#' @param nPerm A \code{numeric} value specifying the number of permutations for the null distribution.
-#' @param weight A \code{numeric} value for the weight parameter in the GSEA algorithm. If weight == 0 then the test statistics do not matter. Default is 1.
-#' @param correl.type A \code{character} string specifying the correlation type. Options are "rank", "symm.rank", and "z.score". Default is "rank".
-#' @param statistic A \code{character} string specifying the statistic to be used. Options are "Kolmogorov-Smirnov" and "area.under.RES". Default is "Kolmogorov-Smirnov".
-#' @param min.overlap A \code{numeric} specifying the minimum overlap required between gene sets and the input data. Default is 5.
+#' @param geneStat A \code{data frame} containing gene statistics, with gene
+#' names as row names and a column named 'stat' for the statistics.
+#' @param ptmSetDb A \code{data frame} of post-translational modification (PTM)
+#' signature sets.
+#' @param nPerm A \code{numeric} value specifying the number of permutations for
+#' the null distribution.
+#' @param weight A \code{numeric} value for the weight parameter in the GSEA
+#' algorithm. If weight == 0 then the test statistics do not matter. Default
+#' is 1.
+#' @param correl.type A \code{character} string specifying the correlation type.
+#' Options are "rank", "symm.rank", and "z.score". Default is "rank".
+#' @param statistic A \code{character} string specifying the statistic to be
+#' used. Options are "Kolmogorov-Smirnov" and "area.under.RES". Default is
+#' "Kolmogorov-Smirnov".
+#' @param min.overlap A \code{numeric} specifying the minimum overlap required
+#' between gene sets and the input data. Default is 5.
 #'
-#' @return A \code{tibble} with enrichment scores and associated statistics for each PTM set.
+#' @return A \code{tibble} with enrichment scores and associated statistics for
+#' each PTM set.
 #'
 #' @details
-#' This function runs GSEA on phosphorylation data to identify enriched PTM sets. It calculates enrichment scores and p-values for each set, normalizes the scores, and adjusts p-values for multiple testing.
+#' This function runs GSEA on phosphorylation data to identify enriched PTM
+#' sets. It calculates enrichment scores and p-values for each set, normalizes
+#' the scores, and adjusts p-values for multiple testing.
 #'
-#' @importFrom dplyr mutate rename filter count tibble as_tibble group_by ungroup arrange bind_rows
+#' @importFrom dplyr mutate rename filter count tibble as_tibble group_by
+#' ungroup arrange bind_rows
 #' @importFrom tidyr separate
 #' @importFrom stats p.adjust
 #'
 #' @export
-runGSEAforPhospho <- function(geneStat, ptmSetDb, nPerm, weight = 1, correl.type = "rank",
-                              statistic = "Kolmogorov-Smirnov", min.overlap = 5) {
+runGSEAforPhospho <- function(geneStat, ptmSetDb, nPerm, weight = 1,
+                              correl.type = "rank",
+                              statistic = "Kolmogorov-Smirnov",
+                              min.overlap = 5) {
 
   # Internal function to calculate GSEA enrichment score
   gseaScorePTM <- function (ordered.gene.list, data.expr, gene.set2,
-                            weight = 1, correl.type = "rank", gene.set.direction = NULL,
+                            weight = 1, correl.type = "rank",
+                            gene.set.direction = NULL,
                             statistic = "Kolmogorov-Smirnov", min.overlap = 5) {
 
     # Function to calculate the enrichment score (ES)
@@ -430,16 +507,19 @@ runGSEAforPhospho <- function(geneStat, ptmSetDb, nPerm, weight = 1, correl.type
       correl.vector <- rep(1, n.rows)
 
     } else if (weight > 0) {
-      # If weighting is used (weight > 0), bring 'correl.vector' into the same order as the ordered gene list
+      # If weighting is used (weight > 0), bring 'correl.vector' into
+      # the same order as the ordered gene list
       if (correl.type == "rank") {
         correl.vector <- data.expr[ordered.gene.list]
 
       } else if (correl.type == "symm.rank") {
         correl.vector <- data.expr[ordered.gene.list]
 
-        correl.vector <- ifelse(correl.vector > correl.vector[ceiling(n.rows/2)],
-                                correl.vector,
-                                correl.vector + correl.vector - correl.vector[ceiling(n.rows/2)])
+        correl.vector <- ifelse(correl.vector >
+                                    correl.vector[ceiling(n.rows/2)],
+                                correl.vector, correl.vector +
+                                    correl.vector -
+                                    correl.vector[ceiling(n.rows/2)])
       } else if (correl.type == "z.score") {
         x <- data.expr[ordered.gene.list]
         correl.vector <- (x - mean(x))/sd(x)
@@ -483,13 +563,13 @@ runGSEAforPhospho <- function(geneStat, ptmSetDb, nPerm, weight = 1, correl.type
 
         # Extract and apply weighting
         correl.vector.u <- correl.vector[ind.u]
-        correl.vector.u <- abs(correl.vector.u)^weight           ## weighting
+        correl.vector.u <- abs(correl.vector.u)^weight       ## weighting
 
         sum.correl.u <- sum(correl.vector.u)
 
-        up.u <- correl.vector.u/sum.correl.u         ## steps up in th random walk
-        gaps.u <- (c(ind.u-1, N) - c(0, ind.u))      ## gaps between hits
-        down.u <- gaps.u/Nm.u                        ## steps down in the random walk
+        up.u <- correl.vector.u/sum.correl.u     ## steps up in th random walk
+        gaps.u <- (c(ind.u-1, N) - c(0, ind.u))  ## gaps between hits
+        down.u <- gaps.u/Nm.u                    ## steps down in random walk
 
         RES.u <- cumsum(up.u-down.u[1:length(up.u)])
 
@@ -499,7 +579,8 @@ runGSEAforPhospho <- function(geneStat, ptmSetDb, nPerm, weight = 1, correl.type
         min.ES.u <-  suppressWarnings(min(valleys.u))
 
         # Calculate final score
-        score.res <- score(max.ES.u, min.ES.u, RES.u, gaps.u, valleys.u, statistic)
+        score.res <- score(max.ES.u, min.ES.u, RES.u, gaps.u,
+                           valleys.u, statistic)
         ES.u <- score.res$ES
         arg.ES.u <- score.res$arg.ES
         RES.u <- score.res$RES
@@ -517,7 +598,7 @@ runGSEAforPhospho <- function(geneStat, ptmSetDb, nPerm, weight = 1, correl.type
       if(number.d > 1){
         # Extract and apply weighting
         correl.vector.d <- correl.vector[ind.d]
-        correl.vector.d <- abs(correl.vector.d)^weight           ## weighting
+        correl.vector.d <- abs(correl.vector.d)^weight     ## weighting
 
         sum.correl.d <- sum(correl.vector.d)
 
@@ -532,7 +613,8 @@ runGSEAforPhospho <- function(geneStat, ptmSetDb, nPerm, weight = 1, correl.type
         min.ES.d <-  suppressWarnings(min(valleys.d))
 
         # Calculate final score
-        score.res <- score(max.ES.d, min.ES.d, RES.d, gaps.d, valleys.d, statistic)
+        score.res <- score(max.ES.d, min.ES.d, RES.d, gaps.d, valleys.d,
+                           statistic)
         ES.d <- score.res$ES
         arg.ES.d <- score.res$arg.ES
         RES.d <- score.res$RES
@@ -564,8 +646,11 @@ runGSEAforPhospho <- function(geneStat, ptmSetDb, nPerm, weight = 1, correl.type
       ind <- list(u=ind.u, d=ind.d)
       step.up <- list(u=up.u, d=up.d )
       step.down <- list(u=1/Nm.u, d=1/Nm.d)
-      gsea.results <-  list(ES = ES, ES.all = list(u=ES.u, d=ES.d), arg.ES = arg.ES, RES = RES, indicator = ind, correl.vector = correl.vector, step.up=step.up, step.down=step.down,
-                          number.u = number.u, number.d = number.d)
+      gsea.results <-  list(ES = ES, ES.all = list(u=ES.u, d=ES.d),
+                            arg.ES = arg.ES, RES = RES, indicator = ind,
+                            correl.vector = correl.vector, step.up=step.up,
+                            step.down=step.down, number.u = number.u,
+                            number.d = number.d)
 
 
     } else { ## end  if(!is.null(gene.set.direction))
@@ -576,7 +661,8 @@ runGSEAforPhospho <- function(geneStat, ptmSetDb, nPerm, weight = 1, correl.type
 
 
       # Match gene set to data
-      tag.indicator <- sign(match(ordered.gene.list, gene.set2, nomatch=0))    # notice that the sign is 0 (no tag) or 1 (tag)
+      # notice that the sign is 0 (no tag) or 1 (tag)
+      tag.indicator <- sign(match(ordered.gene.list, gene.set2, nomatch=0))
       # Positions of gene set in ordered gene list
       ind <-  which(tag.indicator==1)
       # 'correl.vector' is now the size of 'gene.set2'
@@ -586,8 +672,10 @@ runGSEAforPhospho <- function(geneStat, ptmSetDb, nPerm, weight = 1, correl.type
 
       # Determine peaks and valleys
       # Divide correl vector by sum of weights
-      up <-  correl.vector/sum.correl     # "up" represents the peaks in the mountain plot
-      gaps <-  (c(ind-1, N) - c(0, ind))  # gaps between ranked pathway genes
+      # "up" represents the peaks in the mountain plot
+      up <-  correl.vector/sum.correl
+      # gaps between ranked pathway genes
+      gaps <-  (c(ind-1, N) - c(0, ind))
       down <-  gaps/Nm
 
       RES <-  cumsum(c(up,up[Nh])-down)
@@ -603,14 +691,17 @@ runGSEAforPhospho <- function(geneStat, ptmSetDb, nPerm, weight = 1, correl.type
       arg.ES <- score.res$arg.ES
       RES <- score.res$RES
 
-      gsea.results <- list(ES = ES, arg.ES = arg.ES, RES = RES, indicator = ind, correl.vector = correl.vector, step.up=up, step.down=1/Nm)
+      gsea.results <- list(ES = ES, arg.ES = arg.ES, RES = RES, indicator = ind,
+                           correl.vector = correl.vector, step.up = up,
+                           step.down = 1/Nm)
     }
 
     return (gsea.results)
   }
 
 
-  # Remove KINASE signature since this is analogous to the kinase activity inference part
+  # Remove KINASE signature since this is analogous to the kinase
+  # activity inference part
   ptmSetDbNoKinase <- ptmSetDb %>%
     filter(!grepl("KINASE", category))
 
@@ -626,7 +717,8 @@ runGSEAforPhospho <- function(geneStat, ptmSetDb, nPerm, weight = 1, correl.type
     group_by(signature) %>%
     filter(n() >= 5) %>%
     ungroup() %>%
-    separate(site.annotation, sep =  ":", into = c("site", "PubMedID"), extra="merge", fill="right")
+    separate(site.annotation, sep =  ":", into = c("site", "PubMedID"),
+             extra="merge", fill="right")
 
   # Get the number of phospho sites for each signature
   phosphoSiteCount <- phosphoSetDb %>%
@@ -640,8 +732,10 @@ runGSEAforPhospho <- function(geneStat, ptmSetDb, nPerm, weight = 1, correl.type
   # Run GSEA for each PTM set
   rtab <- lapply(phosphoSiteCount$signature, function(signature) {
     # Get number of PTM site and phospho site in the database
-    nPTMsite <-  as.numeric(ptmSiteCount[ptmSiteCount$signature == signature, "no.PTM.site"])
-    nPpSite <-  as.numeric(phosphoSiteCount[phosphoSiteCount$signature == signature, "no.phospho.site"])
+    nPTMsite <-  as.numeric(ptmSiteCount[ptmSiteCount$signature == signature,
+                                         "no.PTM.site"])
+    nPpSite <-  as.numeric(phosphoSiteCount[phosphoSiteCount$signature ==
+                                                signature, "no.phospho.site"])
     signatureSet <-  phosphoSetDb[phosphoSetDb$signature == signature,]
     gene.set2 <-  signatureSet$site
     gene.set.direction <-  signatureSet$site.direction
@@ -650,9 +744,11 @@ runGSEAforPhospho <- function(geneStat, ptmSetDb, nPerm, weight = 1, correl.type
     if (sum(row.names(geneStat) %in% gene.set2) < min.overlap) {
       enrichScoreNorm <- enrichScore <- pvalue <- number.u <- number.d <- 0
     } else {
-      resGSEA <-  gseaScorePTM(ordered.gene.list, data.expr =  data.expr, gene.set2 = gene.set2,
-                             weight = weight, correl.type = correl.type,
-                             gene.set.direction = gene.set.direction, min.overlap =  min.overlap)
+      resGSEA <-  gseaScorePTM(ordered.gene.list, data.expr =  data.expr,
+                               gene.set2 = gene.set2, weight = weight,
+                               correl.type = correl.type,
+                               gene.set.direction = gene.set.direction,
+                               min.overlap =  min.overlap)
       enrichScore <-  resGSEA$ES
       if (!is.null(gene.set.direction)) {
         number.u  <-  resGSEA$number.u
@@ -665,8 +761,15 @@ runGSEAforPhospho <- function(geneStat, ptmSetDb, nPerm, weight = 1, correl.type
         enrichScoreNorm <-  enrichScore
         pvalue = 1
       } else {
-        nullDistES <-  sapply(seq_len(nPerm),  function(x) gseaScorePTM(sample(ordered.gene.list), data.expr=data.expr, gene.set2=gene.set2,
-                                                               weight, correl.type, gene.set.direction = gene.set.direction, min.overlap = min.overlap)$ES)
+        nullDistES <-  sapply(seq_len(nPerm),
+                              function(x) gseaScorePTM(
+                                  sample(ordered.gene.list),
+                                  data.expr=data.expr,
+                                  gene.set2=gene.set2,
+                                  weight,
+                                  correl.type,
+                                  gene.set.direction = gene.set.direction,
+                                  min.overlap = min.overlap)$ES)
         nullDistES <-  unlist(nullDistES)
         if (enrichScore >= 0) {
           nullDistES.pos <-  nullDistES[nullDistES >= 0]
@@ -686,10 +789,10 @@ runGSEAforPhospho <- function(geneStat, ptmSetDb, nPerm, weight = 1, correl.type
       }
     }
     tibble(Name = signature,
-           nSite = number.u + number.d,          # number of phosphosites in the input data
-           enrichScore = enrichScoreNorm,        # normalized enrichment score to correct for differences in signature sizes
-           n.P.site.in.Db = nPpSite,             # number of phosphosites in the database
-           n.PTM.site.in.Db = nPTMsite,          # number of PTM sites in the database
+           nSite = number.u + number.d,
+           enrichScore = enrichScoreNorm, # normalized enrichment score to correct for differences in signature sizes
+           n.P.site.in.Db = nPpSite,      # number of phosphosites in database
+           n.PTM.site.in.Db = nPTMsite,   # number of PTM sites in database
            pvalue = pvalue,
            number.u = number.u,
            number.d = number.d)

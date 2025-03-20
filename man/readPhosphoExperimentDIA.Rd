@@ -12,26 +12,41 @@ readPhosphoExperimentDIA(
 )
 }
 \arguments{
-\item{fileTable}{A \code{data.table} or \code{data.frame} containing metadata about the files to read. Must include columns fileName, searchType, and optionally outputID.}
+\item{fileTable}{A \code{data.table} or \code{data.frame} containing
+metadata about the files to read. Must include columns fileName, searchType,
+and optionally outputID.}
 
-\item{localProbCut}{A \code{numeric} value specifying the cutoff for localization probability. Default is 0.75.}
+\item{localProbCut}{A \code{numeric} value specifying the cutoff for
+localization probability. Default is 0.75.}
 
-\item{onlyReviewed}{A \code{logical} value indicating whether to include only reviewed proteins. Default is \code{TRUE}.}
+\item{onlyReviewed}{A \code{logical} value indicating whether to include
+only reviewed proteins. Default is \code{TRUE}.}
 
-\item{showProgressBar}{A \code{logical} value indicating whether to show a progress bar. Default is \code{FALSE}.}
+\item{showProgressBar}{A \code{logical} value indicating whether to show a
+progress bar. Default is \code{FALSE}.}
 }
 \value{
-A \code{SummarizedExperiment} object containing the processed phosphorylation data.
+A \code{SummarizedExperiment} object containing the processed
+phosphorylation data.
 }
 \description{
-\code{readPhosphoExperimentDIA} reads and processes phosphorylation data from DIA experiments, applying filters for localization probability, and optionally including only reviewed proteins. It constructs a \code{SummarizedExperiment} object.
+\code{readPhosphoExperimentDIA} reads and processes phosphorylation data
+from DIA experiments, applying filters for localization probability, and
+optionally including only reviewed proteins. It constructs a
+\code{SummarizedExperiment} object.
 }
 \details{
-This function processes phosphorylation data from DIA experiments by filtering based on localization probability and non-zero intensity, handling multiplicity, and optionally including only reviewed proteins. The resulting data is returned as a \code{SummarizedExperiment} object with annotations and an intensity matrix.
+This function processes phosphorylation data from DIA experiments by
+filtering based on localization probability and non-zero intensity,
+handling multiplicity, and optionally including only reviewed proteins.
+The resulting data is returned as a \code{SummarizedExperiment} object with
+annotations and an intensity matrix.
 }
 \examples{
 file <- system.file("extdata", "phosDIA_1.xls", package = "SmartPhos")
-fileTable <- data.frame(searchType = "phosphoproteome", fileName = file, id = c("Sample_1"))
-readPhosphoExperimentDIA(fileTable, localProbCut = 0.75, onlyReviewed = FALSE, showProgressBar = FALSE)
+fileTable <- data.frame(searchType = "phosphoproteome", fileName = file,
+id = c("Sample_1"))
+readPhosphoExperimentDIA(fileTable, localProbCut = 0.75,
+onlyReviewed = FALSE, showProgressBar = FALSE)
 
 }

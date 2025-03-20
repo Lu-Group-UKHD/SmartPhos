@@ -2,18 +2,24 @@
 % Please edit documentation in R/normalization_correction.R
 \name{checkRatioMat}
 \alias{checkRatioMat}
-\title{Check the PP/FP ratio matrix and remove feature that do not meet requirements}
+\title{Check the PP/FP ratio matrix and remove feature that do not meet
+requirements}
 \usage{
 checkRatioMat(ratioMat, minOverlap = 3)
 }
 \arguments{
-\item{ratioMat}{A numeric \code{matrix} representing the ratio of phosphoproteome data to full proteome data.}
+\item{ratioMat}{A numeric \code{matrix} representing the ratio of
+phosphoproteome data to full proteome data.}
 
-\item{minOverlap}{A \code{numeric} specifying the minimum number of overlapping peptides required between samples. Default is 3.}
+\item{minOverlap}{A \code{numeric} specifying the minimum number of
+overlapping peptides required between samples. Default is 3.}
 }
 \value{
-A \code{character} vector of sample names that do not meet the overlap criteria.
+A \code{character} vector of sample names that do not meet the
+overlap criteria.
 }
 \description{
-\code{checkRatioMat} checks the ratio \code{matrix} for samples that do not have sufficient overlap of phospho-peptides between enriched (PP) and unenriched (FP) samples.
+\code{checkRatioMat} checks the ratio \code{matrix} for samples that do not
+have sufficient overlap of phospho-peptides between enriched (PP) and
+unenriched (FP) samples.
 }

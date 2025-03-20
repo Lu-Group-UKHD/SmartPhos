@@ -7,13 +7,15 @@
 performCombinedNormalization(maeData)
 }
 \arguments{
-\item{maeData}{A \code{MultiAssayExperiment} object containing proteome and phosphoproteome data.}
+\item{maeData}{A \code{MultiAssayExperiment} object containing proteome and
+phosphoproteome data.}
 }
 \value{
 A numeric \code{matrix} with normalized and log2-transformed data.
 }
 \description{
-\code{performCombinedNormalization} performs combined normalization on proteome and phosphoproteome data from a \code{MultiAssayExperiment} object.
+\code{performCombinedNormalization} performs combined normalization on
+proteome and phosphoproteome data from a \code{MultiAssayExperiment} object.
 }
 \details{
 The function performs the following steps:
@@ -21,7 +23,8 @@ The function performs the following steps:
   \item Extracts the count matrices for Full Proteome (FP) samples.
   \item Combines the proteome and phosphoproteome data into a single matrix.
   \item Removes rows with all NA values.
-  \item Performs median normalization and log2 transformation on the combined matrix.
+  \item Performs median normalization and log2 transformation on the combined
+  matrix.
 }
 }
 \examples{
