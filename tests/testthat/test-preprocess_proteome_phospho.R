@@ -4,23 +4,24 @@ create_mock_data <- function() {
   assay_data <- matrix(abs(rnorm(1000, 10, 2)), nrow = 100, ncol = 10)
   colnames(assay_data) <- paste0("Sample", 1:10)
   rownames(assay_data) <- paste0("Gene", 1:100)
-  
+
   # Create sample metadata
-  sample_data <- data.frame(sample = colnames(assay_data), 
-                            sampleType = rep(c("FullProteome", "Phospho"), each = 5), 
+  sample_data <- data.frame(sample = colnames(assay_data),
+                            sampleType = rep(c("FullProteome", "Phospho"), each = 5),
                             group = rep(c("A", "B"), each = 5))
   rownames(sample_data) <- colnames(assay_data)
-  
+
   # Create gene metadata
-  gene_data <- data.frame(UniprotID = rownames(assay_data), 
-                          Gene = paste0("GeneSymbol", 1:100), 
+  gene_data <- data.frame(UniprotID = rownames(assay_data),
+                          Gene = paste0("GeneSymbol", 1:100),
                           Residue = rep(c("S","T","Y"), c(70,15,15)),
                           Position = rep(1:100))
   rownames(gene_data) <- rownames(assay_data)
-  
+
   # Create SummarizedExperiment object
-  se <- SummarizedExperiment(assays = list(intensity = assay_data), colData = sample_data, rowData = gene_data)
-  
+  se <- SummarizedExperiment(assays = list(intensity = assay_data),
+                             colData = sample_data, rowData = gene_data)
+
   return(se)
 }
 
@@ -91,9 +92,9 @@ test_that("preprocessProteome performs imputation", {
 
 test_that("preprocessPhos returns a SummarizedExperiment object", {
   seData <- create_mock_data()
-  
+
   processedData <- preprocessPhos(seData)
-  
+
   # Check if the returned object is a SummarizedExperiment
   expect_true(inherits(processedData, "SummarizedExperiment"))
 })
@@ -104,7 +105,8 @@ test_that("preprocessPhos filters based on sample type", {
   processedData <- preprocessPhos(seData, getFP = TRUE)
 
   # Check if only FP samples are included
-  expect_true(all(colData(processedData)$sampleType %in% c("FullProteome", "FP")))
+  expect_true(all(colData(processedData)$sampleType %in%
+                      c("FullProteome", "FP")))
 })
 
 test_that("preprocessPhos removes specified outliers", {

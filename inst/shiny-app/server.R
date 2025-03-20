@@ -156,7 +156,8 @@ shinyServer(function(input, output, session) {
     ext <- tools::file_ext(file$datapath)
     req(file)
     # making sure an rds object is being uploaded
-    validate(need(ext %in% c("rds", "RDS", "Rds"), "Please upload an rds object"))
+    validate(need(ext %in% c("rds", "RDS", "Rds"),
+                  "Please upload an rds object"))
     mae(readRDS(file$datapath))
     maeAdj(NULL) #reset maeAdj
   })
@@ -242,7 +243,9 @@ shinyServer(function(input, output, session) {
   output$ifNormByProteinBox <- renderUI({
       if (!is.null(mae())) {
           if (input$assay == "Phosphoproteome" && "Proteome" %in% names(assays(mae()))) {
-              checkboxInput("ifNormByProtein","Normalize phosphorylation by protein expression", value = FALSE)
+              checkboxInput("ifNormByProtein",
+                            "Normalize phosphorylation by protein expression",
+                            value = FALSE)
           }
       }
   })
@@ -257,7 +260,8 @@ shinyServer(function(input, output, session) {
 
   output$ifAlreadyNormBox <- renderUI({
       if(input$ifNormCorrect) {
-          updateRadioButtons(session = getDefaultReactiveDomain(), inputId = "normalize", selected = FALSE)
+          updateRadioButtons(session = getDefaultReactiveDomain(),
+                             inputId = "normalize", selected = FALSE)
           radioButtons("ifAlreadyNorm", "Have the data already been normalized by Spectronaut/MaxQuant ?", c("Yes","No"), selected = "No", inline = TRUE)
       }
   })
@@ -309,7 +313,8 @@ shinyServer(function(input, output, session) {
             ))}
           }
         # whether normalize the phospho intensity by protein expression,
-        # if normalization adjustment is performed, this will be performed after normalization adjustment
+        # if normalization adjustment is performed, this will be performed after
+        # normalization adjustment
         if (!is.null(input$ifNormByProtein) && input$ifNormByProtein) {
           if (("Proteome" %in% names(mae())) && ("FullProteome" %in% unique(colData(mae())$sampleType))) {
             if (!is.null(colData(mae())$sampleName)) {
@@ -413,7 +418,8 @@ shinyServer(function(input, output, session) {
                 selection = "none", style = "bootstrap")
     }
     else {
-      colDataTable <- mutate_if(data.frame(colData(loadedData())), is.character, as.factor)
+      colDataTable <- mutate_if(data.frame(colData(loadedData())),
+                                is.character, as.factor)
       datatable(colDataTable, filter = "top", rownames = FALSE,
                 selection = "none", style = "bootstrap")
     }
@@ -676,7 +682,8 @@ shinyServer(function(input, output, session) {
 
   output$seleMetaColBoxDiff <- renderUI({
       useCol <- colnames(colData(processedData()))
-      useCol <- useCol[!useCol %in% c("sample","sampleType","adjustFactorPP","sampleName")]
+      useCol <- useCol[!useCol %in% c("sample","sampleType",
+                                      "adjustFactorPP","sampleName")]
       selectInput("seleMetaColDiff", "Select metadata column for testing",
                   useCol, multiple = FALSE)
   })
@@ -857,7 +864,8 @@ shinyServer(function(input, output, session) {
   output$downloadTable <- downloadHandler(
     filename = function() { paste('DE_Table', '.tsv', sep = '') },
     content = function(file) {
-      write.table(filterDE(), file = file, quote=FALSE, sep = '\t', col.names = NA)
+      write.table(filterDE(), file = file, quote=FALSE, sep = '\t',
+                  col.names = NA)
     }
   )
 
@@ -1029,7 +1037,8 @@ shinyServer(function(input, output, session) {
         remove1sampleT <- append(remove1sampleT, time)
     }
     allTimepoint <- allTimepoint[!allTimepoint %in% remove1sampleT]
-    # if a reference treatment is selected, then only list timepoints shared between the two conditions
+    # if a reference treatment is selected, then only list timepoints shared
+    # between the two conditions
     if (input$clusterFor == "logFC" | input$clusterFor == "two-condition expression") {
       processedDataRef <- processedData()[, processedData()[[input$seleMetaColTime]] == input$seleTreat_clusterRef]
       timepointRef <- unique(processedDataRef$timepoint)
@@ -1176,7 +1185,8 @@ shinyServer(function(input, output, session) {
       assayMat <- assay(processedDataSub)
       RefMat <- assay(processedDataRef)
       # calculate fold change by subtracting assayMat to mean intensities of RefMat
-      # here the mean intensities in RefMat are calculated per time point or per time point and subject ID.
+      # here the mean intensities in RefMat are calculated per time point or
+      # per time point and subject ID.
       if (input$subjectIDtsc) {
         fcMat <- lapply(unique(processedDataSub$timepoint), function(tp) {
           lapply(unique(processedDataSub$subjectID), function(id) {
@@ -1192,7 +1202,8 @@ shinyServer(function(input, output, session) {
         }) %>% bind_cols() %>% as.matrix()
       }
       rownames(fcMat) <- rownames(assayMat)
-      # rearrange columns in processedDataSub to match with fcMat for splineFilter and calculating mean logFC later
+      # rearrange columns in processedDataSub to match with fcMat for
+      # splineFilter and calculating mean logFC later
       processedDataSub <- processedDataSub[,colnames(fcMat)]
       #  apply spline filter
       inputsValue$ifFilterFit <- input$ifFilterFit
@@ -1898,7 +1909,8 @@ shinyServer(function(input, output, session) {
           geneList <- ptmSetDb
         }
         else {
-          geneList <- read.table(filePath(), header = TRUE, sep = "\t", stringsAsFactors = FALSE)
+          geneList <- read.table(filePath(), header = TRUE,
+                                 sep = "\t", stringsAsFactors = FALSE)
         }
         if (input$seleSourceEnrich == "Selected time-series cluster")
           geneList <- geneList %>% mutate(signature = ifelse(site.direction == "u", paste0(signature,"_upregulated"), paste0(signature, "_downregulated")))
@@ -1980,7 +1992,8 @@ shinyServer(function(input, output, session) {
       if (!is.null(lastClicked)) {
 
         if (input$seleSourceEnrich == "Differential expression") {
-          p <- intensityBoxPlot(se = processedDataSub(), id = geneID, symbol = geneSymbol)
+          p <- intensityBoxPlot(se = processedDataSub(), id = geneID,
+                                symbol = geneSymbol)
           p
         }
         else if (input$seleSourceEnrich == "Selected time-series cluster") {
@@ -2371,7 +2384,8 @@ shinyServer(function(input, output, session) {
         plot <- plotKinaseDE(scoreTab, nTop = input$nTopKinase, pCut = input$pKinase)
         plot
       } else {
-        plot <- plotKinaseTimeSeries(scoreTab, pCut = input$pKinase, clusterName = input$seleCluster)
+        plot <- plotKinaseTimeSeries(scoreTab, pCut = input$pKinase,
+                                     clusterName = input$seleCluster)
         plot
       }
     }

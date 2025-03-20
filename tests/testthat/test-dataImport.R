@@ -14,7 +14,9 @@ fileTable <- data.frame(
 
 # Unit tests
 test_that("readExperimentDIA processes both phosphoproteome and proteome data correctly", {
-  result <- readExperimentDIA(fileTable, localProbCut = 0.75, annotation_col = c("id"), onlyReviewed = FALSE, normalizeByProtein = FALSE)
+  result <- readExperimentDIA(fileTable, localProbCut = 0.75,
+                              annotation_col = c("id"), onlyReviewed = FALSE,
+                              normalizeByProtein = FALSE)
 
   expect_s4_class(result, "MultiAssayExperiment")
   expect_true("Phosphoproteome" %in% names(experiments(result)))
@@ -34,7 +36,9 @@ test_that("readExperimentDIA handles missing phosphoproteome data", {
     id = c("sample1", "sample2")
   )
 
-  result <- readExperimentDIA(fileTable, localProbCut = 0.75, annotation_col = c("id"), normalizeByProtein = FALSE)
+  result <- readExperimentDIA(fileTable, localProbCut = 0.75,
+                              annotation_col = c("id"),
+                              normalizeByProtein = FALSE)
 
   expect_s4_class(result, "MultiAssayExperiment")
   expect_false("Phosphoproteome" %in% names(experiments(result)))
@@ -51,7 +55,9 @@ test_that("readExperimentDIA handles missing proteome data", {
     id = c("Sample_1")
   )
 
-  result <- readExperimentDIA(fileTable, localProbCut = 0.75, annotation_col = c("id"), onlyReviewed = FALSE, normalizeByProtein = FALSE)
+  result <- readExperimentDIA(fileTable, localProbCut = 0.75,
+                              annotation_col = c("id"),
+                              onlyReviewed = FALSE, normalizeByProtein = FALSE)
 
   expect_s4_class(result, "MultiAssayExperiment")
   expect_true("Phosphoproteome" %in% names(experiments(result)))
@@ -78,7 +84,10 @@ fileTable <- data.frame(
 # Unit tests
 test_that("readExperiment processes both phosphoproteomic and proteomic data correctly", {
 
-  result <- readExperiment(fileTable, localProbCut = 0.75, scoreDiffCut = 5, fdrCut = 0.1, scoreCut = 10, pepNumCut = 1, ifLFQ = TRUE, annotation_col = c("id"))
+  result <- readExperiment(fileTable, localProbCut = 0.75,
+                           scoreDiffCut = 5, fdrCut = 0.1,
+                           scoreCut = 10, pepNumCut = 1,
+                           ifLFQ = TRUE, annotation_col = c("id"))
 
   expect_s4_class(result, "MultiAssayExperiment")
   expect_true("Phosphoproteome" %in% names(experiments(result)))
@@ -96,7 +105,10 @@ test_that("readExperiment handles missing phosphoproteomic data", {
     id = c("s1")
   )
 
-  result <- readExperiment(fileTable, localProbCut = 0.75, scoreDiffCut = 5, fdrCut = 0.1, scoreCut = 10, pepNumCut = 1, ifLFQ = TRUE, annotation_col = c())
+  result <- readExperiment(fileTable, localProbCut = 0.75,
+                           scoreDiffCut = 5, fdrCut = 0.1,
+                           scoreCut = 10, pepNumCut = 1,
+                           ifLFQ = TRUE, annotation_col = c())
 
   expect_s4_class(result, "MultiAssayExperiment")
   expect_false("Phosphoproteome" %in% names(experiments(result)))
@@ -113,7 +125,10 @@ test_that("readExperiment handles missing proteomic data", {
     id = c("s1")
   )
 
-  result <- readExperiment(fileTable, localProbCut = 0.75, scoreDiffCut = 5, fdrCut = 0.1, scoreCut = 10, pepNumCut = 1, ifLFQ = TRUE, annotation_col = c())
+  result <- readExperiment(fileTable, localProbCut = 0.75,
+                           scoreDiffCut = 5, fdrCut = 0.1,
+                           scoreCut = 10, pepNumCut = 1,
+                           ifLFQ = TRUE, annotation_col = c())
 
   expect_s4_class(result, "MultiAssayExperiment")
   expect_true("Phosphoproteome" %in% names(experiments(result)))
@@ -132,7 +147,11 @@ test_that("readExperiment constructs sample annotations correctly", {
     condition = c("control", "treated")
   )
 
-  result <- readExperiment(fileTable2, localProbCut = 0.75, scoreDiffCut = 5, fdrCut = 0.1, scoreCut = 10, pepNumCut = 1, ifLFQ = TRUE, annotation_col = c("batch", "condition"))
+  result <- readExperiment(fileTable2, localProbCut = 0.75,
+                           scoreDiffCut = 5, fdrCut = 0.1,
+                           scoreCut = 10, pepNumCut = 1,
+                           ifLFQ = TRUE,
+                           annotation_col = c("batch", "condition"))
 
   expect_equal(rownames(colData(result)), c("s1", "s2"))
   expect_equal(colData(result)$sample, c("Sample1", "sample1"))
@@ -150,22 +169,29 @@ create_mock_mae <- function() {
   proteo_data <- matrix(runif(20, 1, 2), nrow=4, ncol=5)
 
   # Set column names to match sample names
-  colnames(phospho_data) <- colnames(proteo_data) <- c("S1", "S2", "S3", "S4", "S5")
+  colnames(phospho_data) <- colnames(proteo_data) <- c("S1", "S2", "S3",
+                                                       "S4", "S5")
 
   # Create sample annotations
   sample_data <- data.frame(sampleName = c("S1", "S2", "S3", "S4", "S5"),
-                            sampleType = c("FullProteome", "FullProteome", "Phosphoproteome", "Phosphoproteome", "Phosphoproteome"))
+                            sampleType = c("FullProteome", "FullProteome",
+                                           "Phosphoproteome", "Phosphoproteome",
+                                           "Phosphoproteome"))
   rownames(sample_data) <- colnames(phospho_data)
 
   # Create row annotations
   row_data <- data.frame(UniprotID = paste0("P", 1:4))
 
   # Create SummarizedExperiment objects
-  ppe <- SummarizedExperiment(assays = list(counts = phospho_data), colData = sample_data, rowData = row_data)
-  fpe <- SummarizedExperiment(assays = list(counts = proteo_data), colData = sample_data, rowData = row_data)
+  ppe <- SummarizedExperiment(assays = list(counts = phospho_data),
+                              colData = sample_data, rowData = row_data)
+  fpe <- SummarizedExperiment(assays = list(counts = proteo_data),
+                              colData = sample_data, rowData = row_data)
 
   # Create MultiAssayExperiment
-  mae <- MultiAssayExperiment(experiments = list(Phosphoproteome = ppe, Proteome = fpe), colData = sample_data)
+  mae <- MultiAssayExperiment(experiments = list(Phosphoproteome = ppe,
+                                                 Proteome = fpe),
+                              colData = sample_data)
 
   return(mae)
 }
@@ -177,19 +203,22 @@ test_that("normByFullProteome checks for required assays", {
   mae_no_phospho <- mae
   mae_no_phospho[ , , "Phosphoproteome"] <- NULL
 
-  expect_error(normByFullProteome(mae_no_phospho), "Both Phosphoproteome and Proteome assays should be present in the MultiAssayExperiment object")
+  expect_error(normByFullProteome(mae_no_phospho),
+               "Both Phosphoproteome and Proteome assays should be present in the MultiAssayExperiment object")
 
   # Remove Proteome assay
   mae_no_proteome <- mae
   mae_no_proteome[ , , "Proteome"] <- NULL
 
-  expect_error(normByFullProteome(mae_no_proteome), "Both Phosphoproteome and Proteome assays should be present in the MultiAssayExperiment object")
+  expect_error(normByFullProteome(mae_no_proteome),
+               "Both Phosphoproteome and Proteome assays should be present in the MultiAssayExperiment object")
 })
 
 test_that("normByFullProteome handles missing samples correctly", {
   mae <- create_mock_mae()
   colData(mae)$sampleType <- "Phosphoproteome"
 
-  expect_error(normByFullProteome(mae), "Proteome assay for the unenriched samples i.e., sampleType with FullProteome should be present")
+  expect_error(normByFullProteome(mae),
+               "Proteome assay for the unenriched samples i.e., sampleType with FullProteome should be present")
 })
 

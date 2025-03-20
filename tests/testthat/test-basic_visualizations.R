@@ -7,15 +7,19 @@ create_mock_se <- function() {
   rownames(assay_data) <- paste0("Gene", 1:100)
 
   # Create sample annotations
-  sample_data <- data.frame(sample = colnames(assay_data), group = rep(c("A", "B"), each = 5), type = rep(c("X", "Y"), 5))
+  sample_data <- data.frame(sample = colnames(assay_data),
+                            group = rep(c("A", "B"), each = 5),
+                            type = rep(c("X", "Y"), 5))
   rownames(sample_data) <- colnames(assay_data)
 
   # Create gene metadata
-  gene_data <- data.frame(Gene = rownames(assay_data), stat = runif(100), ID = paste0("Gene", 1:100))
+  gene_data <- data.frame(Gene = rownames(assay_data),
+                          stat = runif(100), ID = paste0("Gene", 1:100))
   rownames(gene_data) <- rownames(assay_data)
 
   # Create SummarizedExperiment object
-  se <- SummarizedExperiment(assays = list(imputed = assay_data), colData = sample_data, rowData = gene_data)
+  se <- SummarizedExperiment(assays = list(imputed = assay_data),
+                             colData = sample_data, rowData = gene_data)
 
   return(se)
 }
@@ -52,12 +56,14 @@ test_that("plotMissing generates the correct ggplot object", {
 
 test_that("plotMissing handles SummarizedExperiment with all missing values", {
   assay_data <- matrix(NA, nrow = 3, ncol = 5)
-  colnames(assay_data) <- c("Sample1", "Sample2", "Sample3", "Sample4", "Sample5")
+  colnames(assay_data) <- c("Sample1", "Sample2",
+                            "Sample3", "Sample4", "Sample5")
 
   sample_data <- data.frame(sample = colnames(assay_data))
   rownames(sample_data) <- colnames(assay_data)
 
-  se <- SummarizedExperiment(assays = list(counts = assay_data), colData = sample_data)
+  se <- SummarizedExperiment(assays = list(counts = assay_data),
+                             colData = sample_data)
 
   # Calculate expected completeness
   expected_completeness <- colSums(is.na(assay_data)) / nrow(assay_data)
@@ -123,12 +129,15 @@ test_that("plotIntensity works correctly with color set to 'none'", {
 
 test_that("plotIntensity handles SummarizedExperiment with all non-missing values", {
   assay_data <- matrix(1:15, nrow = 3, ncol = 5)
-  colnames(assay_data) <- c("Sample1", "Sample2", "Sample3", "Sample4", "Sample5")
+  colnames(assay_data) <- c("Sample1", "Sample2", "Sample3",
+                            "Sample4", "Sample5")
 
-  sample_data <- data.frame(sample = colnames(assay_data), group = c("A", "B", "A", "B", "A"))
+  sample_data <- data.frame(sample = colnames(assay_data),
+                            group = c("A", "B", "A", "B", "A"))
   rownames(sample_data) <- colnames(assay_data)
 
-  se <- SummarizedExperiment(assays = list(counts = assay_data), colData = sample_data)
+  se <- SummarizedExperiment(assays = list(counts = assay_data),
+                             colData = sample_data)
 
   plot <- plotIntensity(se, colorByCol = "none")
   plot_data <- ggplot2::ggplot_build(plot)$data[[1]]
@@ -139,12 +148,15 @@ test_that("plotIntensity handles SummarizedExperiment with all non-missing value
 
 test_that("plotIntensity handles SummarizedExperiment with all missing values", {
   assay_data <- matrix(NA, nrow = 3, ncol = 5)
-  colnames(assay_data) <- c("Sample1", "Sample2", "Sample3", "Sample4", "Sample5")
+  colnames(assay_data) <- c("Sample1", "Sample2", "Sample3",
+                            "Sample4", "Sample5")
 
-  sample_data <- data.frame(sample = colnames(assay_data), group = c("A", "B", "A", "B", "A"))
+  sample_data <- data.frame(sample = colnames(assay_data),
+                            group = c("A", "B", "A", "B", "A"))
   rownames(sample_data) <- colnames(assay_data)
 
-  se <- SummarizedExperiment(assays = list(counts = assay_data), colData = sample_data)
+  se <- SummarizedExperiment(assays = list(counts = assay_data),
+                             colData = sample_data)
 
   plot <- plotIntensity(se, colorByCol = "none")
   plot_data <- ggplot2::ggplot_build(plot)$data[[1]]
@@ -253,7 +265,8 @@ test_that("plotPCA works correctly with shape set to 'none' and color specified"
 test_that("plotHeatmap generates a pheatmap object", {
   se <- create_mock_se()
 
-  heatmap <- plotHeatmap("Top variant", se, top = 50, title = "Top Variants Heatmap", annotationCol = NULL)
+  heatmap <- plotHeatmap("Top variant", se, top = 50,
+                         title = "Top Variants Heatmap", annotationCol = NULL)
 
   # Check if the returned object is a pheatmap object
   expect_true(inherits(heatmap, "pheatmap"))
@@ -264,9 +277,12 @@ test_that("plotHeatmap handles 'Differentially expressed' type correctly", {
   se <- create_mock_se()
   gene_data <- as.data.frame(rowData(se))
 
-  heatmap <- plotHeatmap("Differentially expressed", se, data = gene_data, title = "DE Genes Heatmap", annotationCol = NULL)
+  heatmap <- plotHeatmap("Differentially expressed", se,
+                         data = gene_data, title = "DE Genes Heatmap",
+                         annotationCol = NULL)
 
-  # Check if the number of rows in the heatmap matches the number of genes in gene_data
+  # Check if the number of rows in the heatmap matches the number of genes in
+  # gene_data
   expect_equal(length(heatmap$tree_row$labels), nrow(gene_data))
 })
 
@@ -274,8 +290,11 @@ test_that("plotHeatmap handles 'Selected time series cluster' type correctly", {
   se <- create_mock_se()
   gene_data <- rowData(se)
 
-  heatmap <- plotHeatmap("Selected time series cluster", se, data = gene_data, title = "Clustered Genes Heatmap", annotationCol = NULL)
+  heatmap <- plotHeatmap("Selected time series cluster", se,
+                         data = gene_data, title = "Clustered Genes Heatmap",
+                         annotationCol = NULL)
 
-  # Check if the number of rows in the heatmap matches the number of unique genes in gene_data
+  # Check if the number of rows in the heatmap matches the number of
+  # unique genes in gene_data
   expect_equal(length(heatmap$tree_row$labels), length(unique(gene_data$Gene)))
 })

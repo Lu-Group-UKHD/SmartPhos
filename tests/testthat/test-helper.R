@@ -95,8 +95,9 @@ test_that("readOnePhosDIA handles multiple samples correctly", {
 #################### Tests for readPhosphoExperimentDIA() ######################
 
 file <- system.file("extdata", "phosDIA_1.xls", package = "SmartPhos")
-fileTable <- data.table::data.table(searchType = "phosphoproteome", fileName = file,
-                        id = c("Sample_1"))
+fileTable <- data.table::data.table(searchType = "phosphoproteome",
+                                    fileName = file,
+                                    id = c("Sample_1"))
 
 test_that("readPhosphoExperimentDIA processes data correctly", {
 
@@ -119,7 +120,8 @@ test_that("readPhosphoExperimentDIA handles no rows passing filters", {
 })
 
 file <- system.file("extdata", "phosDIA_2.xls", package = "SmartPhos")
-fileTable <- data.table::data.table(searchType = "phosphoproteome", fileName = file, id = c("Sample_1"))
+fileTable <- data.table::data.table(searchType = "phosphoproteome",
+                                    fileName = file, id = c("Sample_1"))
 
 test_that("readPhosphoExperimentDIA handles missing PG.ProteinGroups and PG.UniProtIds", {
 
@@ -199,7 +201,8 @@ test_that("readOneProteomDIA checks for required columns", {
     PG.ProteinGroups = c("P1", "P2", "P3"),
     PG.Genes = c("Gene1", "Gene2", "Gene3")
   )
-  expect_error(readOnePhosDIA(inputTab, "Sample_2"), "Sample not found in quantification file")
+  expect_error(readOnePhosDIA(inputTab, "Sample_2"),
+               "Sample not found in quantification file")
 })
 
 test_that("readOneProteomDIA returns NULL and issues a warning when all rows are filtered out", {
@@ -229,7 +232,8 @@ test_that("readOneProteomDIA ensures unique identifiers with no duplicates", {
 
 
 file <- system.file("extdata", "proteomeDIA_1.xls", package = "SmartPhos")
-fileTable <- data.table::data.table(searchType = "proteome", fileName = file, id = c("sample1", "sample2"))
+fileTable <- data.table::data.table(searchType = "proteome", fileName = file,
+                                    id = c("sample1", "sample2"))
 # Test cases
 test_that("readProteomeExperimentDIA returns a SummarizedExperiment", {
 
@@ -249,7 +253,8 @@ test_that("readProteomeExperimentDIA correctly filters and processes the input d
 
 
 test_that("readProteomeExperimentDIA returns NULL when no proteome data is present", {
-  fileTable <- data.table::data.table(searchType = "phosphoproteome", mfileName = file, id = "sample1")
+  fileTable <- data.table::data.table(searchType = "phosphoproteome",
+                                      mfileName = file, id = "sample1")
 
   expect_null(readProteomeExperimentDIA(fileTable))
 })
@@ -258,7 +263,8 @@ test_that("readProteomeExperimentDIA throws an error when no proteins pass the t
 
   file <- system.file("extdata", "proteomeDIA_2.xls", package = "SmartPhos")
 
-  fileTable <- data.table::data.table(searchType = "proteome", fileName = file, id = "sample1")
+  fileTable <- data.table::data.table(searchType = "proteome", fileName = file,
+                                      id = "sample1")
 
   expect_error(readProteomeExperimentDIA(fileTable))
 })

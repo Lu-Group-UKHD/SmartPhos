@@ -126,8 +126,11 @@ test_that("performDifferentialExp correctly subsets SE object", {
   )
 
   seSub <- result$seSub
-  expect_equal(length(unique(seSub$comparison)), length(reference) + length(target))  # Only reference and target groups should be present
-  expect_equal(ncol(seSub), 10)  # Ensure all samples are included
+  # Only reference and target groups should be present
+  expect_equal(length(unique(seSub$comparison)),
+               length(reference) + length(target))
+  # Ensure all samples are included
+  expect_equal(ncol(seSub), 10)
 })
 
 
@@ -187,7 +190,7 @@ test_that("plotVolcano handles non-default column names correctly", {
 
 
 
-########################### Tests for intensityBoxPlot() ################################
+########################## Tests for intensityBoxPlot() ########################
 
 test_that("intensityBoxPlot generates a ggplot object without subjectID", {
   se <- create_mock_se(with_subjectID = FALSE)
@@ -230,7 +233,8 @@ test_that("intensityBoxPlot handles missing gene/feature ID gracefully", {
     target = "EGF"
   )
 
-  expect_error(intensityBoxPlot(result$seSub, id = "nonexistent_gene", symbol = "Nonexistent Gene"),
+  expect_error(intensityBoxPlot(result$seSub, id = "nonexistent_gene",
+                                symbol = "Nonexistent Gene"),
                "subscript out of bounds")
 })
 

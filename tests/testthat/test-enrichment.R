@@ -3,10 +3,11 @@
 test_that("runFisher returns correct structure for non-PTM gene sets", {
   # Define genes of interest
   genes <- c("GeneA", "GeneB", "GeneC", "GeneD")
-  
+
   # Define reference genes
-  reference <- c("GeneE", "GeneF", "GeneG", "GeneH", "GeneI", "GeneJ", "GeneK", "GeneL")
-  
+  reference <- c("GeneE", "GeneF", "GeneG", "GeneH", "GeneI",
+                 "GeneJ", "GeneK", "GeneL")
+
   # Define inputSet with gene set collections
   inputSet <- list(
     gsc = list(
@@ -15,37 +16,38 @@ test_that("runFisher returns correct structure for non-PTM gene sets", {
       Set3 = c("GeneC", "GeneG", "GeneH", "GeneL")
     )
   )
-  
+
   # Run the function
   result <- runFisher(genes, reference, inputSet, ptm = FALSE)
-  
+
   # Check that result is a data frame
   expect_s3_class(result, "data.frame")
-  
+
   # Check that result has the expected columns
-  expect_true(all(c("Name", "Gene.number", "Set.size", "pval", "padj", "Genes") %in% colnames(result)))
-  
+  expect_true(all(c("Name", "Gene.number", "Set.size",
+                    "pval", "padj", "Genes") %in% colnames(result)))
+
   # Check that 'Name' column matches the gene set names
   expect_equal(sort(result$Name), sort(names(inputSet$gsc)))
-  
+
   # Expected 'Gene.number' per set
   expected_Gene_number <- c(1, 1, 1)
 
   expect_equal(result$Gene.number[order(result$Name)], expected_Gene_number)
-  
+
   # Expected 'Set.size' per set
   expected_Set_size <- c(3, 2, 4)
-  
+
   expect_equal(result$Set.size[order(result$Name)], expected_Set_size)
-  
+
   # Expected intersecting genes per set
   expected_Genes <- list(Set1 = "GeneA", Set2 = "GeneB", Set3 = "GeneC")
-  
+
   genSet <- result$Genes[order(result$Name)]
   names(genSet) <- names(inputSet$gsc)
-  
+
   expect_equal(genSet, expected_Genes)
-  
+
   # Check that 'pval' and 'padj' are numeric and within [0,1]
   expect_true(all(result$pval >= 0 & result$pval <= 1))
   expect_true(all(result$padj >= 0 & result$padj <= 1))
@@ -56,14 +58,16 @@ test_that("runFisher returns correct structure for PTM gene sets", {
   genes <- c("GeneA_pS1", "GeneB_pT2", "GeneC_pY3", "GeneD_pS4", "GeneK_pS11")
 
   # Define reference genes
-  reference <- c("GeneE_pS5", "GeneF_pT6", "GeneG_pY7", "GeneH_pS8", "GeneI_pT9", "GeneJ_pY10", "GeneK_pS11", "GeneL_pT12")
+  reference <- c("GeneE_pS5", "GeneF_pT6", "GeneG_pY7", "GeneH_pS8",
+                 "GeneI_pT9", "GeneJ_pY10", "GeneK_pS11", "GeneL_pT12")
 
   # Define inputSet as a data frame with necessary columns
   inputSet <- data.frame(
     category = c(rep("CATEGORY1", 25), rep("KINASE", 5)), # 30 rows
     site.ptm = c(rep("p", 25), rep("other", 5)),
     signature = c(rep("Sig1", 10), rep("Sig2", 10), rep("Sig3", 10)),
-    site.direction = c(rep("u", 5), rep("d", 5), rep("u", 5), rep("d", 5), rep("u", 5), rep("d", 5)),
+    site.direction = c(rep("u", 5), rep("d", 5), rep("u", 5), rep("d", 5),
+                       rep("u", 5), rep("d", 5)),
     site.annotation = paste0(
       c("GeneA_pS1", "GeneB_pS2", "GeneC_pY3", "GeneD_pS5", "GeneE_pS5",
         "GeneF_pT7", "GeneG_pY8", "GeneH_pS9", "GeneI_pT10", "GeneJ_pY11",
@@ -83,10 +87,12 @@ test_that("runFisher returns correct structure for PTM gene sets", {
   expect_s3_class(result, "data.frame")
 
   # Check that result has the expected columns
-  expect_true(all(c("Name", "Gene.number", "Set.size", "pval", "padj", "Genes") %in% colnames(result)))
+  expect_true(all(c("Name", "Gene.number", "Set.size",
+                    "pval", "padj", "Genes") %in% colnames(result)))
 
   # Expected signature names after processing
-  expected_Names <- c("Sig1_upregulated", "Sig2_upregulated", "Sig3_upregulated" )
+  expected_Names <- c("Sig1_upregulated", "Sig2_upregulated",
+                      "Sig3_upregulated" )
 
   # Check that 'Name' column matches the expected Names
   expect_equal(sort(result$Name), sort(expected_Names))
@@ -108,7 +114,8 @@ test_that("runFisher throws an error when all gene sets are 'KINASE'", {
   genes <- c("GeneA_pS1", "GeneB_pT2", "GeneC_pY3", "GeneD_pS4")
 
   # Define reference genes
-  reference <- c("GeneE_pS5", "GeneF_pT6", "GeneG_pY7", "GeneH_pS8", "GeneI_pT9", "GeneJ_pY10", "GeneK_pS11", "GeneL_pT12")
+  reference <- c("GeneE_pS5", "GeneF_pT6", "GeneG_pY7", "GeneH_pS8",
+                 "GeneI_pT9", "GeneJ_pY10", "GeneK_pS11", "GeneL_pT12")
 
   # Define inputSet as a data frame with 'KINASE' category only
   inputSet <- data.frame(
@@ -124,7 +131,7 @@ test_that("runFisher throws an error when all gene sets are 'KINASE'", {
   )
 
   # Since all 'category' is 'KINASE', function should throw an error
-  expect_error(runFisher(genes, reference, inputSet, ptm = TRUE), 
+  expect_error(runFisher(genes, reference, inputSet, ptm = TRUE),
                "Genesets empty. Check inputSet argument.")
 })
 
@@ -133,7 +140,8 @@ test_that("runFisher handles empty 'genes' vector", {
   genes <- character(0)
 
   # Define reference genes
-  reference <- c("GeneE", "GeneF", "GeneG", "GeneH", "GeneI", "GeneJ", "GeneK", "GeneL")
+  reference <- c("GeneE", "GeneF", "GeneG", "GeneH", "GeneI", "GeneJ",
+                 "GeneK", "GeneL")
 
   # Define inputSet with gene set collections
   inputSet <- list(
@@ -181,7 +189,7 @@ test_that("runFisher handles 'genes' equal to 'reference'", {
 
   # p-values should be 1, as no enrichment
   expect_true(all(result$pval == 1))
-  
+
   # Adjusted p-values should also be 1
   expect_true(all(result$padj == 1))
 
@@ -196,7 +204,8 @@ test_that("runFisher correctly adjusts p-values", {
   genes <- c("GeneA", "GeneB", "GeneC", "GeneD", "GeneE")
 
   # Define reference genes
-  reference <- c("GeneF", "GeneG", "GeneH", "GeneI", "GeneJ", "GeneK", "GeneL", "GeneM", "GeneN", "GeneO", "GeneP")
+  reference <- c("GeneF", "GeneG", "GeneH", "GeneI", "GeneJ", "GeneK",
+                 "GeneL", "GeneM", "GeneN", "GeneO", "GeneP")
 
   # Define inputSet with gene set collections
   inputSet <- list(
@@ -224,7 +233,8 @@ test_that("runFisher correctly identifies intersecting genes", {
   genes <- c("GeneA", "GeneB", "GeneC", "GeneD", "GeneE")
 
   # Define reference genes
-  reference <- c("GeneF", "GeneG", "GeneH", "GeneI", "GeneJ", "GeneK", "GeneL", "GeneM", "GeneN", "GeneO", "GeneP")
+  reference <- c("GeneF", "GeneG", "GeneH", "GeneI", "GeneJ", "GeneK",
+                 "GeneL", "GeneM", "GeneN", "GeneO", "GeneP")
 
   # Define inputSet with gene set collections
   inputSet <- list(
@@ -252,7 +262,8 @@ test_that("runFisher filters out gene sets with Set.size == 0", {
   genes <- c("GeneA", "GeneB", "GeneC", "GeneD", "GeneE")
 
   # Define reference genes
-  reference <- c("GeneF", "GeneG", "GeneH", "GeneI", "GeneJ", "GeneK", "GeneL", "GeneM", "GeneN", "GeneO", "GeneP")
+  reference <- c("GeneF", "GeneG", "GeneH", "GeneI", "GeneJ", "GeneK",
+                 "GeneL", "GeneM", "GeneN", "GeneO", "GeneP")
 
   # Define inputSet with gene set collections
   inputSet <- list(
@@ -269,7 +280,8 @@ test_that("runFisher filters out gene sets with Set.size == 0", {
   # Run the function
   result <- runFisher(genes, reference, inputSet, ptm = FALSE)
 
-  # 'Set6' has no genes in 'genes' or 'reference', so 'Set.size' == 0, and should be filtered out
+  # 'Set6' has no genes in 'genes' or 'reference', so 'Set.size' == 0, and
+  # should be filtered out
   expect_false("Set6" %in% result$Name)
 
   # Other sets should be present
@@ -292,21 +304,22 @@ mock_se <- function() {
   assay_data <- matrix(abs(rnorm(1000, 10, 2)), nrow = 100, ncol = 10)
   colnames(assay_data) <- paste0("Sample", 1:10)
   rownames(assay_data) <- paste0("gene", 1:100)
-  
+
   # Create sample metadata
   sample_data <- data.frame(sample = colnames(assay_data),
                             sampleType = rep(c("FullProteome", "Phospho"), each = 5),
                             group = rep(c("A", "B"), each = 5))
   rownames(sample_data) <- colnames(assay_data)
-  
+
   # Create gene metadata
   gene_data <- data.frame(UniprotID = rownames(assay_data),
                           Gene = paste0("gene", 1:100),
                           site = paste0("site", 1:10))
   rownames(gene_data) <- rownames(assay_data)
-  
+
   # Create SummarizedExperiment object
-  se <- SummarizedExperiment(assays = list(Intensity = assay_data), colData = sample_data, rowData = gene_data)
+  se <- SummarizedExperiment(assays = list(Intensity = assay_data),
+                             colData = sample_data, rowData = gene_data)
   return(se)
 }
 
@@ -317,7 +330,8 @@ mock_inputSet <- list(
   )
 )
 
-mock_reference <- c("gene1", "gene2", "gene3", "gene4", "gene5", "gene6", "gene7", "gene8", "gene9", "gene10")
+mock_reference <- c("gene1", "gene2", "gene3", "gene4", "gene5",
+                    "gene6", "gene7", "gene8", "gene9", "gene10")
 
 # Test that the function runs without errors with default parameters
 test_that("clusterEnrich runs without errors with default parameters", {
@@ -326,7 +340,7 @@ test_that("clusterEnrich runs without errors with default parameters", {
     se = mock_se(),
     inputSet = mock_inputSet
   )
-  
+
   expect_true(is.list(result))
   expect_true("table" %in% names(result))
   expect_true("plot" %in% names(result))
@@ -376,15 +390,16 @@ test_that("clusterEnrich applies FDR adjustment correctly", {
 
 # Test PTM-specific gene sets analysis
 test_that("clusterEnrich handles PTM-specific gene sets correctly", {
-  
+
   inputSet <- data.frame(
     category = c(rep("CATEGORY1", 25), rep("KINASE", 5)), # 30 rows
     site.ptm = c(rep("p", 25), rep("other", 5)),
     signature = c(rep("Sig1", 5), rep("Sig2", 10), rep("Sig3", 15)),
-    site.direction = c(rep("u", 5), rep("d", 5), rep("u", 5), rep("d", 5), rep("u", 5), rep("d", 5)),
+    site.direction = c(rep("u", 5), rep("d", 5), rep("u", 5), rep("d", 5),
+                       rep("u", 5), rep("d", 5)),
     site.annotation = paste0("site", 1:30)
     )
-  
+
   result <- clusterEnrich(
     clusterTab = mock_clusterTab,
     se = mock_se(),

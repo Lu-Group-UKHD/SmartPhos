@@ -29,13 +29,15 @@ test_that("mscale correctly centers and scales the matrix using standard deviati
 
 test_that("mscale correctly censors values symmetrically", {
   result <- mscale(test_matrix, center = TRUE, scale = TRUE, censor = 1)
-  expected <- t(apply(test_matrix, 1, function(y) pmin(pmax((y - mean(y)) / sd(y), -1), 1)))
+  expected <- t(apply(test_matrix, 1,
+                      function(y) pmin(pmax((y - mean(y)) / sd(y), -1), 1)))
   expect_equal(result, expected)
 })
 
 test_that("mscale correctly censors values asymmetrically", {
   result <- mscale(test_matrix, center = TRUE, scale = TRUE, censor = c(-1, 1))
-  expected <- t(apply(test_matrix, 1, function(y) pmin(pmax((y - mean(y)) / sd(y), -1), 1)))
+  expected <- t(apply(test_matrix, 1,
+                      function(y) pmin(pmax((y - mean(y)) / sd(y), -1), 1)))
   expect_equal(result, expected)
 })
 
@@ -44,7 +46,8 @@ test_that("mscale works correctly when input matrix contains NA values", {
   matrix_with_na[1, 1] <- NA
 
   result <- mscale(matrix_with_na, center = TRUE, scale = TRUE, useMad = FALSE)
-  expected <- t(apply(matrix_with_na, 1, function(y) (y - mean(y, na.rm = TRUE)) / sd(y, na.rm = TRUE)))
+  expected <- t(apply(matrix_with_na, 1,
+                      function(y) (y - mean(y, na.rm = TRUE)) / sd(y, na.rm = TRUE)))
   expect_equal(result, expected)
 })
 
@@ -59,12 +62,14 @@ test_that("mscale handles matrices with a single row correctly", {
 # Helper function to create a dummy SummarizedExperiment object
 create_dummy_SE <- function() {
   data <- matrix(rnorm(20), nrow = 5, ncol = 4)
-  colData <- DataFrame(treatment = c("TreatmentA", "TreatmentA", "Control", "Control"),
+  colData <- DataFrame(treatment = c("TreatmentA", "TreatmentA",
+                                     "Control", "Control"),
                        timepoint = c("10min", "20min", "0min", "10min"))
   colnames(data) <- paste0("Sample", 1:4)
   rownames(data) <- paste0("Gene", 1:5)
   rowData <- rownames(data)
-  se <- SummarizedExperiment(assays = list(intensity = data), colData = colData, rowData = rowData)
+  se <- SummarizedExperiment(assays = list(intensity = data),
+                             colData = colData, rowData = rowData)
   return(se)
 }
 
@@ -75,11 +80,14 @@ test_that("addZeroTime correctly adds the zero timepoint to the specified treatm
   data <- create_dummy_SE()
 
   # Apply addZeroTime function
-  result <- addZeroTime(data, condition = "treatment", treat = "TreatmentA", zeroTreat = "Control", timeRange = c("10min", "20min"))
+  result <- addZeroTime(data, condition = "treatment",
+                        treat = "TreatmentA", zeroTreat = "Control",
+                        timeRange = c("10min", "20min"))
 
   # Expected data
   expected_assay <- assay(data)[,1:3]
-  expected_colData <- DataFrame(treatment = c("TreatmentA", "TreatmentA", "TreatmentA"),
+  expected_colData <- DataFrame(treatment = c("TreatmentA", "TreatmentA",
+                                              "TreatmentA"),
                                 timepoint = c("10min", "20min", "0min"))
   rownames(expected_colData) <- paste0("Sample", 1:3)
 
@@ -120,7 +128,8 @@ test_that("clusterTS performs clustering correctly with single condition data", 
   result <- clusterTS(x, k = 3)
 
   expect_true(all(result$cluster$cluster %in% paste0("cluster", 1:3)))
-  expect_equal(ncol(result$cluster), 7)  # Check number of columns in cluster result
+  # Check number of columns in cluster result
+  expect_equal(ncol(result$cluster), 7)
 })
 
 test_that("clusterTS performs clustering correctly with two conditions", {
@@ -130,7 +139,8 @@ test_that("clusterTS performs clustering correctly with two conditions", {
   result <- clusterTS(x, k = 3, twoCondition = TRUE)
 
   expect_true(all(result$cluster$cluster %in% paste0("cluster", 1:3)))
-  expect_equal(ncol(result$cluster), 9)  # Check number of columns in cluster result
+  # Check number of columns in cluster result
+  expect_equal(ncol(result$cluster), 9)
   expect_true("treatment" %in% names(result$cluster))
 })
 
@@ -184,7 +194,8 @@ test_that("plotTimeSeries handles 'expression' type correctly", {
   se <- SummarizedExperiment(assays = list(intensity=mat), colData=colData)
 
   p <- plotTimeSeries(se, type = "expression", geneID = 1, symbol = "Gene 1",
-                      condition = "condition", treatment = "A", timerange = c("0h", "1h", "2h"))
+                      condition = "condition", treatment = "A",
+                      timerange = c("0h", "1h", "2h"))
 
   expect_s3_class(p, "ggplot")
   expect_equal(p$labels$title, "Gene 1")
@@ -199,7 +210,8 @@ test_that("plotTimeSeries handles 'logFC' type correctly", {
   se <- SummarizedExperiment(assays = list(intensity=mat), colData=colData)
 
   p <- plotTimeSeries(se, type = "logFC", geneID = "Gene1", symbol = "Gene1",
-                      condition = "treatment", treatment = "A", refTreat = "B", timerange = c("0min", "1h", "2h"))
+                      condition = "treatment", treatment = "A", refTreat = "B",
+                      timerange = c("0min", "1h", "2h"))
 
   expect_s3_class(p, "ggplot")
   expect_equal(p$labels$title, "Gene1")
@@ -213,8 +225,10 @@ test_that("plotTimeSeries handles 'two-condition expression' type correctly", {
                         treatment=c(rep("A", 3), rep("B", 3)))
   se <- SummarizedExperiment(assays = list(intensity=mat), colData=colData)
 
-  p <- plotTimeSeries(se, type = "two-condition expression", geneID = "Gene1", symbol = "Gene 1",
-                      condition = "treatment", treatment = "A", refTreat = "B", timerange = c("0min", "1h", "2h"))
+  p <- plotTimeSeries(se, type = "two-condition expression", geneID = "Gene1",
+                      symbol = "Gene 1",
+                      condition = "treatment", treatment = "A", refTreat = "B",
+                      timerange = c("0min", "1h", "2h"))
 
   expect_s3_class(p, "ggplot")
   expect_equal(p$labels$title, "Gene 1")
@@ -228,8 +242,9 @@ test_that("plotTimeSeries handles 'addZero' parameter correctly", {
                         treatment=c(rep("A", 2), rep("B", 3)))
   se <- SummarizedExperiment(assays=list(intensity=mat), colData=colData)
 
-  p <- plotTimeSeries(se, type = "expression", geneID = "Gene1", symbol = "Gene1",
-                      condition = "treatment", treatment = "A", addZero = TRUE,
+  p <- plotTimeSeries(se, type = "expression", geneID = "Gene1",
+                      symbol = "Gene1", condition = "treatment",
+                      treatment = "A", addZero = TRUE,
                       zeroTreat = "B", timerange = c("2h", "3h"))
 
   expect_s3_class(p, "ggplot")
@@ -245,8 +260,9 @@ test_that("plotTimeSeries handles subjectID correctly", {
                         subjectID=rep(1:2, each=3))
   se <- SummarizedExperiment(assays=list(intensity=mat), colData=colData)
 
-  p <- plotTimeSeries(se, type = "expression", geneID = "Gene1", symbol = "Gene 1",
-                      condition = "treatment", treatment = "A", timerange = c("0min", "1h", "2h"))
+  p <- plotTimeSeries(se, type = "expression", geneID = "Gene1",
+                      symbol = "Gene 1", condition = "treatment",
+                      treatment = "A", timerange = c("0min", "1h", "2h"))
 
   expect_s3_class(p, "ggplot")
   expect_equal(p$labels$title, "Gene 1")
