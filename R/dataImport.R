@@ -24,7 +24,6 @@
 #' }
 #'
 #' @importFrom utils read.delim
-#' @export
 generateInputTable <- function(rawFolder, batchAsFolder = FALSE) {
   if (batchAsFolder) {
     # Get all subdirectories in the rawFolder
@@ -99,7 +98,6 @@ generateInputTable <- function(rawFolder, batchAsFolder = FALSE) {
 #' }
 #'
 #' @importFrom utils read.delim
-#' @export
 generateInputTable_DIA <- function(rawFolder) {
   # List all files in the rawFolder with pattern "*Labels.txt"
   getFile <- list.files(rawFolder, pattern = "*Labels.txt")

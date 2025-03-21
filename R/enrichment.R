@@ -188,8 +188,19 @@ runFisher <- function (genes, reference, inputSet, ptm = FALSE) {
 #' @importFrom piano runGSA GSAsummaryTable
 #'
 #' @export
-enrichDifferential <- function(dea, type, gsaMethod, geneSet, ptmSet, statType,
+enrichDifferential <- function(dea, type, gsaMethod = c("PAGE", "GSEA"),
+                               geneSet, ptmSet, statType,
                                nPerm = 100, sigLevel = 0.05, ifFDR = FALSE) {
+    gsaMethod <- match.arg(gsaMethod)
+
+    if (!(type %in% c("Pathway enrichment", "Phospho enrichment"))) {
+        stop("Invalid input for the argument type")
+    }
+
+    if (!(statType %in% c("stat", "log2FC"))) {
+        stop("Invalid input for the argument statType")
+    }
+
     if (type == "Pathway enrichment") {
         # Prepare data for pathway enrichment by filtering and sorting
         corTab <- dea %>%

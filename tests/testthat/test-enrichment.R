@@ -289,6 +289,76 @@ test_that("runFisher filters out gene sets with Set.size == 0", {
 })
 
 
+####################### Tests for enrichDifferential() #########################
+
+library(piano)
+# Load multiAssayExperiment object
+data("dia_example")
+# Get SummarizedExperiment object
+se <- dia_example[["Phosphoproteome"]]
+colData(se) <- colData(dia_example)
+newSE <- preprocessPhos(se, normalize = TRUE)
+# Perform differtial expression analyis
+dea <- performDifferentialExp(se = newSE, assay = "Intensity",
+                              method = "limma", reference = "1stCrtl",
+                              target = "EGF",condition = "treatment")
+# Load gene set
+genesetPath <- appDir <- system.file("shiny-app/geneset",package = "SmartPhos")
+inGMT <- loadGSC(paste0(genesetPath,"/Cancer_Hallmark.gmt"),type="gmt")
+
+
+test_that("enrichDifferential handles pathway enrichment with PAGE", {
+
+    result <- enrichDifferential(dea = dea$resDE, type = "Pathway enrichment",
+                                 gsaMethod = "PAGE", geneSet = inGMT,
+                                 statType = "stat", nPerm = 200,
+                                 sigLevel = 0.05, ifFDR = FALSE)
+
+    # Test output structure
+    expect_s3_class(result, "data.frame")
+    expect_true(all(c("Name", "Stat", "p.up", "p.down") %in% colnames(result)))
+})
+
+test_that("enrichDifferential handles invalid input parameters", {
+    set.seed(123)
+
+    dea <- data.frame(
+        Gene = paste0("Gene", 1:100),
+        pvalue = runif(100, 0, 0.1),
+        stat = rnorm(100, 0, 2),
+        log2FC = rnorm(100, 0, 1)
+    )
+
+    geneSet <- list(
+        Pathway1 = paste0("Gene", sample(1:50, 10)),
+        Pathway2 = paste0("Gene", sample(51:100, 10))
+    )
+
+    # Check invalid enrichment type
+    expect_error(enrichDifferential(dea, type = "InvalidType",
+                                    gsaMethod = "PAGE",
+                                    statType = "stat"),
+                 "Invalid input for the argument type")
+
+    # Check invalid statistic type
+    expect_error(enrichDifferential(dea, type = "Pathway enrichment",
+                                    gsaMethod = "PAGE", geneSet,
+                                    statType = "invalidStat"),
+                 "Invalid input for the argument statType")
+})
+
+
+
+test_that("enrichDifferential respects significance threshold", {
+
+    result <- enrichDifferential(dea = dea$resDE, type = "Pathway enrichment",
+                                 gsaMethod = "PAGE", geneSet = inGMT,
+                                 statType = "stat", nPerm = 200,
+                                 sigLevel = 0.01, ifFDR = FALSE)
+
+    expect_true(all(result$p.up <= 0.01 | result$p.down <= 0.01))
+})
+
 
 ######################### Tests for clusterEnrich() ############################
 

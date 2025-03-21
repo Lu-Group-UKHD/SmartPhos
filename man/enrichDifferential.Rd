@@ -8,7 +8,7 @@ or phospho-sites}
 enrichDifferential(
   dea,
   type,
-  gsaMethod,
+  gsaMethod = c("PAGE", "GSEA"),
   geneSet,
   ptmSet,
   statType,
