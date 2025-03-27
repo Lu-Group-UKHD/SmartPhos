@@ -1,12 +1,12 @@
 Package: SmartPhos
 Type: Package
 Title: A phosphoproteomics data analysis package with an interactive ShinyApp
-Version: 0.99.13
+Version: 0.99.14
 Authors@R: c(person("Shubham", "Agrawal", role = c("aut", "cre"), 
 		email = "shubhamagrawal2706@gmail.com",
 		comment = c(ORCID = "0009-0005-2630-9342")),
     person("Junyan", "Lu", role = c("aut"), 
-		email = "junyan.lu@uni-heidelberg.de",
+		email = "jylu1118@gmail.com",
 		comment = c(ORCID = "0000-0002-9211-0746")))
 Description: 
     To facilitate and streamline phosphoproteomics data analysis, we developed
