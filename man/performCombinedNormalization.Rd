@@ -23,8 +23,8 @@ The function performs the following steps:
   \item Extracts the count matrices for Full Proteome (FP) samples.
   \item Combines the proteome and phosphoproteome data into a single matrix.
   \item Removes rows with all NA values.
-  \item Performs median normalization and log2 transformation on the combined
-  matrix.
+  \item Performs median normalization and log2 transformation on the
+  combined matrix.
 }
 }
 \examples{

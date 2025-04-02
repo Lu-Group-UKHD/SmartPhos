@@ -67,8 +67,8 @@ medianNorm <- function(x, method = "median") {
 #'   \item Extracts the count matrices for Full Proteome (FP) samples.
 #'   \item Combines the proteome and phosphoproteome data into a single matrix.
 #'   \item Removes rows with all NA values.
-#'   \item Performs median normalization and log2 transformation on the combined
-#'   matrix.
+#'   \item Performs median normalization and log2 transformation on the
+#'   combined matrix.
 #' }
 #'
 #' @examples
@@ -265,7 +265,9 @@ checkRatioMat <- function(ratioMat, minOverlap = 3) {
   # PP samples
   noOverSmp <- colnames(ratioMat)[colSums(!is.na(ratioMat))==0]
   if (length(noOverSmp) >0) {
-    warning(paste0("Below samples don't have phopho-peptides detected in both enriched (PP) and unenriched (FP) samples and therefore adjusting factor will set to 0 (no adjustment) for them:\n",
+    warning(paste0("Below samples don't have phopho-peptides detected in both ",
+                   "enriched (PP) and unenriched (FP) samples and therefore ",
+                   "adjusting factor will set to 0 (no adjustment) for them:\n",
                    paste0(noOverSmp, collapse = ", ")))
     excludeSampleList <- c(excludeSampleList, noOverSmp)
   }
@@ -282,7 +284,9 @@ checkRatioMat <- function(ratioMat, minOverlap = 3) {
   tooFewOverlap <- colnames(ratioMat)[pairOverlap < minOverlap]
 
   if (length(tooFewOverlap) >0) {
-    warning(paste0("Below samples don't enough number of overlapped phopho-peptides with other samples and therefore adjusting factor will set to 0 (no adjustment) for them:\n",
+    warning(paste0("Below samples don't enough number of overlapped ",
+                   "phopho-peptides with other samples and therefore ",
+                   "adjusting factor will set to 0 (no adjustment) for them:\n",
                    paste0(tooFewOverlap, collapse = ", ")))
     excludeSampleList <- c(excludeSampleList, tooFewOverlap)
   }
@@ -383,8 +387,11 @@ runPhosphoAdjustment <- function(maeData, normalization = FALSE, minOverlap = 3,
   # Adjust phospho measurement on PP samples
   phosMat <- assay(maeData[,names(adjFac)][["Phosphoproteome"]])
   phosMat <- t(t(phosMat)*(2^adjFac))
-  assays(maeData[["Phosphoproteome"]])[["Intensity_adjusted"]] <- assays(maeData[["Phosphoproteome"]])[["Intensity"]]
-  assays(maeData[["Phosphoproteome"]])[["Intensity_adjusted"]][,colnames(phosMat)] <- phosMat
+  assays(maeData[["Phosphoproteome"]])[["Intensity_adjusted"]] <-
+      assays(maeData[["Phosphoproteome"]])[["Intensity"]]
+  assays(
+      maeData[["Phosphoproteome"]])[["Intensity_adjusted"]][,colnames(
+          phosMat)] <- phosMat
 
   return(maeData)
 }
@@ -429,7 +436,9 @@ runPhosphoAdjustment <- function(maeData, normalization = FALSE, minOverlap = 3,
 plotAdjustmentResults <- function(maeData, normalization = FALSE) {
   # Check if the adjustment factor has been applied
   if (!"adjustFactorPP" %in% colnames(colData(maeData))) {
-    stop("Phosphorylation measurments have not been adjusted yet. Please perform normalization adjustment using calcAdjustFacotr function first")
+    stop("Phosphorylation measurments have not been adjusted yet. ",
+         "Please perform normalization adjustment using calcAdjustFacotr ",
+         "function first")
   }
 
   # Visualize precursors before and after adjustment
@@ -451,7 +460,8 @@ plotAdjustmentResults <- function(maeData, normalization = FALSE) {
   # For precursors present in all samples
   featureComplete <- rownames(ratioMat.ori)[complete.cases(ratioMat.ori)]
   if (!length(featureComplete) >0) {
-    warning("No feature (PP/FP ratio) has been detected in all samples. Ratio trend line will not be generated")
+    warning("No feature (PP/FP ratio) has been detected in all samples. ",
+            "Ratio trend line will not be generated")
     ratioTrendPlot <- NULL
   } else {
     ratioPlotTab.complete <- filter(ratioPlotTab, id %in% featureComplete)

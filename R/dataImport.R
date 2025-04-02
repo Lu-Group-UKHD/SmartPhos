@@ -401,7 +401,8 @@ readExperimentDIA <- function(fileTable, localProbCut = 0.75,
 normByFullProteome <- function(mae, replace = TRUE) {
   # Check if both Phosphoproteome and Proteome assays are present
   if (!all(c("Phosphoproteome", "Proteome") %in% names(assays(mae)))) {
-    stop("Both Phosphoproteome and Proteome assays should be present in the MultiAssayExperiment object")
+    stop("Both Phosphoproteome and Proteome assays should be present in the ",
+         "MultiAssayExperiment object")
   }
 
   # Extract phosphoproteome and proteome assays
@@ -413,7 +414,8 @@ normByFullProteome <- function(mae, replace = TRUE) {
 
   # Check if proteome assay for the unenriched samples is present
   if (nrow(sampleTab.fp) == 0) {
-    stop("Proteome assay for the unenriched samples i.e., sampleType with FullProteome should be present")
+    stop("Proteome assay for the unenriched samples i.e., sampleType with ",
+         "FullProteome should be present")
   }
 
   # Extract assay data for phosphoproteome and proteome

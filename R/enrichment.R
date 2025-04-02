@@ -368,7 +368,8 @@ enrichDifferential <- function(dea, type, gsaMethod = c("PAGE", "GSEA"),
 #' # Call the function
 #' clusterEnrich(clust$cluster, seProcess, inGMT)
 #'
-#' @importFrom dplyr filter mutate group_by summarise ungroup bind_rows arrange n
+#' @importFrom dplyr filter mutate group_by summarise ungroup bind_rows
+#' arrange n
 #' @importFrom tidyr separate
 #' @importFrom stats p.adjust
 #' @import ggplot2
@@ -801,7 +802,7 @@ runGSEAforPhospho <- function(geneStat, ptmSetDb, nPerm, weight = 1,
     }
     tibble(Name = signature,
            nSite = number.u + number.d,
-           enrichScore = enrichScoreNorm, # normalized enrichment score to correct for differences in signature sizes
+           enrichScore = enrichScoreNorm, # normalized enrichment score
            n.P.site.in.Db = nPpSite,      # number of phosphosites in database
            n.PTM.site.in.Db = nPTMsite,   # number of PTM sites in database
            pvalue = pvalue,

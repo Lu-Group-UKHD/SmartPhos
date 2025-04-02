@@ -106,7 +106,8 @@ performDifferentialExp <- function(se, assay, method = "limma",
   # Stop if method is other than limma or proDA
   if (!is.null(condition)) {
     if (is.null(se[[condition]])) {
-        stop("Invalid condtion! Provide condition which is part of the given Summarized Experiment object")
+        stop("Invalid condtion! Provide condition which is part of the given ",
+             "Summarized Experiment object")
     }
   }
 

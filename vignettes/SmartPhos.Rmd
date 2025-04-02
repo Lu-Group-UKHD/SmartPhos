@@ -1,5 +1,6 @@
 ---
-title: "SmartPhos: a pipeline for processing and analysis of phosphoproteome data"
+title: "SmartPhos: a pipeline for processing and analysis of phosphoproteome 
+data"
 author: "Shubham Agrawal, Junyan Lu"
 date: "2025-03-27"
 output:
@@ -86,7 +87,8 @@ object. On top of that, this panel has different options for preprocessing of
 the selected assay. The options provided by the shiny app are as follows:
 
 * **Normalization correction**: This option is present only if the 
-phophoproteomics data is present. It allows for the correction of normalization artefacts introduced by the Spectronaut. 
+phophoproteomics data is present. It allows for the correction of normalization 
+artefacts introduced by the Spectronaut. 
 * **Normalize** phospho intensity by the corresponding protein expression.
 * **Transformation**: The transformation methods available are: log2 and vst 
 (variance stabilizing transformation).
@@ -132,7 +134,8 @@ This is performed on the original assay and not on the imputed assay.
 Perform principal component analysis (PCA) by running the following command:
 ```{r}
 # perform PCA
-pca <- stats::prcomp(t(assays(newSE)[["imputed"]]), center = TRUE, scale. = TRUE)
+pca <- stats::prcomp(t(assays(newSE)[["imputed"]]), center = TRUE, 
+                     scale. = TRUE)
 # call the plotting function
 p <- plotPCA(pca = pca, se = newSE, color = "replicate")
 p
@@ -186,7 +189,8 @@ dea <- performDifferentialExp(se = newSE, assay = "imputed", method = "limma",
 ```
 
 ‘dea’ is a list object which contains two values: ‘resDE’ with tabular 
-differential expression analysis results and ‘seSub’ which is the subsetted SummarizedExperiment object based on the selected condition. 
+differential expression analysis results and ‘seSub’ which is the subsetted 
+SummarizedExperiment object based on the selected condition. 
 
 ```{r}
 dea$seSub
@@ -215,7 +219,8 @@ Time series clustering is performed to group proteins/phosphopeptides based on
 how their level changes over time. The *clusterTS()* function employs 
 **fuzzy c-means clustering** algorithm which considers the time-resolved trend, 
 but not the expression levels. Thus, members of the same cluster would have a 
-similar trend over time (e.g., all increasing or all decreasing), though their expression level can be different.
+similar trend over time (e.g., all increasing or all decreasing), though their 
+expression level can be different.
 
 To use this function, users must have logitudinal data with **timepoint** 
 annotation in their data. The time points are either unit-less numbers 
@@ -235,8 +240,9 @@ exprMat <- SummarizedExperiment::assay(newSEzero)
 tsc <- clusterTS(x = exprMat, k = 5)
 ```
 
-‘tsc’ is a list object which contains two values: ‘cluster’ with tabular time 
-series clustering results and ‘plot’ with the clusters plots. 
+‘tsc’ is a list object which contains two values: 
+‘cluster’ with tabular time series clustering results and ‘plot’ 
+with the clusters plots. 
 
 ```{r}
 tsc$cluster
@@ -254,7 +260,8 @@ plotTimeSeries(newSEzero, type = "expression", geneID = "s40",
 
 # Enrichment analysis
 
-Enrichment analysis can be performed on either gene sets (gene-centric) or post-translational modification signature sets (site-centric) that are 
+Enrichment analysis can be performed on either gene sets (gene-centric) or 
+post-translational modification signature sets (site-centric) that are 
 differentially expressed or in a time-series cluster.
 
 In the latter, each set contains PTM site names with direction of regulation 
@@ -262,12 +269,15 @@ In the latter, each set contains PTM site names with direction of regulation
 be considered since this pipeline supports proteomic and phosphoproteomic data. 
 The gene sets and PTM signature sets are derived from the Molecular Signatures 
 Database (Subramanian, Tamayo et al.,2005; Liberzon et al., 2011, Liberzon et 
-al., 2015) and the PTM Signature Database version 2.0.0 (Krug et al., 2019), respectively. Users are encouraged to consult the PTMsigDB website (https://proteomics.broadapps.org/ptmsigdb/) and the paper of Krug et al. for 
+al., 2015) and the PTM Signature Database version 2.0.0 (Krug et al., 2019), 
+respectively. Users are encouraged to consult the PTMsigDB website
+(https://proteomics.broadapps.org/ptmsigdb/) and the paper of Krug et al. for 
 details on how PTM signature sets were curated and their annotation.
 
 In gene-centric pathway enrichment, users can perform either Parametric 
 Analysis of Gene Set Enrichment (PAGE) (Kim & Volsky, 2005) or Gene Set 
-Enrichment Analysis (GSEA) (Subramanian, Tamayo et al.,2005) with Differential Expression analysis result. With Time series clustering result, we offer the 
+Enrichment Analysis (GSEA) (Subramanian, Tamayo et al.,2005) with Differential 
+Expression analysis result. With Time series clustering result, we offer the 
 Fisher's exact test. For phospho-signature enrichment on Differential 
 Expression analysis result, we offer PTM-Signature Enrichment Analysis 
 (PTM-SEA), a method adapted from GSEA by Krug et al. (2019) to be applicable 
@@ -294,7 +304,9 @@ resTab
 ```{r message=FALSE}
 # Load the gene set
 genesetPath <- system.file("shiny-app/geneset", package = "SmartPhos")
-inGMT <- piano::loadGSC(paste0(genesetPath,"/Chemical_and_Genetic_Perturbations.gmt"), type="gmt")
+inGMT <- piano::loadGSC(paste0(genesetPath,
+                               "/Chemical_and_Genetic_Perturbations.gmt"), 
+                        type="gmt")
 # Call the function
 clustEnr <- clusterEnrich(clusterTab = tsc$cluster,
                           se = newSE, inputSet = inGMT,
@@ -320,14 +332,17 @@ clustEnr
 
 SmartPhos can perform kinase activity inference based on phosphopeptides that 
 are differentially expressed or in a cluster. Similar to enrichment analysis, 
-users would first need to perform either a differential expression analysis or time-series clustering and select a cluster of interest. 
+users would first need to perform either a differential expression analysis or 
+time-series clustering and select a cluster of interest. 
 
-A network of kinase-phosphosite interactions is constructed using the package **OmnipathR** (Türei et al., 2021). Users can choose to construct this network 
+A network of kinase-phosphosite interactions is constructed using the package 
+**OmnipathR** (Türei et al., 2021). Users can choose to construct this network 
 with prior knowledge from either Homo sapiens (taxonomy ID = 9606) or Mus 
 musculus (taxonomy ID = 10090).
 
 By combining prior knowledge about known kinase-phosphosite interactions and 
-the data, SmartPhos can infer the activity of the kinases responsible for the phosphopeptides being considered. The activity is estimated by an activity 
+the data, SmartPhos can infer the activity of the kinases responsible for the 
+phosphopeptides being considered. The activity is estimated by an activity 
 score computed with the package **decoupleR** (Badia-I-Mompel et al., 2022) 
 following the authors' tutorial on Kinase and Transcription Factor activity 
 estimation. For time-series clustering, users can also estimate how likely the 

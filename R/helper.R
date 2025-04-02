@@ -154,7 +154,8 @@ readPhosphoExperiment <- function(fileTable, localProbCut = 0.75,
                            !inputTab$Reverse %in% "+",]
 
     # Stop if none of the records pass the chosen threshold
-    if (nrow(inputTab) == 0) stop("No phosphorylation site could pass the specified threshold in any sample!")
+    if (nrow(inputTab) == 0) stop("No phosphorylation site could pass the ",
+                                  "specified threshold in any sample!")
 
     # Process data for each sample
     expSub <- lapply(seq(nrow(fileTableSub)), function(i) {
@@ -175,7 +176,8 @@ readPhosphoExperiment <- function(fileTable, localProbCut = 0.75,
   expAll <- data.table::rbindlist(expAll)
 
   # Stop if none of the record passed chosen threshold
-  if (nrow(expAll) == 0) stop("No phosphorylation site could pass the specified threshold in any sample!")
+  if (nrow(expAll) == 0) stop("No phosphorylation site could pass the ",
+                              "specified threshold in any sample!")
 
   # Prepare annotations
   annoTab <- expAll[!duplicated(expAll$rowName),c("rowName","UniprotID",
@@ -405,13 +407,15 @@ readPhosphoExperimentDIA <- function(fileTable, localProbCut = 0.75,
     # Keep only Phospho (STY) modifications
     inputTab <- inputTab[inputTab$PTM.ModificationTitle == "Phospho (STY)",]
 
-    # Decide whether "PG.ProteinGroups" or "PG.UniProtIds" should be used as protein IDs
+    # Decide whether "PG.ProteinGroups" or "PG.UniProtIds" should be
+    # used as protein IDs
     if ("PG.ProteinGroups" %in% colnames(inputTab) &
         !"PG.UniProtIds" %in% colnames(inputTab)) {
       inputTab$PG.UniProtIds <- inputTab$PG.ProteinGroups
     } else if (!"PG.ProteinGroups" %in% colnames(inputTab) &
                !"PG.UniProtIds" %in% colnames(inputTab)) {
-      stop("Either PG.ProteinGroups or PG.UniProtIds should be in the quantification table")
+      stop("Either PG.ProteinGroups or PG.UniProtIds should be in the ",
+           "quantification table")
     }
 
     # Handle missing PTM.CollapseKey column
@@ -432,7 +436,8 @@ readPhosphoExperimentDIA <- function(fileTable, localProbCut = 0.75,
                            !inputTab$PTM.SiteLocation %in% c(NA,""),]
 
     # Stop if no records passed the chosen threshold
-    if (nrow(inputTab) == 0) stop("No phosphorylation site could pass the specified threshold in any sample!")
+    if (nrow(inputTab) == 0) stop("No phosphorylation site could pass the ",
+                                  "specified threshold in any sample!")
 
     # Include only reviewed proteins if specified
     if (onlyReviewed) {
@@ -465,7 +470,8 @@ readPhosphoExperimentDIA <- function(fileTable, localProbCut = 0.75,
   expAll <- data.table::rbindlist(expAll)
 
   # Stop if no records passed chosen threshold
-  if (nrow(expAll) == 0) stop("No phosphorylation site could pass the specified threshold in any sample!")
+  if (nrow(expAll) == 0) stop("No phosphorylation site could pass the ",
+                              "specified threshold in any sample!")
 
   expAll <- expAll[order(expAll$rowName),]
 
@@ -947,6 +953,8 @@ dealMultiMap <- function(annoTab, method = "remove") {
 
 # function to remove prefix or suffix of PP or FP samples
 removePreSuffix <- function(sampleName) {
-  sampleName <- gsub("([._](FullProteome|FP|Phospho|PP)$)|(^(FullProteome|FP|Phospho|PP)[._])","",sampleName)
+  sampleName <- gsub("([._](FullProteome|FP|Phospho|PP)$)|
+                     (^(FullProteome|FP|Phospho|PP)[._])",
+                     "",sampleName)
   return(sampleName)
 }
