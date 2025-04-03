@@ -188,18 +188,16 @@ runFisher <- function (genes, reference, inputSet, ptm = FALSE) {
 #' @importFrom piano runGSA GSAsummaryTable
 #'
 #' @export
-enrichDifferential <- function(dea, type, gsaMethod = c("PAGE", "GSEA"),
-                               geneSet, ptmSet, statType,
+enrichDifferential <- function(dea, type = c("Pathway enrichment",
+                                             "Phospho enrichment"),
+                               gsaMethod = c("PAGE", "GSEA"),
+                               geneSet, ptmSet,
+                               statType = c("stat", "log2FC"),
                                nPerm = 100, sigLevel = 0.05, ifFDR = FALSE) {
+
+    type <- match.arg(type)
     gsaMethod <- match.arg(gsaMethod)
-
-    if (!(type %in% c("Pathway enrichment", "Phospho enrichment"))) {
-        stop("Invalid input for the argument type")
-    }
-
-    if (!(statType %in% c("stat", "log2FC"))) {
-        stop("Invalid input for the argument statType")
-    }
+    statType <- match.arg(statType)
 
     if (type == "Pathway enrichment") {
         # Prepare data for pathway enrichment by filtering and sorting
@@ -475,9 +473,13 @@ clusterEnrich <- function(clusterTab, se, inputSet, reference = NULL,
 #'
 #' @export
 runGSEAforPhospho <- function(geneStat, ptmSetDb, nPerm, weight = 1,
-                              correl.type = "rank",
-                              statistic = "Kolmogorov-Smirnov",
+                              correl.type = c("rank", "symm.rank", "z.score"),
+                              statistic = c("Kolmogorov-Smirnov",
+                                            "area.under.RES"),
                               min.overlap = 5) {
+
+  correl.type <- match.arg(correl.type)
+  statistic <- match.arg(statistic)
 
   # Internal function to calculate GSEA enrichment score
   gseaScorePTM <- function (ordered.gene.list, data.expr, gene.set2,

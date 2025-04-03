@@ -294,9 +294,13 @@ plotPCA <- function(pca, se, xaxis = "PC1", yaxis = "PC2", color = "none",
 #' plotHeatmap(type = "Top variant", top = 10, se = result, cutCol = 2)
 #'
 #' @export
-plotHeatmap <- function(type, se, data = NULL, top = 100, cutCol = 1,
+plotHeatmap <- function(type = c("Top variant", "Differentially expressed",
+                                 "Selected time series cluster"),
+                        se, data = NULL, top = 100, cutCol = 1,
                         cutRow = 1, clustCol = TRUE, clustRow = TRUE,
                         annotationCol = NULL, title = NULL) {
+
+    type <- match.arg(type)
     # Select the appropriate intensity assay and gene IDs based on the type of
     # heatmap
     if (type == "Top variant") {

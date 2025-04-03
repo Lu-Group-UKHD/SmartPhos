@@ -4,7 +4,7 @@
 \alias{getDecouplerNetwork}
 \title{Load Kinase-Substrate Interaction Network}
 \usage{
-getDecouplerNetwork(speciesRef = "Homo sapiens")
+getDecouplerNetwork(speciesRef = c("Homo sapiens", "Mus musculus"))
 }
 \arguments{
 \item{speciesRef}{A \code{character} string specifying the species. Supported

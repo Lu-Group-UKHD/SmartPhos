@@ -8,11 +8,11 @@ preprocessProteome(
   seData,
   filterList = NULL,
   missCut = 50,
-  transform = "log2",
+  transform = c("log2", "vst", "none"),
   normalize = FALSE,
   getPP = FALSE,
   removeOutlier = NULL,
-  impute = "none",
+  impute = c("none", "QRILC", "MLE", "bpca", "missForest", "MinDet"),
   batch = NULL,
   verbose = FALSE,
   scaleFactorTab = NULL

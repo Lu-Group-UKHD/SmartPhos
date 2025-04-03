@@ -88,10 +88,16 @@ getOneSymbol <- function(Gene) {
 #'
 #' @export
 preprocessProteome <- function(seData, filterList = NULL, missCut = 50,
-                               transform = "log2", normalize = FALSE,
+                               transform = c("log2", "vst", "none"),
+                               normalize = FALSE,
                                getPP = FALSE, removeOutlier = NULL,
-                               impute = "none", batch = NULL, verbose = FALSE,
+                               impute = c("none", "QRILC", "MLE", "bpca",
+                                          "missForest", "MinDet"),
+                               batch = NULL, verbose = FALSE,
                                scaleFactorTab = NULL) {
+
+  transform <- match.arg(transform)
+  impute <- match.arg(impute)
 
   # Retrieve desired sample type
   if (getPP) {
@@ -285,10 +291,16 @@ preprocessProteome <- function(seData, filterList = NULL, missCut = 50,
 #'
 #' @export
 preprocessPhos <- function(seData, filterList = NULL, missCut = 50,
-                           transform="log2", normalize = FALSE, getFP = FALSE,
+                           transform = c("log2", "vst", "none"),
+                           normalize = FALSE, getFP = FALSE,
                            removeOutlier = NULL, assayName = NULL, batch = NULL,
-                           scaleFactorTab = NULL, impute = "none",
+                           scaleFactorTab = NULL,
+                           impute =  c("none", "QRILC", "MLE", "bpca",
+                                               "missForest", "MinDet"),
                            verbose = FALSE) {
+
+  transform <- match.arg(transform)
+  impute <- match.arg(impute)
 
   # Retrieve the desired sample type or specified assay
   if (is.null(assayName)) {

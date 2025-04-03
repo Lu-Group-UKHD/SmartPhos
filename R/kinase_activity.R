@@ -22,8 +22,10 @@
 #' @importFrom utils read.table data
 #'
 #' @export
-getDecouplerNetwork <- function(speciesRef = "Homo sapiens") {
+getDecouplerNetwork <- function(speciesRef = c("Homo sapiens",
+                                               "Mus musculus")) {
 
+  speciesRef <- match.arg(speciesRef)
   # load network of kinase-substrate interaction from
   # omnipathR_kinase_network folder
   if (speciesRef == "Homo sapiens") {
@@ -101,8 +103,9 @@ getDecouplerNetwork <- function(speciesRef = "Homo sapiens") {
 #'
 #' @export
 calcKinaseScore <- function(resTab, decoupler_network, corrThreshold = 0.9,
-                            statType = "stat", nPerm = 100) {
+                            statType = c("stat", "log2FC") ,nPerm = 100) {
 
+  statType <- match.arg(statType)
   # Remove duplicate rows based on the 'site' column and keep all other columns
   resTab <- resTab %>%
     distinct(site, .keep_all = TRUE) %>%

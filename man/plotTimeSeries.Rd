@@ -7,7 +7,7 @@ SummarizedExperiment object}
 \usage{
 plotTimeSeries(
   se,
-  type,
+  type = c("expression", "logFC", "two-condition expression"),
   geneID,
   symbol,
   condition,

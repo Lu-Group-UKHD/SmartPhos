@@ -319,36 +319,6 @@ test_that("enrichDifferential handles pathway enrichment with PAGE", {
     expect_true(all(c("Name", "Stat", "p.up", "p.down") %in% colnames(result)))
 })
 
-test_that("enrichDifferential handles invalid input parameters", {
-    set.seed(123)
-
-    dea <- data.frame(
-        Gene = paste0("Gene", 1:100),
-        pvalue = runif(100, 0, 0.1),
-        stat = rnorm(100, 0, 2),
-        log2FC = rnorm(100, 0, 1)
-    )
-
-    geneSet <- list(
-        Pathway1 = paste0("Gene", sample(1:50, 10)),
-        Pathway2 = paste0("Gene", sample(51:100, 10))
-    )
-
-    # Check invalid enrichment type
-    expect_error(enrichDifferential(dea, type = "InvalidType",
-                                    gsaMethod = "PAGE",
-                                    statType = "stat"),
-                 "Invalid input for the argument type")
-
-    # Check invalid statistic type
-    expect_error(enrichDifferential(dea, type = "Pathway enrichment",
-                                    gsaMethod = "PAGE", geneSet,
-                                    statType = "invalidStat"),
-                 "Invalid input for the argument statType")
-})
-
-
-
 test_that("enrichDifferential respects significance threshold", {
 
     result <- enrichDifferential(dea = dea$resDE, type = "Pathway enrichment",

@@ -94,10 +94,12 @@
 #' reference = "1stCrtl", target = "EGF", condition = "treatment")
 #'
 #' @export
-performDifferentialExp <- function(se, assay, method = "limma",
+performDifferentialExp <- function(se, assay, method = c("limma", "ProDA"),
                                    condition = NULL, reference, target,
                                    refTime = NULL, targetTime = NULL,
                                    pairedTtest = FALSE) {
+
+  method <- match.arg(method)
   # Stop if method is other than limma or proDA
   if (!(method %in% c("limma", "ProDA"))) {
       stop("Invalid method!! Provide either limma or ProDA")

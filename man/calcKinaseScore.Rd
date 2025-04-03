@@ -8,7 +8,7 @@ calcKinaseScore(
   resTab,
   decoupler_network,
   corrThreshold = 0.9,
-  statType = "stat",
+  statType = c("stat", "log2FC"),
   nPerm = 100
 )
 }

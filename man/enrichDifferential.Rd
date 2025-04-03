@@ -7,11 +7,11 @@ or phospho-sites}
 \usage{
 enrichDifferential(
   dea,
-  type,
+  type = c("Pathway enrichment", "Phospho enrichment"),
   gsaMethod = c("PAGE", "GSEA"),
   geneSet,
   ptmSet,
-  statType,
+  statType = c("stat", "log2FC"),
   nPerm = 100,
   sigLevel = 0.05,
   ifFDR = FALSE

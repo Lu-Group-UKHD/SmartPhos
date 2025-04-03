@@ -560,9 +560,13 @@ splineFilter <- function(exprMat, subjectID = NULL, time, df, pCut = 0.5,
 #' timerange = timerange)
 #'
 #' @export
-plotTimeSeries <- function(se, type, geneID, symbol, condition, treatment,
+plotTimeSeries <- function(se, type = c("expression", "logFC",
+                                        "two-condition expression"),
+                           geneID, symbol, condition, treatment,
                            refTreat, addZero = FALSE, zeroTreat = NULL,
                            timerange) {
+
+  type <- match.arg(type)
 
   if (type == "expression") {
     # Handle zero time point addition if specified

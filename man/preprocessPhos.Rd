@@ -8,14 +8,14 @@ preprocessPhos(
   seData,
   filterList = NULL,
   missCut = 50,
-  transform = "log2",
+  transform = c("log2", "vst", "none"),
   normalize = FALSE,
   getFP = FALSE,
   removeOutlier = NULL,
   assayName = NULL,
   batch = NULL,
   scaleFactorTab = NULL,
-  impute = "none",
+  impute = c("none", "QRILC", "MLE", "bpca", "missForest", "MinDet"),
   verbose = FALSE
 )
 }

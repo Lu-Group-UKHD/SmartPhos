@@ -7,7 +7,7 @@
 performDifferentialExp(
   se,
   assay,
-  method = "limma",
+  method = c("limma", "ProDA"),
   condition = NULL,
   reference,
   target,

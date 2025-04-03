@@ -5,7 +5,7 @@
 \title{Plot Heatmap of Intensity assay}
 \usage{
 plotHeatmap(
-  type,
+  type = c("Top variant", "Differentially expressed", "Selected time series cluster"),
   se,
   data = NULL,
   top = 100,

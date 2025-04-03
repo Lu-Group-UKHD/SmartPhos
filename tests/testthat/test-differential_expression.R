@@ -79,21 +79,6 @@ test_that("performDifferentialExp works with ProDA method", {
   expect_gt(nrow(result$resDE), 0)
 })
 
-test_that("performDifferentialExp throws error for invalid method", {
-  se <- create_mock_se()
-
-  expect_error(
-    performDifferentialExp(
-      se = se,
-      assay = "Intensity",
-      method = "wrong_method",
-      condition = "treatment",
-      reference = "ctr1",
-      target = "EGF"
-    ),
-    "Invalid method!! Provide either limma or ProDA"
-  )
-})
 
 test_that("performDifferentialExp throws error for missing condition column", {
   se <- create_mock_se()

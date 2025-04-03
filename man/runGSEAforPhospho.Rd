@@ -9,8 +9,8 @@ runGSEAforPhospho(
   ptmSetDb,
   nPerm,
   weight = 1,
-  correl.type = "rank",
-  statistic = "Kolmogorov-Smirnov",
+  correl.type = c("rank", "symm.rank", "z.score"),
+  statistic = c("Kolmogorov-Smirnov", "area.under.RES"),
   min.overlap = 5
 )
 }
