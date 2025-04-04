@@ -51,6 +51,9 @@
 #' @export
 runFisher <- function (genes, reference, inputSet, ptm = FALSE) {
 
+  category <- Set.size <- pval <- NULL
+  site.ptm <- site.direction <- site.annotation <- NULL
+
   # Retrieve the gene sets
   if (!ptm) {
     genesets <- inputSet$gsc
@@ -199,6 +202,10 @@ enrichDifferential <- function(dea, type = c("Pathway enrichment",
     gsaMethod <- match.arg(gsaMethod)
     statType <- match.arg(statType)
 
+    pvalue <- Gene <- p.up.adj <- p.down.adj <- desc <- p.up <- p.down <- NULL
+    site <- Name <- Site.number <- Number.up <- Number.down <- NULL
+    Number.pSite.Db <- Number.PTM.site.Db <- padj <- NULL
+
     if (type == "Pathway enrichment") {
         # Prepare data for pathway enrichment by filtering and sorting
         corTab <- dea %>%
@@ -226,7 +233,7 @@ enrichDifferential <- function(dea, type = c("Pathway enrichment",
                           gsc = geneSet,
                           signifMethod = 'nullDist')
         }
-        else if (gseMethod == "GSEA") {
+        else if (gsaMethod == "GSEA") {
             res <- runGSA(geneLevelStats = myCoef,
                           geneSetStat = "gsea",
                           adjMethod = "fdr",
@@ -377,6 +384,7 @@ clusterEnrich <- function(clusterTab, se, inputSet, reference = NULL,
                           ptm = FALSE, adj = "BH", filterP = 0.05,
                           ifFDR = FALSE) {
 
+  cluster <- padj <- ifSig <- pval <- Name <- atLeast1 <- NULL
   # If reference is not provided, derive it from the SummarizedExperiment object
   if (is.null(reference)) {
     if (ptm) {
@@ -480,6 +488,8 @@ runGSEAforPhospho <- function(geneStat, ptmSetDb, nPerm, weight = 1,
 
   correl.type <- match.arg(correl.type)
   statistic <- match.arg(statistic)
+  category <- site.ptm <- site.annotation <- nSite <- NULL
+  enrichScore <- pvalue <- NULL
 
   # Internal function to calculate GSEA enrichment score
   gseaScorePTM <- function (ordered.gene.list, data.expr, gene.set2,

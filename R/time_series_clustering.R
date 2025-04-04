@@ -61,6 +61,8 @@
 mscale <- function(x, center = TRUE, scale = TRUE, censor = NULL,
                    useMad = FALSE){
 
+  meanAD <- NULL
+
   # Check if both scaling and centering are requested
   if (scale & center) {
     # Scale using Mean Absolute Deviation (MAD)
@@ -237,6 +239,9 @@ clusterTS <- function(x, k = 5, pCut = NULL, twoCondition = FALSE) {
 
   options(warn=-1)
 
+  feature <- cluster <- time <- value <- prob <- geneGroup <- treatment <- NULL
+  cNum <- timeTreat <- NULL
+
   # Remove rows with NA values
   x.center <- x[complete.cases(x),]
 
@@ -408,6 +413,9 @@ clusterTS <- function(x, k = 5, pCut = NULL, twoCondition = FALSE) {
 #'
 splineFilter <- function(exprMat, subjectID = NULL, time, df, pCut = 0.5,
                          ifFDR = FALSE, treatment = NULL, refTreatment = NULL) {
+
+  p <- relevel <- NULL
+
   # Convert time points from minutes to hours if both units are present
   if ((all(str_ends(time,"h|min"))) & (!all(str_ends(time,"h"))) &
       (!all(str_ends(time,"min")))) {
@@ -567,6 +575,7 @@ plotTimeSeries <- function(se, type = c("expression", "logFC",
                            timerange) {
 
   type <- match.arg(type)
+  time <- value <- subjectID <- NULL
 
   if (type == "expression") {
     # Handle zero time point addition if specified

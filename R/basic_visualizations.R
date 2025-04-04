@@ -35,6 +35,8 @@
 #'
 #' @export
 plotMissing <- function(se) {
+
+  perNA <- NULL
   # Extract the assay data from the SummarizedExperiment object
   countMat <- assay(se)
 
@@ -97,6 +99,9 @@ plotMissing <- function(se) {
 #'
 #' @export
 plotIntensity <- function(se, colorByCol = "none") {
+
+  id <- value <- name <- NULL
+
   # Extract the assay data from the SummarizedExperiment object
   countMat <- assay(se)
 

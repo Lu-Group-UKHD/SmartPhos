@@ -910,6 +910,8 @@ readProteomeExperimentDIA <- function(fileTable, showProgressBar = FALSE) {
 
 #function to run matrixQCvis
 runMatrixQCvis <- function(mae, index = 1) {
+
+  shinyQC <- NULL
   if (index > length(mae)) {
     print("Index out of range of MultiAssayExperiment object")
   }

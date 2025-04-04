@@ -26,6 +26,8 @@ getDecouplerNetwork <- function(speciesRef = c("Homo sapiens",
                                                "Mus musculus")) {
 
   speciesRef <- match.arg(speciesRef)
+  Homo_sapien_kinase_substrate_network <- NULL
+  Mus_musculus_kinase_substrate_network <- NULL
   # load network of kinase-substrate interaction from
   # omnipathR_kinase_network folder
   if (speciesRef == "Homo sapiens") {
@@ -104,6 +106,9 @@ getDecouplerNetwork <- function(speciesRef = c("Homo sapiens",
 #' @export
 calcKinaseScore <- function(resTab, decoupler_network, corrThreshold = 0.9,
                             statType = c("stat", "log2FC") ,nPerm = 100) {
+
+  site <- target <- stat <- log2FC <- statistic <- condition <- NULL
+  score <- p_value <- correlation <- NULL
 
   statType <- match.arg(statType)
   # Remove duplicate rows based on the 'site' column and keep all other columns
@@ -190,6 +195,9 @@ calcKinaseScore <- function(resTab, decoupler_network, corrThreshold = 0.9,
 #'
 #' @export
 plotKinaseDE <- function(scoreTab, nTop = 10, pCut = 0.05) {
+
+  p_value <- score <- score_sign <- significance <- NULL
+
   plotTab <- scoreTab %>% mutate(significance = ifelse(p_value <= pCut,
                                                        paste0("p <= ",pCut),
                                                        paste0("p > ",pCut)),
@@ -273,6 +281,8 @@ plotKinaseDE <- function(scoreTab, nTop = 10, pCut = 0.05) {
 #' @export
 plotKinaseTimeSeries <- function(scoreTab, pCut = 0.05,
                                  clusterName = "cluster1") {
+
+  p_value <- timepoint <- Activity_score <- sig <- NULL
 
   # Add a significance marker based on the p-value threshold
   plotTab <- dplyr::mutate(scoreTab, sig = ifelse(p_value<=pCut, "*", ""))

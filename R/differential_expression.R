@@ -100,6 +100,9 @@ performDifferentialExp <- function(se, assay, method = c("limma", "ProDA"),
                                    pairedTtest = FALSE) {
 
   method <- match.arg(method)
+  log2FC <- P.Value <- adj.P.Val <- Row.names <- B <- AveExpr <- NULL
+  padj <- pvalue <- t_statistic <- pval <- adj_pval <- logFC <- NULL
+  df <- avg_abundance <- n_approx <- n_obs <- NULL
   # Stop if method is other than limma or proDA
   if (!(method %in% c("limma", "ProDA"))) {
       stop("Invalid method!! Provide either limma or ProDA")
@@ -234,6 +237,9 @@ performDifferentialExp <- function(se, assay, method = c("limma", "ProDA"),
 #'
 #' @export
 plotVolcano <- function(tableDE, pFilter = 0.05, fcFilter = 0.5) {
+
+  log2FC <- pvalue <- Gene <- ID <- NULL
+
   if (!("log2FC" %in% colnames(tableDE))) stop("column 'log2FC' not found")
   if (!("pvalue" %in% colnames(tableDE))) stop("column 'pvalue' not found")
   if (!("Gene" %in% colnames(tableDE))) stop("column 'Gene' not found")
@@ -338,6 +344,9 @@ plotVolcano <- function(tableDE, pFilter = 0.05, fcFilter = 0.5) {
 #'
 #' @export
 intensityBoxPlot <- function(se, id, symbol) {
+
+  group <- value <- subjectID <- NULL
+
   exprMat <- assays(se)[["Intensity"]]
 
   # Check if the SE object contains subject-specific data

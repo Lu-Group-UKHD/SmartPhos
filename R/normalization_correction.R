@@ -203,6 +203,7 @@ getRatioMatrix <- function(maeData, normalization = FALSE,
 #' @export
 plotLogRatio <- function(maeData, normalization = FALSE) {
 
+  feature <- value <- name <- NULL
 
   # Calculate the ratio matrix of phosphoproteome to full proteome data,
   # if adjustment already performed, use the adjusted ratio for plotting.
@@ -434,6 +435,9 @@ runPhosphoAdjustment <- function(maeData, normalization = FALSE, minOverlap = 3,
 #' @import ggplot2
 #' @export
 plotAdjustmentResults <- function(maeData, normalization = FALSE) {
+
+  id <- adjustment <- ratio <- medVal <- NULL
+
   # Check if the adjustment factor has been applied
   if (!"adjustFactorPP" %in% colnames(colData(maeData))) {
     stop("Phosphorylation measurments have not been adjusted yet. ",
