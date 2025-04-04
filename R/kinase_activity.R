@@ -28,13 +28,21 @@ getDecouplerNetwork <- function(speciesRef = c("Homo sapiens",
   speciesRef <- match.arg(speciesRef)
   Homo_sapien_kinase_substrate_network <- NULL
   Mus_musculus_kinase_substrate_network <- NULL
+  data_env <- new.env(parent = emptyenv())
+
   # load network of kinase-substrate interaction from
   # omnipathR_kinase_network folder
   if (speciesRef == "Homo sapiens") {
-    data("Homo_sapien_kinase_substrate_network")
+    data("Homo_sapien_kinase_substrate_network", envir = data_env,
+         package = "SmartPhos")
+    Homo_sapien_kinase_substrate_network <-
+        data_env[["Homo_sapien_kinase_substrate_network"]]
     return(Homo_sapien_kinase_substrate_network)
   } else if (speciesRef == "Mus musculus") {
-    data("Mus_musculus_kinase_substrate_network")
+    data("Mus_musculus_kinase_substrate_network", envir = data_env,
+         package = "SmartPhos")
+      Mus_musculus_kinase_substrate_network <-
+        data_env[["Mus_musculus_kinase_substrate_network"]]
     return(Mus_musculus_kinase_substrate_network)
   }
 }
