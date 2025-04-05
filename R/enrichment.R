@@ -57,7 +57,7 @@ runFisher <- function (genes, reference, inputSet, ptm = FALSE) {
   # Retrieve the gene sets
   if (!ptm) {
     genesets <- inputSet$gsc
-    setList <- 1 : length(genesets)
+    setList <- seq_along(genesets)
   } else {
     # Filter and process the PTM-specific gene sets
     genesets <- inputSet %>%
