@@ -14,6 +14,8 @@
 #' @format an object of "tbl_df" (tidy table)
 #' @examples
 #' data(swissProt)
+#' @return A \code{data frame} or \code{tibble} containing high-level
+#' annotations for manually curated proteins.
 "swissProt"
 
 
@@ -27,19 +29,23 @@
 #' @format a data.frame object
 #' @examples
 #' data(Homo_sapien_kinase_substrate_network)
+#' @return A \code{data frame} containing the information about the known
+#' kinase-phosphosite interactions for Homo sapiens.
 "Homo_sapien_kinase_substrate_network"
 
 
 #' Mus_musculus_kinase_substrate_network
 #'
 #' A prior knowledge database about the known kinase-phosphosite interactions
-#' for Homo sapiens
+#' for Mus musculus
 #'
 #' @docType data
 #' @usage data(Mus_musculus_kinase_substrate_network)
 #' @format a data.frame object
 #' @examples
 #' data(Mus_musculus_kinase_substrate_network)
+#' @return A \code{data frame} containing the information about the known
+#' kinase-phosphosite interactions for Mus musculus.
 "Mus_musculus_kinase_substrate_network"
 
 
@@ -53,6 +59,8 @@
 #' @format a class S4 object of MultiAssayExperiment
 #' @examples
 #' data(dda_example)
+#' @return A \code{MultiAssayExperiment} object containing a sample of DDA mass
+#' spectrometry data from Max Quant.
 "dda_example"
 
 
@@ -66,4 +74,6 @@
 #' @format a class S4 object of MultiAssayExperiment
 #' @examples
 #' data(dia_example)
+#' @return A \code{MultiAssayExperiment} object containing a sample of DIA mass
+#' spectrometry data from Spectronaut.
 "dia_example"

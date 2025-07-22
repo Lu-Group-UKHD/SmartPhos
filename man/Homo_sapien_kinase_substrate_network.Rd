@@ -10,6 +10,10 @@ a data.frame object
 \usage{
 data(Homo_sapien_kinase_substrate_network)
 }
+\value{
+A \code{data frame} containing the information about the known
+kinase-phosphosite interactions for Homo sapiens.
+}
 \description{
 A prior knowledge database about the known kinase-phosphosite interactions
 for Homo sapiens

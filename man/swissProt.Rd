@@ -10,6 +10,10 @@ an object of "tbl_df" (tidy table)
 \usage{
 data(swissProt)
 }
+\value{
+A \code{data frame} or \code{tibble} containing high-level
+annotations for manually curated proteins.
+}
 \description{
 This is a high-quality, manually curated protein sequence database which
 provides a high level of annotations (such as the description of the function

@@ -10,9 +10,13 @@ a data.frame object
 \usage{
 data(Mus_musculus_kinase_substrate_network)
 }
+\value{
+A \code{data frame} containing the information about the known
+kinase-phosphosite interactions for Mus musculus.
+}
 \description{
 A prior knowledge database about the known kinase-phosphosite interactions
-for Homo sapiens
+for Mus musculus
 }
 \examples{
 data(Mus_musculus_kinase_substrate_network)

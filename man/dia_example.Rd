@@ -10,6 +10,10 @@ a class S4 object of MultiAssayExperiment
 \usage{
 data(dia_example)
 }
+\value{
+A \code{MultiAssayExperiment} object containing a sample of DIA mass
+spectrometry data from Spectronaut.
+}
 \description{
 A sample of Data Independent Acquisition (DIA) mass spectrometry data from
 Spectronaut.

@@ -10,6 +10,10 @@ a class S4 object of MultiAssayExperiment
 \usage{
 data(dda_example)
 }
+\value{
+A \code{MultiAssayExperiment} object containing a sample of DDA mass
+spectrometry data from Max Quant.
+}
 \description{
 A sample of Data Dependent Acquisition (DDA) mass spectrometry data from
 Max Quant.
