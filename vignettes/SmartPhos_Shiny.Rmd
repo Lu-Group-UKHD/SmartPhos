@@ -954,8 +954,15 @@ script).
 knitr::include_graphics(file.path("images", "log_info.png"))
 ```
 
+# Session Info
+
+```{r}
+sessionInfo()
+```
+
 
 # References
+
 Badia-I-Mompel, P., Santiago, J. V., Braunger, J., Geiß, C., Dimitrov, D., 
 Müller‐Dott, S., Tauš, P., Dugourd, A., Holland, C. H., Flores, R. O. R., & 
 Sáez-Rodríguez, J. (2022). decoupleR: ensemble of computational methods to 
