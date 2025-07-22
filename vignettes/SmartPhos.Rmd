@@ -1,5 +1,5 @@
 ---
-title: "SmartPhos: a pipeline for processing and analysis of phosphoproteome 
+title: "SmartPhos: a pipeline for processing and analysis of phosphoproteomic 
 data"
 author: "Shubham Agrawal, Junyan Lu"
 date: "2025-03-27"
@@ -266,7 +266,7 @@ differentially expressed or in a time-series cluster.
 
 In the latter, each set contains PTM site names with direction of regulation 
 (up- or down-regulated) instead of gene names. Only phosphorylation sites will 
-be considered since this pipeline supports proteomic and phosphoproteomic data. 
+be considered since this pipeline supports proteomics and phosphoproteomics data. 
 The gene sets and PTM signature sets are derived from the Molecular Signatures 
 Database (Subramanian, Tamayo et al.,2005; Liberzon et al., 2011, Liberzon et 
 al., 2015) and the PTM Signature Database version 2.0.0 (Krug et al., 2019), 

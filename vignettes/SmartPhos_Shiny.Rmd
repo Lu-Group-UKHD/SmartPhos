@@ -23,7 +23,7 @@ BiocStyle::markdown()
 # Introduction
 
 SmartPhos Explorer is an R Shiny app for streamlined analysis of *proteomics* 
-and *phosphoproteomics*, featuring data preprocessing, exploratory data 
+and *phosphoproteomics*, featuring data pre-processing, exploratory data 
 analysis, hypothesis testing, time-series analysis and functional 
 interpretation. There are two ways to run the SmartPhos Explorer shiny app:
 
