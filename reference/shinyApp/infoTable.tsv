@@ -1,0 +1,77 @@
+name	panel	description
+upload	Preprocessing	type of upload: a zip file or an R object
+tool	Preprocessing	tool used to process the raw MS files: Spectronaut or MaxQuant
+assay	Preprocessing	selects the type of assay: phosphoproteomic or proteomic
+getFP	Preprocessing	if the samples are enriched or non-enriched
+getPP	Preprocessing	if the samples are enriched or non-enriched
+ifNormCorrect	Preprocessing	apply the normalization correction method (only applicable for phosphoproteomics data)
+transform	Preprocessing	select the tranformation method
+normalize	Preprocessing	if normalization is desired or not
+missFilter	Preprocessing	percentage of missing values allowed
+outliers	Preprocessing	list of all the sample outliers to be removed for further analysis/exploration
+impute	Preprocessing	select the imputation method
+batch	Preprocessing	correct for batch effects
+colBatch	Preprocessing	column(s) used for batch effects correction
+colorBox	Preprocessing	color the box-plot based on the selected annotation
+xaxisPCA	PCA	principal component on x-axis
+yaxisPCA	PCA	principal component on y-axis
+colorPCA	PCA	color the points based on the selected annotation
+shapePCA	PCA	shape the points based on the selected annotation
+chooseType	Heatmap	select the type of heatmap: most-variant genes, differentially expressed genes or genes from cluster
+numGenes	Heatmap	number of top-variant genes
+seleClusterHM	Heatmap	selected cluster number
+numClustCol	Heatmap	number of custers, the columns of the heatmap should be divided into
+numClustRow	Heatmap	number of clusters, the rows of the heatmap should be divided into
+colAnnoHM	Heatmap	additional column annotations for the heatmap
+seleMetaColDiff	Differential expression	metadata column for performing differential expression analysis (eg. Treatment, CellLine, Replicate, etc.) 
+seleID1	Differential expression	reference group ID(s)
+Treat1	Differential expression	reference treatment condition(s)
+Time1	Differential expression	reference timepoint(s)
+seleID2	Differential expression	target group ID(s)
+Treat2	Differential expression	target treatment condition(s)
+Time2	Differential expression	target timepoint(s)
+deMethod	Differential expression	select differential expression method: limma or ProDA
+ifAdjusted	Differential expression	if adjusted pValue should be used for filtering
+fcFilter	Differential expression	log fold-change value for filtering
+pFilter	Differential expression	p value for filtering
+geneID_DE	Differential expression	last clicked gene ID
+geneSymbol_DE	Differential expression	last clicked gene symbol
+seleMetaColTime	Time series clustering	metadata column for performing time-series clustering (eg. Treatment, CellLine, Replicate, etc.) 
+clusterFor	Time series clustering	perform clustering on selected data: expression, log fold-change, two-condition expression
+seleTreat_cluster	Time series clustering	select treatment condition
+addZero	Time series clustering	add zero timepoints
+seleZeroTreat	Time series clustering	select treatment from which to copy the zero timepoint data 
+seleTimeRange	Time series clustering	select the time points to include for clustering
+ifFilterFit	Time series clustering	filter genes based on spline fit test
+ifSplineFdr	Time series clustering	option to use FDR value
+pSpline	Time series clustering	p value cut-off for spline fit
+seleTreat_clusterRef	Time series clustering	select the reference treatment for clustering
+topVarTime	Time series clustering	percentage of top variant genes along time for filtering
+seleNumCluster	Time series clustering	enter number of clusters desired
+seleProbCut	Time series clustering	cut-off for cluster membership probability
+seleCluster	Time series clustering	selected cluster number
+geneIDclust	Time series clustering	last clicked gene ID
+geneSymbolclust	Time series clustering	last clicked gene symbol
+seleSourceEnrich	Enrichment analysis	select source of gene list: differential expression or time series cluster
+analysisMethod	Enrichment analysis	select analysis method for enrichment analysis
+enrichMethod	Enrichment analysis	select enrichment method: PAGE or GSEA
+sigSet	Enrichment analysis	select geneset database
+permNum	Enrichment analysis	permutation number (only for GSEA)
+statType	Enrichment analysis	select statistic for ranking: stat or log2FC
+ifEnrichFDR	Enrichment analysis	use FDR for filtering
+sigLevel	Enrichment analysis	p value cut-off for enrichment results
+enrichMethod1	Enrichment analysis	select enrichment method: Fisher’s exact test
+sigSetPTM	Enrichment analysis	select PTM set database
+geneIDenrich	Enrichment analysis	last clicked gene ID
+geneSymbolenrich	Enrichment analysis	last clicked gene symbol
+seleSourceKinase	Kinase activity inference	data to perform the analysis on: differential expression or time-series clustering
+speciesRef	Kinase activity inference	reference species: Home sapiens, Mus muscles, etc.
+statTypeKinase	Kinase activity inference	statistics for computing kinase score: stat or log2FC
+nPermKinase	Kinase activity inference	number of permutations
+seleClusterKinase	Kinase activity inference	cluster number
+seleKinaseTimeMethod	Kinase activity inference	infer whether how active the kinases are or how likely the kinases are associated to the cluster
+seleTimeRangeKinase	Kinase activity inference	time range included during clustering
+seleAssoMethod	Kinase activity inference	select association method: Fisher’s exact test or FSGEA
+ifKinaseFDR	Kinase activity inference	if adjusted pValue should be used for filtering
+pKinase	Kinase activity inference	p value for filtering
+kinaseLastClicked	Kinase activity inference	last clicked kinase
