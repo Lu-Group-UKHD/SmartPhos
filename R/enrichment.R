@@ -137,7 +137,7 @@ runFisher <- function (genes, reference, inputSet, ptm = FALSE) {
 #' analysis results. It should include columns like
 #'   `pvalue`, `Gene` (or `site`), `stat`, and `log2FC`.
 #' @param type A \code{character} string indicating the type of enrichment.
-#' Options are `"Pathway enrichment"` or `"Phospho enrichment"`.
+#' Options are `"Pathway enrichment"` or `"Phospho-signature enrichment"`.
 #' @param gsaMethod A \code{character} string specifying the gene set analysis
 #' method for pathway enrichment. Options are `"PAGE"` or `"GSEA"`.
 #' @param geneSet A gene set collection to use for pathway enrichment.
@@ -192,7 +192,7 @@ runFisher <- function (genes, reference, inputSet, ptm = FALSE) {
 #'
 #' @export
 enrichDifferential <- function(dea, type = c("Pathway enrichment",
-                                             "Phospho enrichment"),
+                                             "Phospho-signature enrichment"),
                                gsaMethod = c("PAGE", "GSEA"),
                                geneSet, ptmSet,
                                statType = c("stat", "log2FC"),
