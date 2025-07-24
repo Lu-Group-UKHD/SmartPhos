@@ -7,7 +7,7 @@ or phospho-sites}
 \usage{
 enrichDifferential(
   dea,
-  type = c("Pathway enrichment", "Phospho enrichment"),
+  type = c("Pathway enrichment", "Phospho-signature enrichment"),
   gsaMethod = c("PAGE", "GSEA"),
   geneSet,
   ptmSet,
@@ -23,7 +23,7 @@ analysis results. It should include columns like
   `pvalue`, `Gene` (or `site`), `stat`, and `log2FC`.}
 
 \item{type}{A \code{character} string indicating the type of enrichment.
-Options are `"Pathway enrichment"` or `"Phospho enrichment"`.}
+Options are `"Pathway enrichment"` or `"Phospho-signature enrichment"`.}
 
 \item{gsaMethod}{A \code{character} string specifying the gene set analysis
 method for pathway enrichment. Options are `"PAGE"` or `"GSEA"`.}
