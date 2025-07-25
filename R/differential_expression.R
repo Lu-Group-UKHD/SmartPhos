@@ -371,7 +371,7 @@ intensityBoxPlot <- function(se, id, symbol) {
   # Create the boxplot with additional formatting
   p <- p + geom_boxplot(aes(fill = group),
     width = 0.5, alpha = 0.5,
-    outlrunier.shape = NA
+    outlier.shape = NA
   ) +
     geom_point() +
     ylab("Normalized Intensities") + xlab("") +

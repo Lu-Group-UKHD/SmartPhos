@@ -1,0 +1,222 @@
+CHANGES IN VERSION 0.99.26 (2025-07-25)
+
+--------------------------------------
+
++ add NEWS.txt file
+
+
+CHANGES IN VERSION 0.99.25 (2025-07-24)
+
+--------------------------------------
+
++ minor typo fix
+
+
+CHANGES IN VERSION 0.99.24 (2025-07-24)
+
+--------------------------------------
+
++ bug fix in enrichDifferential()
+
+
+CHANGES IN VERSION 0.99.23 (2025-07-24)
+
+--------------------------------------
+
++ update SmartPhos vignette
+
+
+CHANGES IN VERSION 0.99.22 (2025-07-22)
+
+--------------------------------------
+
++ add @return in dataset.R script return value
+
+
+CHANGES IN VERSION 0.99.21 (2025-07-22)
+
+--------------------------------------
+
++ minor typo fixes
+
+
+CHANGES IN VERSION 0.99.20 (2025-07-22)
+
+--------------------------------------
+
++ add seesionInfo() in SmartPhos_Shiny vignette
++ update DESCRIPTION file
+
+
+CHANGES IN VERSION 0.99.19 (2025-04-05)
+
+--------------------------------------
+
++ use seq_along() instead of 1:length() in runFisher()
+
+
+CHANGES IN VERSION 0.99.18 (2025-04-04)
+
+--------------------------------------
+
++ create data environment for correct data loading
+
+
+CHANGES IN VERSION 0.99.17 (2025-04-04)
+
+--------------------------------------
+
++ resolve verbose NOTE from devtools::check()
++ minor typo fix in function argument
+
+
+CHANGES IN VERSION 0.99.16 (2025-04-03)
+
+--------------------------------------
+
++ add Depends in DESCRIPTION file
++ add match.arg() in all relevant functions
++ remove invalid unit tests
+
+
+CHANGES IN VERSION 0.99.15 (2025-04-02)
+
+--------------------------------------
+
++ update stop() message to fit 80-characters rule
+
+
+CHANGES IN VERSION 0.99.14 (2025-03-27)
+
+--------------------------------------
+
++ minor typo fixes
+
+
+CHANGES IN VERSION 0.99.13 (2025-03-21)
+
+--------------------------------------
+
++ remove @export from some functions
++ add match.arg() in enrichDifferential()
++ add unit tests for enrichDifferential()
+
+
+CHANGES IN VERSION 0.99.12 (2025-03-21)
+
+--------------------------------------
+
++ update SmartPhos vignette
+
+
+CHANGES IN VERSION 0.99.11 (2025-03-20)
+
+--------------------------------------
+
++ update shiny server script
++ simple code format
+
+
+CHANGES IN VERSION 0.99.10 (2025-03-20)
+
+--------------------------------------
+
++ simple code format
+
+
+CHANGES IN VERSION 0.99.9 (2025-03-18)
+
+--------------------------------------
+
++ update plotHeatmap() to reduce code repetition 
+
+
+CHANGES IN VERSION 0.99.8 (2025-03-18)
+
+--------------------------------------
+
++ use @import instead of @importFrom for Namespace
+
+
+CHANGES IN VERSION 0.99.7 (2025-03-15)
+
+--------------------------------------
+
++ update DESCRIPTION file
+
+
+CHANGES IN VERSION 0.99.6 (2025-03-14)
+
+--------------------------------------
+
++ code format
++ update warning() to stop() and update unit tests accordingly
++ create data environment to use in-package dataset
+
+
+CHANGES IN VERSION 0.99.5 (2025-03-13)
+
+--------------------------------------
+
++ update color argument to colorByCol in plotIntensity()
++ add verbose argument in readExperiment() and readExperimentDIA()
++ update names of in-package datasets
++ remove print() inside functions and add message() with verbose argument
+
+
+CHANGES IN VERSION 0.99.4 (2025-03-12)
+
+--------------------------------------
+
++ no change
+
+
+CHANGES IN VERSION 0.99.3 (2025-02-26)
+
+--------------------------------------
+
++ update gitignore file
+
+
+CHANGES IN VERSION 0.99.2 (2025-02-26)
+
+--------------------------------------
+
++ update gitignore file
+
+
+CHANGES IN VERSION 0.99.1 (2025-02-26)
+
+--------------------------------------
+
++ no change
+
+
+VERSION 0.99.0 (2025-02-24)
+
+---------------------------
+
++ SmartPhos package with shinyApp SmartPhos Explorer
++ create MultiAssayExperiment object from Spectronaut & MaxQuant files
++ different visualization and analysis available.
++ possible analysis:
+  - data transformation and normalization
+  - data imputation
+  - batch effect correction
+  - principal component analyis
+  - differential expression analyis
+  - time-series clustering
+  - geneset enrichment analyis
+  - phopho-signature enrichment 
+  - kinase activity inference
++ visualizations:
+  - intensity plot
+  - pca plot
+  - heatmaps
+  - volacano plot for differential expression analysis
+  - p value histogram
+  - time series plot
+  - geneset enrichment plots
+  - kinase activity inference
+  
+  
