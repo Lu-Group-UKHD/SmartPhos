@@ -1,3 +1,11 @@
+CHANGES IN VERSION 0.99.28 (2025-07-31)
+
+--------------------------------------
+
+- add download button in the shiny app to download the whole table  after performing differential expression
+- minor code format
+
+
 CHANGES IN VERSION 0.99.27 (2025-07-25)
 
 - no change

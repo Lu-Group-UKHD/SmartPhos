@@ -854,15 +854,32 @@ shinyServer(function(input, output, session) {
     }
   })
 
+  output$downloadFullTableUI <- renderUI({
+      if (!is.null(tableDE())) {
+          downloadButton("downloadFullTable", "Download the whole table",
+                         style="color: #FFFFFF; background-color:
+                         #3498DB; border-color: #2E86C1;")
+      }
+  })
+
+  # a button to download DE gene table as tsv
+  output$downloadFullTable <- downloadHandler(
+      filename = function() { paste('DE_Table', '.tsv', sep = '') },
+      content = function(file) {
+          write.table(tableDE(), file = file, quote=FALSE, sep = '\t',
+                      col.names = NA)
+      }
+  )
+
   output$downloadTableUI <- renderUI({
     if (!is.null(filterDE())) {
-      downloadLink('downloadTable', 'Download current table')
+      downloadLink('downloadTable', 'Download current table based on selected thresholds')
     }
   })
 
   # a button to download DE gene table as tsv
   output$downloadTable <- downloadHandler(
-    filename = function() { paste('DE_Table', '.tsv', sep = '') },
+    filename = function() { paste('DE_filtered_table', '.tsv', sep = '') },
     content = function(file) {
       write.table(filterDE(), file = file, quote=FALSE, sep = '\t',
                   col.names = NA)
@@ -2211,7 +2228,7 @@ shinyServer(function(input, output, session) {
                   siteTab <- processedData()[rowData(processedData())$site %in% unique(clusterData$site),
                                              processedData()$treatment == input$seleTreat_cluster & processedData()$timepoint %in% input$seleTimeRange]
                   # an empty vector to store order of timepoints in the heatmap
-                  timeOrder = c()
+                  timeOrder <-  c()
                   # Compute the fold change of a time point with respect to the previous time point
                   for (i in 2:length(timeRank)) {
                     time2 <- timeVector[timeRank == as.character(i)]

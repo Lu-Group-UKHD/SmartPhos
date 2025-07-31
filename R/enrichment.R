@@ -551,7 +551,7 @@ runGSEAforPhospho <- function(geneStat, ptmSetDb, nPerm, weight = 1,
     }
 
     # Length of gene list is same as the number of rows in input matrix
-    N <-  length(ordered.gene.list)
+    N <- length(ordered.gene.list)
 
 
     # Sirectionality of the gene set
@@ -681,7 +681,7 @@ runGSEAforPhospho <- function(geneStat, ptmSetDb, nPerm, weight = 1,
 
       # Without directionality
       Nh <- length(gene.set2)
-      Nm <-  N - Nh
+      Nm <- N - Nh
 
 
       # Match gene set to data
@@ -697,16 +697,16 @@ runGSEAforPhospho <- function(geneStat, ptmSetDb, nPerm, weight = 1,
       # Determine peaks and valleys
       # Divide correl vector by sum of weights
       # "up" represents the peaks in the mountain plot
-      up <-  correl.vector/sum.correl
+      up <- correl.vector/sum.correl
       # gaps between ranked pathway genes
-      gaps <-  (c(ind-1, N) - c(0, ind))
-      down <-  gaps/Nm
+      gaps <- (c(ind-1, N) - c(0, ind))
+      down <- gaps/Nm
 
       RES <-  cumsum(c(up,up[Nh])-down)
-      valleys <-  RES[1:Nh]-up
+      valleys <- RES[1:Nh]-up
 
-      max.ES <-  max(RES)
-      min.ES <-  min(valleys)
+      max.ES <- max(RES)
+      min.ES <- min(valleys)
 
       # Calculate final score
       score.res <- score(max.ES, min.ES, RES[1:Nh], gaps, valleys, statistic)
@@ -756,27 +756,27 @@ runGSEAforPhospho <- function(geneStat, ptmSetDb, nPerm, weight = 1,
   # Run GSEA for each PTM set
   rtab <- lapply(phosphoSiteCount$signature, function(signature) {
     # Get number of PTM site and phospho site in the database
-    nPTMsite <-  as.numeric(ptmSiteCount[ptmSiteCount$signature == signature,
+    nPTMsite <- as.numeric(ptmSiteCount[ptmSiteCount$signature == signature,
                                          "no.PTM.site"])
-    nPpSite <-  as.numeric(phosphoSiteCount[phosphoSiteCount$signature ==
+    nPpSite <- as.numeric(phosphoSiteCount[phosphoSiteCount$signature ==
                                                 signature, "no.phospho.site"])
-    signatureSet <-  phosphoSetDb[phosphoSetDb$signature == signature,]
-    gene.set2 <-  signatureSet$site
-    gene.set.direction <-  signatureSet$site.direction
-    gene.set.PMID <-  signatureSet$PubMedID
+    signatureSet <- phosphoSetDb[phosphoSetDb$signature == signature,]
+    gene.set2 <- signatureSet$site
+    gene.set.direction <- signatureSet$site.direction
+    gene.set.PMID <- signatureSet$PubMedID
     # Calculate the gsea score
     if (sum(row.names(geneStat) %in% gene.set2) < min.overlap) {
       enrichScoreNorm <- enrichScore <- pvalue <- number.u <- number.d <- 0
     } else {
-      resGSEA <-  gseaScorePTM(ordered.gene.list, data.expr =  data.expr,
+      resGSEA <- gseaScorePTM(ordered.gene.list, data.expr =  data.expr,
                                gene.set2 = gene.set2, weight = weight,
                                correl.type = correl.type,
                                gene.set.direction = gene.set.direction,
                                min.overlap =  min.overlap)
-      enrichScore <-  resGSEA$ES
+      enrichScore <- resGSEA$ES
       if (!is.null(gene.set.direction)) {
-        number.u  <-  resGSEA$number.u
-        number.d <-  resGSEA$number.d
+        number.u  <- resGSEA$number.u
+        number.d <- resGSEA$number.d
       } else {
         number.u <- number.d <- 0
       }
@@ -785,7 +785,7 @@ runGSEAforPhospho <- function(geneStat, ptmSetDb, nPerm, weight = 1,
         enrichScoreNorm <-  enrichScore
         pvalue = 1
       } else {
-        nullDistES <-  sapply(seq_len(nPerm),
+        nullDistES <- sapply(seq_len(nPerm),
                               function(x) gseaScorePTM(
                                   sample(ordered.gene.list),
                                   data.expr=data.expr,
@@ -794,21 +794,21 @@ runGSEAforPhospho <- function(geneStat, ptmSetDb, nPerm, weight = 1,
                                   correl.type,
                                   gene.set.direction = gene.set.direction,
                                   min.overlap = min.overlap)$ES)
-        nullDistES <-  unlist(nullDistES)
+        nullDistES <- unlist(nullDistES)
         if (enrichScore >= 0) {
-          nullDistES.pos <-  nullDistES[nullDistES >= 0]
+          nullDistES.pos <- nullDistES[nullDistES >= 0]
           if (length(nullDistES.pos) == 0) nullDistES.pos <-  0.5
-          posMean <-  mean(nullDistES.pos)
-          enrichScoreNorm <-  enrichScore/posMean
-          s <-  sum(nullDistES.pos >= enrichScore)/length(nullDistES.pos)
-          pvalue <-  ifelse(s == 0, 1/nPerm, s)
+          posMean <- mean(nullDistES.pos)
+          enrichScoreNorm <- enrichScore/posMean
+          s <- sum(nullDistES.pos >= enrichScore)/length(nullDistES.pos)
+          pvalue <- ifelse(s == 0, 1/nPerm, s)
         } else {
-          nullDistES.neg <-  nullDistES[nullDistES < 0]
+          nullDistES.neg <- nullDistES[nullDistES < 0]
           if (length(nullDistES.neg) == 0) nullDistES.neg <-  0.5
-          negMean <-  mean(nullDistES.neg)
-          enrichScoreNorm <-  enrichScore/negMean
-          s <-  sum(nullDistES.neg <= enrichScore)/length(nullDistES.neg)
-          pvalue <-  ifelse(s == 0, 1/nPerm, s)
+          negMean <- mean(nullDistES.neg)
+          enrichScoreNorm <- enrichScore/negMean
+          s <- sum(nullDistES.neg <= enrichScore)/length(nullDistES.neg)
+          pvalue <- ifelse(s == 0, 1/nPerm, s)
         }
       }
     }

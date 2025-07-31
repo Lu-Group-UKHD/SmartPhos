@@ -622,10 +622,10 @@ plotTimeSeries <- function(se, type = c("expression", "logFC",
         lapply(unique(seqMat$subjectID), function(id) {
           if (length(colnames(assay(refMat)[,refMat$timepoint == tp &
                                             refMat$subjectID == id])) > 1) {
-            refMean = rowMeans(assay(refMat)[,refMat$timepoint == tp &
+            refMean <-  rowMeans(assay(refMat)[,refMat$timepoint == tp &
                                                refMat$subjectID == id])
           } else {
-            refMean = assay(refMat)[,refMat$timepoint == tp &
+            refMean <-  assay(refMat)[,refMat$timepoint == tp &
                                         refMat$subjectID == id]
           }
           assay(seqMat)[,seqMat$timepoint == tp &
@@ -635,9 +635,9 @@ plotTimeSeries <- function(se, type = c("expression", "logFC",
     } else {
       fcMat <- lapply(unique(seqMat$timepoint), function(tp) {
         if (length(colnames(assay(refMat)[,refMat$timepoint == tp])) > 1) {
-          refMean = rowMeans(assay(refMat)[,refMat$timepoint == tp])
+          refMean <-  rowMeans(assay(refMat)[,refMat$timepoint == tp])
         } else {
-          refMean = assay(refMat)[,refMat$timepoint == tp]
+          refMean <-  assay(refMat)[,refMat$timepoint == tp]
         }
 
         assay(seqMat)[,seqMat$timepoint == tp] - refMean
