@@ -1,3 +1,11 @@
+CHANGES IN VERSION 0.99.29 (2025-10-01)
+
+--------------------------------------
+
+- perform imputation using MSCoreUtils package instead of DEP package
+- update tests for basic_visualizations.R
+
+
 CHANGES IN VERSION 0.99.28 (2025-07-31)
 
 --------------------------------------

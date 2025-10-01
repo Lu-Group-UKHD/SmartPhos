@@ -114,8 +114,7 @@ test_that("plotIntensity applies coloring correctly", {
   plot <- plotIntensity(se, colorByCol = "group")
 
   # Check if the fill aesthetic is set correctly
-  expect_true("colour" %in% names(plot$labels))
-  expect_equal(plot$labels$colour, "group")
+  expect_equal(as_label(plot$layers[[1]]$mapping$colour), "group")
 })
 
 test_that("plotIntensity works correctly with color set to 'none'", {
@@ -205,8 +204,7 @@ test_that("plotPCA applies coloring correctly", {
   plot <- plotPCA(pca, se, color = "group")
 
   # Check if the color aesthetic is set correctly
-  expect_true("colour" %in% names(plot$labels))
-  expect_equal(plot$labels$colour, "group")
+  expect_equal(as_label(plot$layers[[1]]$mapping$colour), "group")
 })
 
 test_that("plotPCA applies shaping correctly", {
@@ -216,8 +214,7 @@ test_that("plotPCA applies shaping correctly", {
   plot <- plotPCA(pca, se, shape = "type")
 
   # Check if the shape aesthetic is set correctly
-  expect_true("shape" %in% names(plot$labels))
-  expect_equal(plot$labels$shape, "type")
+  expect_equal(as_label(plot$layers[[1]]$mapping$shape), "type")
 })
 
 test_that("plotPCA works correctly with color and shape set to 'none'", {
@@ -238,8 +235,7 @@ test_that("plotPCA works correctly with color set to 'none' and shape specified"
   plot <- plotPCA(pca, se, color = "none", shape = "type")
 
   # Check if the shape aesthetic is set correctly
-  expect_true("shape" %in% names(plot$labels))
-  expect_equal(plot$labels$shape, "type")
+  expect_equal(as_label(plot$layers[[1]]$mapping$shape), "type")
 
   # Check if the color aesthetic is not set
   expect_false("colour" %in% names(plot$labels))
@@ -252,8 +248,7 @@ test_that("plotPCA works correctly with shape set to 'none' and color specified"
   plot <- plotPCA(pca, se, color = "group", shape = "none")
 
   # Check if the color aesthetic is set correctly
-  expect_true("colour" %in% names(plot$labels))
-  expect_equal(plot$labels$colour, "group")
+  expect_equal(as_label(plot$layers[[1]]$mapping$colour), "group")
 
   # Check if the shape aesthetic is not set
   expect_false("shape" %in% names(plot$labels))

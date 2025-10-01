@@ -123,7 +123,8 @@ plotIntensity <- function(se, colorByCol = "none") {
     theme(
       axis.text.x = element_text(angle = 90, hjust = 1, vjust = 0),
       plot.title = element_text(hjust = 0.5, face = "bold")
-    )
+    ) +
+    xlab("name") + ylab("value")
 
   # Add color to the boxplots if a valid metadata column is specified
   if (colorByCol == "none") {

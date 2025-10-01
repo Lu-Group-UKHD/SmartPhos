@@ -80,7 +80,7 @@ getOneSymbol <- function(Gene) {
 #' @importFrom dplyr filter mutate
 #' @importFrom tidyr pivot_longer
 #' @importFrom vsn justvsn
-#' @importFrom DEP impute
+#' @importFrom MsCoreUtils impute_matrix
 #' @importFrom limma removeBatchEffect
 #' @importFrom missForest missForest
 #' @importFrom doParallel registerDoParallel
@@ -195,7 +195,7 @@ preprocessProteome <- function(seData, filterList = NULL, missCut = 50,
         imp <- t(mf$ximp)
     }
     else {
-      imp <- DEP::impute(fpeSub, fun = impute)
+        imp <- MsCoreUtils::impute_matrix(assay(fpeSub), method = impute)
     }
     assays(fpeSub)[["imputed"]] <- assay(imp)
     rowData(fpeSub)$name <- NULL
@@ -282,7 +282,7 @@ preprocessProteome <- function(seData, filterList = NULL, missCut = 50,
 #' @importFrom SummarizedExperiment colData rowData assay assays
 #' @importFrom dplyr filter mutate
 #' @importFrom tidyr pivot_longer
-#' @importFrom DEP impute
+#' @importFrom MsCoreUtils impute_matrix
 #' @importFrom vsn justvsn
 #' @importFrom limma removeBatchEffect
 #' @importFrom missForest missForest
@@ -406,7 +406,7 @@ preprocessPhos <- function(seData, filterList = NULL, missCut = 50,
         imp <- t(mf$ximp)
     }
     else {
-      imp <- DEP::impute(ppeSub, fun = impute)
+        imp <- MsCoreUtils::impute_matrix(assay(ppeSub), method = impute)
     }
     assays(ppeSub)[["imputed"]] <- assay(imp)
     rowData(ppeSub)$name <- NULL
