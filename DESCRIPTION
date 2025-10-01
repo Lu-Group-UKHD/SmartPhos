@@ -1,7 +1,7 @@
 Package: SmartPhos
 Type: Package
 Title: A phosphoproteomics data analysis package with an interactive ShinyApp
-Version: 0.99.29
+Version: 0.99.30
 Authors@R: c(person("Shubham", "Agrawal", role = c("aut", "cre"), 
 		email = "shubhamagrawal2706@gmail.com",
 		comment = c(ORCID = "0009-0005-2630-9342")),
@@ -43,6 +43,7 @@ Imports:
     grid,
     XML,
     MsCoreUtils,
+    imputeLCMD,
     missForest,
     limma,
     proDA,
