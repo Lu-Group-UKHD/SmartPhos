@@ -955,8 +955,8 @@ dealMultiMap <- function(annoTab, method = "remove") {
 
 # function to remove prefix or suffix of PP or FP samples
 removePreSuffix <- function(sampleName) {
-  sampleName <- gsub("([._](FullProteome|FP|Phospho|PP)$)|
-                     (^(FullProteome|FP|Phospho|PP)[._])",
+  sampleName <- gsub("([._](TotalProteome|TP|FullProteome|FP|Phospho|PP)$)|
+                     (^(TotalProteome|TP|FullProteome|FP|Phospho|PP)[._])",
                      "",sampleName)
   return(sampleName)
 }

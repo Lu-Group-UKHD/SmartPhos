@@ -8,7 +8,7 @@ plotAdjustmentResults(maeData, normalization = FALSE)
 }
 \arguments{
 \item{maeData}{A \code{MultiAssayExperiment} object containing
-phosphoproteome and full proteome data.}
+phosphoproteome and proteome data.}
 
 \item{normalization}{A \code{logical} value indicating whether normalization
 was performed. Default is \code{FALSE}.}

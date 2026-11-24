@@ -20,7 +20,7 @@ proteome and phosphoproteome data from a \code{MultiAssayExperiment} object.
 \details{
 The function performs the following steps:
 \enumerate{
-  \item Extracts the count matrices for Full Proteome (FP) samples.
+  \item Extracts the count matrices for Total Proteome / Full Proteome (TP/FP) samples.
   \item Combines the proteome and phosphoproteome data into a single matrix.
   \item Removes rows with all NA values.
   \item Performs median normalization and log2 transformation on the

@@ -1,7 +1,7 @@
 Package: SmartPhos
 Type: Package
 Title: A phosphoproteomics data analysis package with an interactive ShinyApp
-Version: 0.99.30
+Version: 0.99.31
 Authors@R: c(person("Shubham", "Agrawal", role = c("aut", "cre"), 
 		email = "shubhamagrawal2706@gmail.com",
 		comment = c(ORCID = "0009-0005-2630-9342")),
@@ -66,7 +66,7 @@ Imports:
     cowplot
 Encoding: UTF-8
 VignetteBuilder: knitr
-RoxygenNote: 7.3.3
+RoxygenNote: 8.1.1
 Depends: R (>= 4.4.0)
 Suggests: 
     knitr,

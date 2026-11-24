@@ -207,6 +207,8 @@ performDifferentialExp <- function(se, assay, method = c("limma", "ProDA"),
 #' significance. Default is 0.05.
 #' @param fcFilter A \code{numeric} value specifying the log2 fold-change
 #' threshold for significance. Default is 0.5.
+#' @param usePadj A \code{boolean} value specifying to use adjusted P-value or
+#' not. Default is FALSE.
 #'
 #' @return A \code{ggplot2} object representing the volcano plot.
 #'
@@ -236,7 +238,8 @@ performDifferentialExp <- function(se, assay, method = c("limma", "ProDA"),
 #' plotVolcano(de$resDE)
 #'
 #' @export
-plotVolcano <- function(tableDE, pFilter = 0.05, fcFilter = 0.5) {
+plotVolcano <- function(tableDE, pFilter = 0.05, fcFilter = 0.5,
+                        usePadj = FALSE) {
 
   log2FC <- pvalue <- Gene <- ID <- NULL
 
@@ -249,45 +252,68 @@ plotVolcano <- function(tableDE, pFilter = 0.05, fcFilter = 0.5) {
   # type character
   dataVolcano <- data.frame(tableDE)
   dataVolcano$ID <- as.character(dataVolcano$ID)
-  # Categorize each gene based on the provided p-value and log2 fold-change
-  # thresholds
-  dataVolcano <- mutate(dataVolcano, expression = case_when(
-    dataVolcano$log2FC >= as.numeric(fcFilter) &
-        dataVolcano$pvalue <= as.numeric(pFilter) ~ "Up",
-    dataVolcano$log2FC <= -as.numeric(fcFilter) &
-        dataVolcano$pvalue <= as.numeric(pFilter) ~ "Down",
-    dataVolcano$pvalue > as.numeric(pFilter) |
-        (dataVolcano$log2FC < as.numeric(fcFilter) &
-             dataVolcano$log2FC > -as.numeric(fcFilter)) ~ "Not Sig"
-  ))
 
-  # Create the volcano plot
-  v <- ggplot(dataVolcano, aes(x = log2FC, y = -log10(pvalue), label = Gene,
-                               customdata = ID)) +
-    # Add vertical lines for fold-change thresholds
-    geom_vline(xintercept = 0, color = "black", linetype = "solid",
-               linewidth = 0.25) +
-    geom_vline(xintercept = as.numeric(fcFilter), color = "darkgrey",
-               linetype = "dashed") +
-    geom_vline(xintercept = -as.numeric(fcFilter), color = "darkgrey",
-               linetype = "dashed") +
-    # Add horizontal lines for p-value thresholds
-    geom_hline(yintercept = -log10(as.numeric(pFilter)), color = "darkgrey",
-               linetype = "dashed") +
-    annotate(x = 5.0, y = -log10(as.numeric(pFilter)) - 0.1,
-             label = paste("P-value = ", as.numeric(pFilter)),
-             geom = "text", size = 3, color = "darkgrey") +
-    geom_hline(yintercept = -log10(0.25), color = "darkgrey",
-               linetype = "dashed") +
-    annotate(x = 5.0, y = 0.5, label = paste("P-value = ", 0.25),
-             geom = "text", size = 3, color = "darkgrey") +
-    # Plot the points and color them based on their expression status
-    geom_point(aes(color = expression), size = 0.9) +
-    scale_color_manual(values = c("Up" = "firebrick3",
-                                  "Down" = "navy", "Not Sig" = "darkgrey")) +
-    xlab("absolute log2(Quantity) difference") +
-    ggtitle("Volcano plot") +
-    theme(plot.title = element_text(hjust = 0.5))
+  if (usePadj) {
+      dataVolcano <- mutate(dataVolcano, expression = case_when(
+          dataVolcano$log2FC >= as.numeric(fcFilter) &
+              dataVolcano$padj <= as.numeric(pFilter) ~ "Up",
+          dataVolcano$log2FC <= -as.numeric(fcFilter) &
+              dataVolcano$padj <= as.numeric(pFilter) ~ "Down",
+          dataVolcano$padj > as.numeric(pFilter) |
+              (dataVolcano$log2FC < as.numeric(fcFilter) &
+                   dataVolcano$log2FC > -as.numeric(fcFilter)) ~ "Not Sig"
+      ))
+
+      v <- ggplot(dataVolcano, aes(x = log2FC, y = -log10(padj), label = Gene,
+                                   customdata = ID))
+  }
+  else {
+      dataVolcano <- mutate(dataVolcano, expression = case_when(
+          dataVolcano$log2FC >= as.numeric(fcFilter) &
+              dataVolcano$pvalue <= as.numeric(pFilter) ~ "Up",
+          dataVolcano$log2FC <= -as.numeric(fcFilter) &
+              dataVolcano$pvalue <= as.numeric(pFilter) ~ "Down",
+          dataVolcano$pvalue > as.numeric(pFilter) |
+              (dataVolcano$log2FC < as.numeric(fcFilter) &
+                   dataVolcano$log2FC > -as.numeric(fcFilter)) ~ "Not Sig"
+      ))
+
+      v <- ggplot(dataVolcano, aes(x = log2FC, y = -log10(pvalue), label = Gene,
+                                   customdata = ID))
+  }
+
+  v <- v +
+      #Add horizontal lines for p-value thresholds
+      geom_hline(yintercept = -log10(as.numeric(pFilter)), color = "brown",
+                 linetype = "dashed") +
+      # Plot the points and color them based on their expression status
+      geom_point(aes(color = expression), size = 0.9) +
+      scale_color_manual(values = c("Up" = "firebrick3",
+                                    "Down" = "navy", "Not Sig" = "darkgrey")) +
+      # Add vertical lines for fold-change thresholds
+      geom_vline(xintercept = 0, color = "brown", linetype = "solid",
+                 linewidth = 0.25) +
+      geom_vline(xintercept = as.numeric(fcFilter), color = "brown",
+                 linetype = "dashed") +
+      geom_vline(xintercept = -as.numeric(fcFilter), color = "brown",
+                 linetype = "dashed") +
+      xlab("Log2FC") +
+      ggtitle("Volcano plot") +
+      theme_classic() +
+      theme(plot.title = element_text(hjust = 0.5))
+
+  if (usePadj) {
+      v <- v + annotate(x = 2.5, y = -log10(as.numeric(pFilter)) - 0.35,
+                        label = paste("adj P-value = ", as.numeric(pFilter)),
+                        geom = "text", size = 3, color = "brown")
+  }
+  else {
+      v <- v + annotate(x = 2.5, y = -log10(as.numeric(pFilter)) - 0.35,
+                        label = paste("P-value = ", as.numeric(pFilter)),
+                        geom = "text", size = 3, color = "brown")
+  }
+
+
   return(v)
 }
 

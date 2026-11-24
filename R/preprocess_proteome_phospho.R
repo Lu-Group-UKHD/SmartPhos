@@ -106,8 +106,8 @@ preprocessProteome <- function(seData, filterList = NULL, missCut = 50,
     fpe <- seData[,seData$sampleType %in% c("Phospho", "PP")]
     colData(fpe) <- colData(seData)[colnames(fpe),]
   } else {
-    # Otherwise, retrieve FullProteome samples
-    fpe <- seData[,seData$sampleType %in% c("FullProteome", "FP")]
+    # Otherwise, retrieve TotalProteome/FullProteome samples
+    fpe <- seData[,seData$sampleType %in% c("TotalProteome", "TP", "FullProteome", "FP")]
     colData(fpe) <- colData(seData)[colnames(fpe),]
   }
 
@@ -307,8 +307,8 @@ preprocessPhos <- function(seData, filterList = NULL, missCut = 50,
   # Retrieve the desired sample type or specified assay
   if (is.null(assayName)) {
     if (getFP) {
-      # Retrieve FullProteome samples if specified
-      ppe <- seData[,seData$sampleType %in% c("FullProteome", "FP")]
+      # Retrieve TotalProteome/FullProteome samples if specified
+      ppe <- seData[,seData$sampleType %in% c("TotalProteome", "TP", "FullProteome", "FP")]
       colData(ppe) <- colData(seData)[colnames(ppe),]
     } else {
       # Otherwise, retrieve Phospho samples

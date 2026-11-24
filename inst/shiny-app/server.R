@@ -193,7 +193,7 @@ shinyServer(function(input, output, session) {
     if (input$assay == "Phosphoproteome") {
       inputsValue$getFP <- input$getFP
       if (input$getFP) {
-        ppe <- se[,se$sampleType %in% c("FullProteome", "FP")]
+        ppe <- se[,se$sampleType %in% c("TotalProteome", "TP", "FullProteome", "FP")]
         colData(ppe) <- colData(se)[colnames(ppe),]
       }
       else {
@@ -209,7 +209,7 @@ shinyServer(function(input, output, session) {
         colData(fpe) <- colData(se)[colnames(fpe),]
       }
       else {
-        fpe <- se[,se$sampleType %in% c("FullProteome", "FP")]
+        fpe <- se[,se$sampleType %in% c("TotalProteome", "TP", "FullProteome", "FP")]
         colData(fpe) <- colData(se)[colnames(fpe),]
       }
       fpe
@@ -285,7 +285,10 @@ shinyServer(function(input, output, session) {
 
       if (input$assay == "Phosphoproteome") {
         if (!is.null(input$ifNormCorrect) && input$ifNormCorrect) {
-          if (("Proteome" %in% names(mae())) && ("FullProteome" %in% unique(colData(mae())$sampleType))) {
+          if (("Proteome" %in% names(mae())) && (("TotalProteome" %in% unique(colData(mae())$sampleType)) ||
+                                                 ("TP" %in% unique(colData(mae())$sampleType)) ||
+                                                 ("FullProteome" %in% unique(colData(mae())$sampleType)) ||
+                                                 ("FP" %in% unique(colData(mae())$sampleType)))) {
             if (!is.null(colData(mae())$sampleName)) {
               inputsValue$ifNormCorrect <- input$ifNormCorrect
               maeData <- runPhosphoAdjustment(mae(),
@@ -316,7 +319,10 @@ shinyServer(function(input, output, session) {
         # if normalization adjustment is performed, this will be performed after
         # normalization adjustment
         if (!is.null(input$ifNormByProtein) && input$ifNormByProtein) {
-          if (("Proteome" %in% names(mae())) && ("FullProteome" %in% unique(colData(mae())$sampleType))) {
+          if (("Proteome" %in% names(mae())) && (("TotalProteome" %in% unique(colData(mae())$sampleType)) ||
+                                                 ("TP" %in% unique(colData(mae())$sampleType)) ||
+                                                 ("FullProteome" %in% unique(colData(mae())$sampleType)) ||
+                                                 ("FP" %in% unique(colData(mae())$sampleType)))) {
             if (!is.null(colData(mae())$sampleName)) {
               inputsValue$ifNormByProtein <- input$ifNormByProtein
               maeData <- SmartPhos::normByFullProteome(maeData)
@@ -890,7 +896,8 @@ shinyServer(function(input, output, session) {
   plotV <- reactive({
     v <- plotVolcano(tableDE = tableDE(),
                      pFilter = input$pFilter,
-                     fcFilter = input$fcFilter)
+                     fcFilter = input$fcFilter,
+                     usePadj = input$ifAdjusted)
     v
   })
 
@@ -901,10 +908,10 @@ shinyServer(function(input, output, session) {
     if (!is.null(ptHiglight$log2FC)) {
       # highlight the point selected either by clicking on the data table row or
       # by clicking on a point on the volcano plot
-      p <- add_trace(p, x = ptHiglight$log2FC, y = ptHiglight$pValue,
-                     type = "scatter", mode = 'markers',
-                     marker = list(size = 10, symbol = "star"),
-                     showlegend = FALSE)
+        p <- add_trace(p, x = ptHiglight$log2FC, y = ptHiglight$pValue,
+                       type = "scatter", mode = 'markers',
+                       marker = list(size = 10, symbol = "star"),
+                       showlegend = FALSE)
     }
     p
   })
@@ -927,7 +934,13 @@ shinyServer(function(input, output, session) {
     colorRows$row_priority <- c(lastClicked$geneID, colorRows$row_priority[colorRows$row_priority != lastClicked$geneID])
     colorRows$row_color <- lapply(colorRows$row_priority, function(x) ifelse(x %in% lastClicked$geneID, "lightgreen", "white"))
     ptHiglight$log2FC <- filterDE()[filterDE()$ID == lastInfo,]$log2FC
-    ptHiglight$pValue <- -log10(filterDE()[filterDE()$ID == lastInfo,]$pvalue)
+    if (input$ifAdjusted) {
+        ptHiglight$pValue <- -log10(filterDE()[filterDE()$ID == lastInfo,]$padj)
+    }
+    else {
+        ptHiglight$pValue <- -log10(filterDE()[filterDE()$ID == lastInfo,]$pvalue)
+    }
+
   })
   # observe event when a row in the DE table is clicked
   observeEvent(input$DEtab_row_last_clicked,{
@@ -942,7 +955,13 @@ shinyServer(function(input, output, session) {
       lastClicked$geneSymbol <- filterDE()[lastInfo,]$Gene
     }
     ptHiglight$log2FC <- filterDE()[lastInfo,]$log2FC
-    ptHiglight$pValue <- -log10(filterDE()[lastInfo,]$pvalue)
+    if (input$ifAdjusted) {
+        ptHiglight$pValue <- -log10(filterDE()[lastInfo,]$padj)
+    }
+    else {
+        ptHiglight$pValue <- -log10(filterDE()[lastInfo,]$pvalue)
+    }
+
     colorRows$row_priority <- c(lastClicked$geneID, colorRows$row_priority[colorRows$row_priority != lastClicked$geneID])
     colorRows$row_color <- lapply(colorRows$row_priority, function(x) ifelse(x %in% lastClicked$geneID, "lightgreen", "white"))
   })
@@ -2033,7 +2052,7 @@ shinyServer(function(input, output, session) {
     if(!is.null(GSEres$resTab)) {
       p <- ggplotly(GSEres$enrPlot, source = "enrich",
                     height = 60*length(unique(GSEres$resTab$Name)))
-      p %>% event_register("plotly_click")
+      p %>% event_register("plotly_click") %>% layout(showlegend = TRUE)
       #ggplotly(GSEres$enrPlot)
       p
     }

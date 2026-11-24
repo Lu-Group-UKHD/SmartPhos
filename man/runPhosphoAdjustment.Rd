@@ -14,7 +14,7 @@ runPhosphoAdjustment(
 }
 \arguments{
 \item{maeData}{A \code{MultiAssayExperiment} object containing
-phosphoproteome and full proteome data.}
+phosphoproteome and proteome data.}
 
 \item{normalization}{A \code{logical} value indicating whether to perform
 normalization. Default is \code{FALSE}.}
@@ -41,7 +41,7 @@ The function performs the following steps:
 \enumerate{
   \item Defines an optimization function to minimize the sum of squared
   differences between pairs of samples.
-  \item Calculates the ratio matrix of phosphoproteome to full proteome data.
+  \item Calculates the ratio matrix of phosphoproteome to total/full proteome data.
   \item Subsets features based on completeness criteria.
   \item Performs a sanity check to identify and exclude problematic samples.
   \item Sets initial values for the adjustment factor based on column

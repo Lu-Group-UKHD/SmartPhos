@@ -430,14 +430,19 @@ clusterEnrich <- function(clusterTab, se, inputSet, reference = NULL,
   # Create a ggplot object for visualization of enrichment results
   p <- ggplot(plotTab,
               aes(x=cluster, y=Name, customdata = cluster, key = Name)) +
-    geom_point(aes(size =-log10(pval),fill=-log10(pval)), shape = 21,
+    geom_point(aes(size = Gene.number, fill = -log10(pval)), shape = 21,
                color = "black") +
+    scale_size_continuous(name = "Gene number") +
     scale_fill_gradient(low = "white", high = "red") +
+    guides(fill = guide_colorbar(order = 1),
+           size = guide_legend(order = 2)) +
+    #scale_color_gradient(low = "white", high = "red", name = "-log10(pval)") +
     xlab("Cluster") +
     ylab("Pathway") +
     theme(axis.text.x = element_text(size = 12),
           axis.text.y = element_text(size = 12),
           plot.title = element_text(hjust = 0.5, face = "bold"))
+
   return(list(table = plotTab, plot = p))
 }
 

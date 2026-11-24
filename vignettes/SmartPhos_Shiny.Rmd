@@ -148,11 +148,12 @@ available.
 
 * **sampleType**: Contains information of whether enrichment for phosphorylated 
 peptides is performed for a certain sample. The sampleType can be **Phospho** 
-(or **PP**) for the phospho-enriched samples and **FullProteome** (or **FP**) 
-for the non-enriched sample. Not that the app will still work if only one of 
-the sample type is present but some functions may not be available. For 
-example, the novel normalisation correction for phosphoproteomic data will not 
-be available if full proteome without enrichment is absent.   
+(or **PP**) for the phospho-enriched samples and **FullProteome** or 
+**TotalProteome** (or **FP**, **TP**) for the non-enriched sample. Not that the 
+app will still work if only one of the sample type is present but some 
+functions may not be available. For example, the novel normalisation correction 
+for phosphoproteomic data will not be available if full proteome without 
+enrichment is absent.   
 
 
 The above mentioned columns are mandatory ones. Other than that, fileTable.txt 
@@ -160,11 +161,12 @@ can contain optional columns such as:
 
 * **sampleName** column is important for performing normalization correction or 
 for normalizing Phosphoproteome samples by Full Proteome samples. This should 
-be the sample id without FP_/PP_ or Phospho_/FullProteome_ suffix or prefix. 
-For example, for the sample ID, **FullProteome_1stCrtl_0min_rep1**, the 
-sampleName should be, “**1stCrtl_0min_rep1**". Without this column, it would 
-not be possible to perform normalization correction and normalizing 
-phosphoproteome samples by full proteome samples.
+be the sample id without FP_/PP_/TP_ or Phospho_/FullProteome_/TotalProteome 
+suffix or prefix. For example, for the sample ID, 
+**FullProteome_1stCrtl_0min_rep1**, the sampleName should be, 
+“**1stCrtl_0min_rep1**". Without this column, it would not be possible to 
+perform normalization correction and normalizing phosphoproteome samples by 
+full proteome samples.
 
 * **subjectID** with information like patientID, cell lines, etc. This column 
 will be used if there are multiple samples from the same subject and users wish 

@@ -1,3 +1,12 @@
+
+CHANGES IN VERSION 0.99.31 (2026-11-24)
+
+--------------------------------------
+
+- update Volcano plot and cluster enrichment plot
+- also accepts TotalProteome and TP
+
+
 CHANGES IN VERSION 0.99.30 (2025-10-01)
 
 --------------------------------------
