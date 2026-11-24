@@ -27,7 +27,7 @@ The function performs the following steps:
   \item Optionally treats subdirectories as separate batches.
   \item Reads the summary file containing experimental information.
   \item Generates unique experimental IDs based on batch and sample names.
-  \item Processes file paths for full proteome and phosphoproteome data.
+  \item Processes file paths for total proteome / full proteome and phosphoproteome data.
   \item Creates a combined input table with file names, sample names, search
   types, batches, and IDs.
 }

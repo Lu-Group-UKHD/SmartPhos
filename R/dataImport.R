@@ -18,7 +18,7 @@
 #'   \item Optionally treats subdirectories as separate batches.
 #'   \item Reads the summary file containing experimental information.
 #'   \item Generates unique experimental IDs based on batch and sample names.
-#'   \item Processes file paths for full proteome and phosphoproteome data.
+#'   \item Processes file paths for total proteome / full proteome and phosphoproteome data.
 #'   \item Creates a combined input table with file names, sample names, search
 #'   types, batches, and IDs.
 #' }
@@ -133,7 +133,7 @@ generateInputTable_DIA <- function(rawFolder) {
   phosphoTab$searchType <- "phosphoproteome"
   phosphoTab$id <- id
 
-  # Combine full proteome and phosphoproteome tables into a single input table
+  # Combine total proteome / full proteome and phosphoproteome tables into a single input table
   inputTab <- rbind(fullTab, phosphoTab)
 
   return(inputTab)
@@ -359,11 +359,11 @@ readExperimentDIA <- function(fileTable, localProbCut = 0.75,
 
 #' @name normByFullProteome
 #'
-#' @title Normalize Phosphoproteome by Full Proteome
+#' @title Normalize Phosphoproteome by Total Proteome / Full Proteome
 #'
 #' @description
 #' \code{normByFullProteome} normalizes the phosphoproteome data by the
-#' corresponding full proteome data in a \code{MultiAssayExperiment} object.
+#' corresponding total proteome / full proteome data in a \code{MultiAssayExperiment} object.
 #' The "Phosphoproteome" assay
 #' in the MultiAssayExperiment will be replaced by the ratio.
 #'
@@ -410,7 +410,7 @@ normByFullProteome <- function(mae, replace = TRUE) {
   fpe <- mae[["Proteome"]]
   sampleTab <- colData(mae)
   sampleTab.pp <- sampleTab[sampleTab$sampleType %in% c("Phospho", "PP"), ]
-  sampleTab.fp <- sampleTab[sampleTab$sampleType %in% c("FullProteome", "FP"), ]
+  sampleTab.fp <- sampleTab[sampleTab$sampleType %in% c("TotalProteome", "TP", "FullProteome", "FP"), ]
 
   # Check if proteome assay for the unenriched samples is present
   if (nrow(sampleTab.fp) == 0) {
@@ -422,7 +422,7 @@ normByFullProteome <- function(mae, replace = TRUE) {
   ppMat <- assay(ppe[, colnames(ppe) %in% rownames(sampleTab.pp)])
   fpMat <- assay(fpe[, colnames(fpe) %in% rownames(sampleTab.fp)])
 
-  # Find the full proteome (non-enriched) counterparts of the phosphoproteome
+  # Find the total proteome / full proteome (non-enriched) counterparts of the phosphoproteome
   # (enriched) samples
   ppSampleName <- sampleTab.pp[colnames(ppMat), ]$sampleName
   fpSampleID <- rownames(sampleTab.fp)[match(ppSampleName,

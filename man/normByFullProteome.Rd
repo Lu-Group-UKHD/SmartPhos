@@ -2,7 +2,7 @@
 % Please edit documentation in R/dataImport.R
 \name{normByFullProteome}
 \alias{normByFullProteome}
-\title{Normalize Phosphoproteome by Full Proteome}
+\title{Normalize Phosphoproteome by Total Proteome / Full Proteome}
 \usage{
 normByFullProteome(mae, replace = TRUE)
 }
@@ -21,7 +21,7 @@ phosphoproteome data.
 }
 \description{
 \code{normByFullProteome} normalizes the phosphoproteome data by the
-corresponding full proteome data in a \code{MultiAssayExperiment} object.
+corresponding total proteome / full proteome data in a \code{MultiAssayExperiment} object.
 The "Phosphoproteome" assay
 in the MultiAssayExperiment will be replaced by the ratio.
 }

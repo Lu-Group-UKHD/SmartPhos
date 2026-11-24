@@ -147,9 +147,9 @@ test_that("plotVolcano correctly categorizes genes based on thresholds", {
 
   dataVolcano <- ggplot2::ggplot_build(v_plot)
 
-  up_genes <- dataVolcano$data[[8]][dataVolcano$data[[8]]$colour == "firebrick3", ]
-  down_genes <- dataVolcano$data[[8]][dataVolcano$data[[8]]$colour == "navy", ]
-  not_sig_genes <- dataVolcano$data[[8]][dataVolcano$data[[8]]$colour == "darkgrey", ]
+  up_genes <- dataVolcano$data[[2]][dataVolcano$data[[2]]$colour == "firebrick3", ]
+  down_genes <- dataVolcano$data[[2]][dataVolcano$data[[2]]$colour == "navy", ]
+  not_sig_genes <- dataVolcano$data[[2]][dataVolcano$data[[2]]$colour == "darkgrey", ]
 
   expect_equal(nrow(up_genes), 4)  # Expected number of upregulated genes
   expect_equal(nrow(down_genes), 2)  # Expected number of downregulated genes

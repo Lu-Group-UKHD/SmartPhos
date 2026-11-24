@@ -64,7 +64,7 @@ medianNorm <- function(x, method = "median") {
 #' @details
 #' The function performs the following steps:
 #' \enumerate{
-#'   \item Extracts the count matrices for Full Proteome (FP) samples.
+#'   \item Extracts the count matrices for Total Proteome / Full Proteome (TP/FP) samples.
 #'   \item Combines the proteome and phosphoproteome data into a single matrix.
 #'   \item Removes rows with all NA values.
 #'   \item Performs median normalization and log2 transformation on the
@@ -81,8 +81,8 @@ medianNorm <- function(x, method = "median") {
 #' @export
 performCombinedNormalization <- function(maeData) {
 
-  # get count matrix from FP (Full Proteome) samples
-  setFP <- maeData[,maeData$sampleType %in% c("FullProteome", "FP")]
+  # get count matrix from TP / FP (Total Proteome / Full Proteome) samples
+  setFP <- maeData[,maeData$sampleType %in% c("TotalProteome", "TP", "FullProteome", "FP")]
   protFP <- assay(setFP[["Proteome"]])
   phosFP <- assay(setFP[["Phosphoproteome"]])
   # Combine proteome and phosphoproteome data into a single matrix
@@ -144,7 +144,7 @@ getRatioMatrix <- function(maeData, normalization = FALSE,
   if (!normalization) {
     phosFP <- log2(assay(
         maeData[,maeData$sampleType %in%
-                    c("FullProteome", "FP")][["Phosphoproteome"]]))
+                    c("TotalProteome", "TP", "FullProteome", "FP")][["Phosphoproteome"]]))
   }
   else  {
     phosFP <- performCombinedNormalization(maeData)
@@ -306,7 +306,7 @@ checkRatioMat <- function(ratioMat, minOverlap = 3) {
 #' \code{MultiAssayExperiment} object to normalize the phosphoproteome data.
 #'
 #' @param maeData A \code{MultiAssayExperiment} object containing
-#' phosphoproteome and full proteome data.
+#' phosphoproteome and proteome data.
 #' @param normalization A \code{logical} value indicating whether to perform
 #' normalization. Default is \code{FALSE}.
 #' @param minOverlap A \code{numeric} value specifying the minimum number of
@@ -324,7 +324,7 @@ checkRatioMat <- function(ratioMat, minOverlap = 3) {
 #' \enumerate{
 #'   \item Defines an optimization function to minimize the sum of squared
 #'   differences between pairs of samples.
-#'   \item Calculates the ratio matrix of phosphoproteome to full proteome data.
+#'   \item Calculates the ratio matrix of phosphoproteome to total/full proteome data.
 #'   \item Subsets features based on completeness criteria.
 #'   \item Performs a sanity check to identify and exclude problematic samples.
 #'   \item Sets initial values for the adjustment factor based on column
@@ -407,7 +407,7 @@ runPhosphoAdjustment <- function(maeData, normalization = FALSE, minOverlap = 3,
 #' phosphoproteome adjustment.
 #'
 #' @param maeData A \code{MultiAssayExperiment} object containing
-#' phosphoproteome and full proteome data.
+#' phosphoproteome and proteome data.
 #' @param normalization A \code{logical} value indicating whether normalization
 #' was performed. Default is \code{FALSE}.
 #'

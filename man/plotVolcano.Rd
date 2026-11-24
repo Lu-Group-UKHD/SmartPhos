@@ -4,7 +4,7 @@
 \alias{plotVolcano}
 \title{Plot Volcano Plot for Differential Expression Analysis}
 \usage{
-plotVolcano(tableDE, pFilter = 0.05, fcFilter = 0.5)
+plotVolcano(tableDE, pFilter = 0.05, fcFilter = 0.5, usePadj = FALSE)
 }
 \arguments{
 \item{tableDE}{A \code{data frame} containing differential expression results
@@ -15,6 +15,9 @@ significance. Default is 0.05.}
 
 \item{fcFilter}{A \code{numeric} value specifying the log2 fold-change
 threshold for significance. Default is 0.5.}
+
+\item{usePadj}{A \code{boolean} value specifying to use adjusted P-value or
+not. Default is FALSE.}
 }
 \value{
 A \code{ggplot2} object representing the volcano plot.
